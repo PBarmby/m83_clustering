@@ -18,20 +18,24 @@ band_names = {'05_225': 11, '3_225': 13, '05_336': 15,  '3_336': 17, '05_373': 1
 
 cluster_colours = ['y','g','b','r','c','m','k']
 
+results = open('results.txt', 'a')
 
 def do_everything():
     '''Automate clustering process'''
     
     run = np.genfromtxt('experiments.txt', dtype='str')
     
-    for i in range(0, run.size):
+    for i in range(0, len(run)):
         
-        print do_cluster(run[i,0], run[i,1], run[i,2], run[i,3])
+        title = run[i,0]+'-'+run[i,1]+'vs'+run[i,2]+'-'+run[i,3]
+        print >> results, title
+        
+        print >> results, do_cluster(run[i,0], run[i,1], run[i,2], run[i,3], int(run[i,4]))
 
     return
   
     
-def do_cluster(band1, band2, band3, band4, number_clusters=3):
+def do_cluster(band1, band2, band3, band4, number_clusters):
     '''do K-means clustering on colours constructed from HST photometry band1, band 2,
     band3, band4 are keys from band_names --- ie, names of HST  filters'''
     
@@ -42,7 +46,7 @@ def do_cluster(band1, band2, band3, band4, number_clusters=3):
         return
     for band in [band1, band2, band3, band4]:
         if band not in band_names.keys():
-            print "Cadn't find %s in band_name list" %band
+            print "Can't find %s in band_name list" %band
             return
     
     #Import Data from WFC# ERS M83 Data Products: .txt file is catalog of all sources
@@ -88,11 +92,12 @@ def do_cluster(band1, band2, band3, band4, number_clusters=3):
     cluster_number = clf.predict(scaler.fit_transform(clusterdata))
     print cluster_number
     
-    results = open('results.txt', 'a')  #Send data to separate text file 'results'
+    #results = open('results.txt', 'a')  #Send data to separate text file 'results'
     
     #Compute the score
     # kmeans_model = KMeans(n_clusters = 3, random_state = 1).fit(clusterdata)
     
+        
     labels = clf.labels_
     score = metrics.silhouette_score(scaler.fit_transform(clusterdata), labels, metric = 'euclidean')
     print >> results, 'Silhouette score for bands %s %s %s %s: %f' % (band1, band2, band3, band4, score)
@@ -100,7 +105,7 @@ def do_cluster(band1, band2, band3, band4, number_clusters=3):
     #Print number of objects per cluster and send to txt file 'results'
     
     print >> results, 'Cluster# #objects'
-    
+        
     for i in range(0, number_clusters):
         x_cluster = x[cluster_number == i]
         print >> results, i, len(x_cluster)
