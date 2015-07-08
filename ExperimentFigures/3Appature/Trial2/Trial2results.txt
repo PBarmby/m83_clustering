@@ -1,0 +1,98 @@
+#Experiments run using multiplecluster.py 
+#Silhouette score and the number of objects in each cluster recorded
+3_336-3_225vs3_373-3_438
+Silhouette score for bands 3_336 3_225 3_373 3_438: 0.380026
+Cluster# #objects
+0 8299
+1 2831
+2 4116
+None
+3_336-3_438vs3_373-3_555
+Silhouette score for bands 3_336 3_438 3_373 3_555: 0.454856
+Cluster# #objects
+0 8670
+1 5506
+2 1879
+None
+3_336-3_555vs3_373-3_814
+Silhouette score for bands 3_336 3_555 3_373 3_814: 0.448913
+Cluster# #objects
+0 5952
+1 7924
+2 2367
+None
+3_336-3_814vs3_373-3_225
+Silhouette score for bands 3_336 3_814 3_373 3_225: 0.358334
+Cluster# #objects
+0 6987
+1 2978
+2 7246
+None
+3_336-3_225vs3_373-3_438
+Silhouette score for bands 3_336 3_225 3_373 3_438: 0.307950
+Cluster# #objects
+0 6492
+1 2496
+2 2246
+3 4012
+None
+3_336-3_438vs3_373-3_555
+Silhouette score for bands 3_336 3_438 3_373 3_555: 0.393111
+Cluster# #objects
+0 5828
+1 2821
+2 1112
+3 6294
+None
+3_336-3_555vs3_373-3_814
+Silhouette score for bands 3_336 3_555 3_373 3_814: 0.396435
+Cluster# #objects
+0 5841
+1 5625
+2 1194
+3 3583
+None
+3_336-3_814vs3_373-3_225
+Silhouette score for bands 3_336 3_814 3_373 3_225: 0.362499
+Cluster# #objects
+0 6558
+1 5697
+2 2081
+3 2875
+None
+3_336-3_225vs3_373-3_438
+Silhouette score for bands 3_336 3_225 3_373 3_438: 0.362871
+Cluster# #objects
+0 1198
+1 2670
+2 6526
+3 1277
+4 3575
+None
+3_336-3_438vs3_373-3_555
+Silhouette score for bands 3_336 3_438 3_373 3_555: 0.345609
+Cluster# #objects
+0 4422
+1 1883
+2 766
+3 5597
+4 3387
+None
+3_336-3_555vs3_373-3_814
+Silhouette score for bands 3_336 3_555 3_373 3_814: 0.392210
+Cluster# #objects
+0 5602
+1 5518
+2 2430
+3 1627
+4 1066
+None
+3_336-3_814vs3_373-3_225
+Silhouette score for bands 3_336 3_814 3_373 3_225: 0.355502
+Cluster# #objects
+0 3902
+1 1345
+2 4211
+3 2336
+4 5417
+None
