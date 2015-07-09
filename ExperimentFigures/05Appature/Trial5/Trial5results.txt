@@ -1,0 +1,182 @@
+#Experiments run using multiplecluster.py 
+#Silhouette score and the number of objects in each cluster recorded
+05_487-05_225vs05_373-05_225
+Silhouette score for bands 05_487 05_225 05_373 05_225: 0.522190
+Cluster# #objects
+0 912
+1 252
+2 696
+None
+05_487-05_438vs05_502-05_438
+Silhouette score for bands 05_487 05_438 05_502 05_438: 0.460248
+Cluster# #objects
+0 166
+1 940
+2 629
+None
+05_487-05_555vs05_657-05_555
+Silhouette score for bands 05_487 05_555 05_657 05_555: 0.430005
+Cluster# #objects
+0 1197
+1 388
+2 495
+None
+05_487-05_814vs05_673-05_814
+Silhouette score for bands 05_487 05_814 05_673 05_814: 0.411565
+Cluster# #objects
+0 985
+1 872
+2 321
+None
+05_487-05_225vs05_373-05_225
+Silhouette score for bands 05_487 05_225 05_373 05_225: 0.471920
+Cluster# #objects
+0 653
+1 154
+2 599
+3 454
+None
+05_487-05_438vs05_502-05_438
+Silhouette score for bands 05_487 05_438 05_502 05_438: 0.398604
+Cluster# #objects
+0 360
+1 709
+2 111
+3 555
+None
+05_487-05_555vs05_657-05_555
+Silhouette score for bands 05_487 05_555 05_657 05_555: 0.435782
+Cluster# #objects
+0 1181
+1 403
+2 44
+3 452
+None
+05_487-05_814vs05_673-05_814
+Silhouette score for bands 05_487 05_814 05_673 05_814: 0.365605
+Cluster# #objects
+0 665
+1 533
+2 823
+3 157
+None
+05_487-05_225vs05_373-05_225
+Silhouette score for bands 05_487 05_225 05_373 05_225: 0.462079
+Cluster# #objects
+0 557
+1 235
+2 576
+3 464
+4 28
+None
+05_487-05_438vs05_502-05_438
+Silhouette score for bands 05_487 05_438 05_502 05_438: 0.383856
+Cluster# #objects
+0 426
+1 430
+2 56
+3 185
+4 638
+None
+05_487-05_555vs05_657-05_555
+Silhouette score for bands 05_487 05_555 05_657 05_555: 0.372711
+Cluster# #objects
+0 731
+1 44
+2 387
+3 664
+4 254
+None
+05_487-05_814vs05_673-05_814
+Silhouette score for bands 05_487 05_814 05_673 05_814: 0.329694
+Cluster# #objects
+0 791
+1 344
+2 581
+3 397
+4 65
+None
+05_487-05_225vs05_373-05_225
+Silhouette score for bands 05_487 05_225 05_373 05_225: 0.437475
+Cluster# #objects
+0 509
+1 162
+2 417
+3 26
+4 341
+5 405
+None
+05_487-05_438vs05_502-05_438
+Silhouette score for bands 05_487 05_438 05_502 05_438: 0.392594
+Cluster# #objects
+0 435
+1 412
+2 54
+3 23
+4 643
+5 168
+None
+05_487-05_555vs05_657-05_555
+Silhouette score for bands 05_487 05_555 05_657 05_555: 0.367447
+Cluster# #objects
+0 677
+1 214
+2 169
+3 31
+4 291
+5 698
+None
+05_487-05_814vs05_673-05_814
+Silhouette score for bands 05_487 05_814 05_673 05_814: 0.342306
+Cluster# #objects
+0 633
+1 258
+2 215
+3 226
+4 73
+5 773
+None
+05_487-05_225vs05_373-05_225
+Silhouette score for bands 05_487 05_225 05_373 05_225: 0.416857
+Cluster# #objects
+0 396
+1 105
+2 302
+3 19
+4 219
+5 474
+6 345
+None
+05_487-05_438vs05_502-05_438
+Silhouette score for bands 05_487 05_438 05_502 05_438: 0.348337
+Cluster# #objects
+0 565
+1 246
+2 43
+3 109
+4 336
+5 411
+6 25
+None
+05_487-05_555vs05_657-05_555
+Silhouette score for bands 05_487 05_555 05_657 05_555: 0.339639
+Cluster# #objects
+0 664
+1 288
+2 144
+3 190
+4 436
+5 30
+6 328
+None
+05_487-05_814vs05_673-05_814
+Silhouette score for bands 05_487 05_814 05_673 05_814: 0.348083
+Cluster# #objects
+0 666
+1 143
+2 342
+3 38
+4 208
+5 135
+6 646
+None
