@@ -13,17 +13,22 @@ from sklearn import preprocessing
 from sklearn import metrics 
 from sklearn.metrics import pairwise_distances
 
-
+# correspondance between photometric measurement and column name in data file
+# (needed because we can't get ascii.commented_header reader to work)
 band_names = {'05_225': 11, '3_225': 13, '05_336': 15,  '3_336': 17, '05_373': 19, '3_373': 21, '05_438':23,    '3_438':25,  '05_487':27, '3_487': 29, '05_502':31, '3_502':33, '05_555': 35, '3_555': 37, '05_657': 39 ,'3_657':41 ,'05_673':43, '3_673':45 , '05_814':47 , '3_814':49 }
 
-cluster_colours = ['y','g','b','r','c','m','k']
+# used for plots
+cluster_colours = ['y','g','b','r','c','m','k'] 
 
-results = open('results.txt', 'a')
 
-def do_everything():
-    '''Automate clustering process'''
+def do_everything(input_file = 'experiments.txt', output_file = 'results.txt'):
+    '''Automate clustering process
+       input: input_file:  a 5-column text file with 1 line per clustering run
+                           each line lists the 4 filters to be used to construct colours, plus number of clusters
+       output: output_file: a text file listing results from each clustering run'''
     
-    run = np.genfromtxt('experiments.txt', dtype='str')
+   run = np.genfromtxt(input_file, dtype='str')
+   results = open(output_file, 'a') 
     
     for i in range(0, len(run)):
         
