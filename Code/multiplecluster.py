@@ -24,10 +24,12 @@ cluster_colours = ['y','g','b','r','c','m','k']
 # need this so that output files always have the same number of columns
 max_num_clusters = 8
 
-def do_everything(input_file = 'experiments.txt', output_file = 'results.txt'):
+def do_everything(input_file = 'experiments.txt', output_file = 'results.txt', mp=False, oci=False):
     '''Automate clustering process
        input: input_file:  a 5-column text file with 1 line per clustering run
                            each line lists the 4 filters to be used to construct colours, plus number of clusters
+              mp: make output plots?
+              oci: output cluster IDs for each object?
        output: output_file: a text file listing input+results from each clustering run'''
     
     run = np.genfromtxt(input_file, dtype='str')
@@ -40,7 +42,7 @@ def do_everything(input_file = 'experiments.txt', output_file = 'results.txt'):
         
         input_str =  '{} {}'.format(np.array_str(run[i][:-1])[1:-1],int(run[i,4])) # list of input parameters: bands and num of clusters
 
-        score, num_obj =  do_cluster(run[i,0], run[i,1], run[i,2], run[i,3], int(run[i,4]))
+        score, num_obj =  do_cluster(run[i,0], run[i,1], run[i,2], run[i,3], int(run[i,4]), make_plots=mp, output_cluster_id=oci)
         total_obj = num_obj.sum()
         output_str = ' {:.4f} {:5d} {}'.format(score, total_obj, np.array_str(num_obj)[1:-1])
         
@@ -51,7 +53,7 @@ def do_everything(input_file = 'experiments.txt', output_file = 'results.txt'):
     return
   
     
-def do_cluster(band1, band2, band3, band4, number_clusters, make_plots=False):
+def do_cluster(band1, band2, band3, band4, number_clusters, make_plots=False, output_cluster_id=False):
     '''do K-means clustering on colours constructed from HST photometry band1, band 2,
     band3, band4 are keys from band_names --- ie, names of HST  filters'''
     
@@ -90,7 +92,8 @@ def do_cluster(band1, band2, band3, band4, number_clusters, make_plots=False):
     y = data[:,1][greatdata]
     r = data[:,2][greatdata]
     d = data[:,3][greatdata]
-    
+    id = data[:,4][greatdata]
+
     #Put data in the right format for clustering
     
     clusterdata = np.vstack([colour1, colour2]).T
@@ -107,6 +110,11 @@ def do_cluster(band1, band2, band3, band4, number_clusters, make_plots=False):
     
     cluster_number = clf.predict(scaler.fit_transform(clusterdata))
 #    print cluster_number
+
+# THIS IS NOT YET WORKING!!
+    if output_cluster_id:
+        file_name = 'ID_'+str(number_clusters)+'cl_'+band1+'-'+band2+'vs'+band3+'-'+band4+'.txt'
+        np.savetxt(file_name, (id,cluster_number))
     
     #Compute the score
     # kmeans_model = KMeans(n_clusters = 3, random_state = 1).fit(clusterdata)
