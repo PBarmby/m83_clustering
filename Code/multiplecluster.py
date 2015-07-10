@@ -181,7 +181,7 @@ def do_cluster(band1, band2, band3, band4, number_clusters, make_plots=False):
         ax.set_xlabel(band1+' - '+band2)
         ax.set_ylabel(band3+' - '+band4)
         
-        file_name = 'Cluster '+str(number_clusters)+'# '+band1+'-'+band2+'vs'+band3+'-'+band4+'.png'
+        file_name = 'Cluster_'+str(number_clusters)+'cl_'+band1+'-'+band2+'vs'+band3+'-'+band4+'.png'
         pylab.savefig(file_name)
         
         # plot xy positions of objects in different clusters
@@ -200,7 +200,7 @@ def do_cluster(band1, band2, band3, band4, number_clusters, make_plots=False):
         ax2.legend()
         #plt.show()
         
-        filename = 'XY '+str(number_clusters)+'# '+band1+'-'+band2+'vs'+band3+'-'+band4+'.png'
+        filename = 'XY_'+str(number_clusters)+'cl_'+band1+'-'+band2+'vs'+band3+'-'+band4+'.png'
         pylab.savefig(filename)
     
     return(score, objects_per_cluster)
