@@ -20,27 +20,35 @@ band_names = {'05_225': 11, '3_225': 13, '05_336': 15,  '3_336': 17, '05_373': 1
 # used for plots
 cluster_colours = ['y','g','b','r','c','m','k'] 
 
+# need this so that output files always have the same number of columns
+max_num_clusters = 8
 
 def do_everything(input_file = 'experiments.txt', output_file = 'results.txt'):
     '''Automate clustering process
        input: input_file:  a 5-column text file with 1 line per clustering run
                            each line lists the 4 filters to be used to construct colours, plus number of clusters
-       output: output_file: a text file listing results from each clustering run'''
+       output: output_file: a text file listing input+results from each clustering run'''
     
-   run = np.genfromtxt(input_file, dtype='str')
-   results = open(output_file, 'a') 
+    run = np.genfromtxt(input_file, dtype='str')
+    results = open(output_file, 'a') 
     
     for i in range(0, len(run)):
         
-        title = run[i,0]+'-'+run[i,1]+'vs'+run[i,2]+'-'+run[i,3]
-        print >> results, title
+        input_str =  '{} {}'.format(np.array_str(run[i][:-1])[1:-1],int(run[i,4])) # list of input parameters
+
+        score, num_obj =  do_cluster(run[i,0], run[i,1], run[i,2], run[i,3], int(run[i,4]))
+#        score, num_obj = 0.89, np.array([5,4,1,0,0])
+        total_obj = num_obj.sum()
+        output_str = ' {:.4f} {:5d} {}'.format(score, total_obj, np.array_str(num_obj)[1:-1])
         
-        print >> results, do_cluster(run[i,0], run[i,1], run[i,2], run[i,3], int(run[i,4]))
+        results.write(input_str + ' ' + output_str + '\n')
+
+    results.close()
 
     return
   
     
-def do_cluster(band1, band2, band3, band4, number_clusters):
+def do_cluster(band1, band2, band3, band4, number_clusters, make_plots=False):
     '''do K-means clustering on colours constructed from HST photometry band1, band 2,
     band3, band4 are keys from band_names --- ie, names of HST  filters'''
     
@@ -95,107 +103,104 @@ def do_cluster(band1, band2, band3, band4, number_clusters):
     clf.fit(scaler.fit_transform(clusterdata))
     
     cluster_number = clf.predict(scaler.fit_transform(clusterdata))
-    print cluster_number
-    
-    #results = open('results.txt', 'a')  #Send data to separate text file 'results'
+#    print cluster_number
     
     #Compute the score
     # kmeans_model = KMeans(n_clusters = 3, random_state = 1).fit(clusterdata)
-    
         
     labels = clf.labels_
     score = metrics.silhouette_score(scaler.fit_transform(clusterdata), labels, metric = 'euclidean')
-    print >> results, 'Silhouette score for bands %s %s %s %s: %f' % (band1, band2, band3, band4, score)
+#    print >> results, 'Silhouette score for bands %s %s %s %s: %f' % (band1, band2, band3, band4, score)
     
     #Print number of objects per cluster and send to txt file 'results'
-    
-    print >> results, 'Cluster# #objects'
+#    print >> results, 'Cluster# #objects'
         
+    objects_per_cluster = np.zeros(max_num_clusters,dtype=np.int16)
     for i in range(0, number_clusters):
         x_cluster = x[cluster_number == i]
-        print >> results, i, len(x_cluster)
-    
-    
+        objects_per_cluster[i] = len(x_cluster)
+#       print >> results, i, len(x_cluster)
+
+    objects_per_cluster.sort() # sort from smallest to largest 
+    objects_per_cluster = objects_per_cluster[::-1] # reverse sort
+
     # Do some stats 
-    
-    
-    
-    
-    
-    
-    
+    # (TBD) -- results of this should perhaps be included in return()
+
     #--------------------------------------------------------------------------
     
-    #Visualize results 
+    #Visualize results -- should probably be a separate function
     
-    fig = plt.figure(figsize=(5,5))
-    ax = fig.add_subplot(111)
-    
-    # Compute 2D histogram of the input 
-    
-    H, C1_bins, C2_bins = np.histogram2d(colour1, colour2, 50)
-    
-    #Plot Density 
-    
-    ax = plt.axes()
-    ax.imshow(H.T, origin = 'lower', interpolation ='nearest', aspect='auto', 
-              extent = [C1_bins[0], C1_bins[-1],
-                        C2_bins[0], C2_bins[-1]],
-              cmap=plt.cm.binary)
-              
-    #Plot Cluster centers
-    cluster_centers = scaler.inverse_transform(clf.cluster_centers_)
-    
-    for i in range(0, number_clusters):
-        ax.scatter(cluster_centers[i, 0], cluster_centers[i, 1],
-                   s=40, c=cluster_colours[i], edgecolors='k')
-    
-    #Plot cluster boundaries 
-    
-    C1_centers = 0.5 * (C1_bins[1:] + C1_bins[:-1])
-    C2_centers = 0.5 * (C2_bins[1:] + C2_bins[:-1])
-    
-    clusterdatagrid = np.meshgrid(C1_centers, C2_centers)
-    clusterdatagrid = np.array(clusterdatagrid).reshape((2, 50 * 50)).T
-    
-    H = clf.predict(scaler.transform(clusterdatagrid)).reshape((50,50))
-    
-    for i in range(number_clusters):
-        Hcp = H.copy()
-        flag = (Hcp == i)
-        Hcp[flag] = 1 
-        Hcp[~flag] = 0
+    if make_plots:
+        fig = plt.figure(figsize=(5,5))
+        ax = fig.add_subplot(111)
         
-        ax.contour(C1_centers, C2_centers, Hcp, [-0.5, 0.5],
-                   linewidths=1, c='k')
-                   
-    ax.xaxis.set_major_locator(plt.MultipleLocator(0.3))
-    
-    ax.set_xlabel(band1+' - '+band2)
-    ax.set_ylabel(band3+' - '+band4)
-    
-    file_name = 'Cluster '+str(number_clusters)+'# '+band1+'-'+band2+'vs'+band3+'-'+band4+'.png'
-    pylab.savefig(file_name)
-    
-    # plot xy positions of objects in different clusters
-    
-    fig2 = plt.figure(figsize=(5,5))
-    ax2 = fig2.add_subplot(111)
-    
-    for i in range(0, number_clusters):
-        x_cluster = x[cluster_number == i]
-        y_cluster = y[cluster_number == i]
-        ax2.scatter(x_cluster, y_cluster, label = i, c=cluster_colours[i])
+        # Compute 2D histogram of the input 
         
-    #ax2.title('Clustering in colours '+band1+' - '+band2+' vs '+band3+' - '+band4)
-    ax2.set_xlabel('X [pixels]')
-    ax2.set_ylabel('Y [pixels]')
-    ax2.legend()
-    #plt.show()
+        H, C1_bins, C2_bins = np.histogram2d(colour1, colour2, 50)
+        
+        #Plot Density 
+        
+        ax = plt.axes()
+        ax.imshow(H.T, origin = 'lower', interpolation ='nearest', aspect='auto', 
+                  extent = [C1_bins[0], C1_bins[-1],
+                            C2_bins[0], C2_bins[-1]],
+                  cmap=plt.cm.binary)
+                  
+        #Plot Cluster centers
+        cluster_centers = scaler.inverse_transform(clf.cluster_centers_)
+        
+        for i in range(0, number_clusters):
+            ax.scatter(cluster_centers[i, 0], cluster_centers[i, 1],
+                       s=40, c=cluster_colours[i], edgecolors='k')
+        
+        #Plot cluster boundaries 
+        
+        C1_centers = 0.5 * (C1_bins[1:] + C1_bins[:-1])
+        C2_centers = 0.5 * (C2_bins[1:] + C2_bins[:-1])
+        
+        clusterdatagrid = np.meshgrid(C1_centers, C2_centers)
+        clusterdatagrid = np.array(clusterdatagrid).reshape((2, 50 * 50)).T
+        
+        H = clf.predict(scaler.transform(clusterdatagrid)).reshape((50,50))
+        
+        for i in range(number_clusters):
+            Hcp = H.copy()
+            flag = (Hcp == i)
+            Hcp[flag] = 1 
+            Hcp[~flag] = 0
+            
+            ax.contour(C1_centers, C2_centers, Hcp, [-0.5, 0.5],
+                       linewidths=1, c='k')
+                       
+        ax.xaxis.set_major_locator(plt.MultipleLocator(0.3))
+        
+        ax.set_xlabel(band1+' - '+band2)
+        ax.set_ylabel(band3+' - '+band4)
+        
+        file_name = 'Cluster '+str(number_clusters)+'# '+band1+'-'+band2+'vs'+band3+'-'+band4+'.png'
+        pylab.savefig(file_name)
+        
+        # plot xy positions of objects in different clusters
+        
+        fig2 = plt.figure(figsize=(5,5))
+        ax2 = fig2.add_subplot(111)
+        
+        for i in range(0, number_clusters):
+            x_cluster = x[cluster_number == i]
+            y_cluster = y[cluster_number == i]
+            ax2.scatter(x_cluster, y_cluster, label = i, c=cluster_colours[i])
+            
+        #ax2.title('Clustering in colours '+band1+' - '+band2+' vs '+band3+' - '+band4)
+        ax2.set_xlabel('X [pixels]')
+        ax2.set_ylabel('Y [pixels]')
+        ax2.legend()
+        #plt.show()
+        
+        filename = 'XY '+str(number_clusters)+'# '+band1+'-'+band2+'vs'+band3+'-'+band4+'.png'
+        pylab.savefig(filename)
     
-    filename = 'XY '+str(number_clusters)+'# '+band1+'-'+band2+'vs'+band3+'-'+band4+'.png'
-    pylab.savefig(filename)
-    
-    return   
+    return(score, objects_per_cluster)
+
     
     
