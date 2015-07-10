@@ -7,6 +7,7 @@ Created on Fri Apr 03 13:24:41 2015
 import numpy as np 
 import pylab as pylab
 from matplotlib import pyplot as plt 
+from astropy.table import Table, Column
 
 from sklearn.cluster import KMeans
 from sklearn import preprocessing 
@@ -30,14 +31,16 @@ def do_everything(input_file = 'experiments.txt', output_file = 'results.txt'):
        output: output_file: a text file listing input+results from each clustering run'''
     
     run = np.genfromtxt(input_file, dtype='str')
+
+    # TODO: check whether results file already exists; if not, open it and print a header line
+    # if it does already exist, just open it
     results = open(output_file, 'a') 
     
     for i in range(0, len(run)):
         
-        input_str =  '{} {}'.format(np.array_str(run[i][:-1])[1:-1],int(run[i,4])) # list of input parameters
+        input_str =  '{} {}'.format(np.array_str(run[i][:-1])[1:-1],int(run[i,4])) # list of input parameters: bands and num of clusters
 
         score, num_obj =  do_cluster(run[i,0], run[i,1], run[i,2], run[i,3], int(run[i,4]))
-#        score, num_obj = 0.89, np.array([5,4,1,0,0])
         total_obj = num_obj.sum()
         output_str = ' {:.4f} {:5d} {}'.format(score, total_obj, np.array_str(num_obj)[1:-1])
         
@@ -203,4 +206,44 @@ def do_cluster(band1, band2, band3, band4, number_clusters, make_plots=False):
     return(score, objects_per_cluster)
 
     
-    
+def results_summary(input_file = 'results.txt'):
+    '''compute and plot summaries for clustering analysis'''
+
+    # read in the data -- this is not an ideal way to do it since it requires knowledge of file structure
+    results_table = Table.read(input_file, format='ascii.no_header')
+    num_clust = results_table['col5']
+    score = results_table['col6']
+    total_obj = results_table['col7'].astype('float')
+
+    # add a column with the size of the smallest cluster
+    # have to do some tricky stuff since column corresponding to smallest cluster varies dep on number of clusters
+    last_clust_col = 7+ num_clust
+    results_table.add_column(Column(name='size_smallest', data=np.zeros(len(results_table)),dtype=np.int16))
+    for i in range(0,len(results_table)):
+        lastcol = 'col{}'.format(last_clust_col[i])
+        results_table['size_smallest'][i] = results_table[lastcol][i]
+
+    biggest_clust_fract = results_table['col8']/total_obj # compute fraction of objects in largest cluster
+    smallest_clust_fract = results_table['size_smallest']/total_obj # compute fraction of objects in smallest cluster
+
+    fig, ax = plt.subplots()
+    ax.plot(num_clust, score)
+    ax.set_xlabel('Number of clusters')
+    ax.set_ylabel('Score')
+    fig.show()
+
+    fig, ax = plt.subplots()
+    ax.plot(num_clust, biggest_clust_fract)
+    ax.plot(num_clust, smallest_clust_fract)
+    ax.set_xlabel('Number of clusters')
+    ax.set_ylabel('Fractional size')
+    fig.show()
+
+    fig, ax = plt.subplots()
+    ax.plot(score, biggest_clust_fract)
+    ax.plot(score, smallest_clust_fract)
+    ax.set_xlabel('Score')
+    ax.set_ylabel('Fractional size')
+    fig.show()
+
+    return()
