@@ -92,7 +92,7 @@ def do_cluster(band1, band2, band3, band4, number_clusters, make_plots=False, ou
     y = data[:,1][greatdata]
     r = data[:,2][greatdata]
     d = data[:,3][greatdata]
-    id = data[:,4][greatdata]
+    id = data[:,4][greatdata].astype(np.int32)
 
     #Put data in the right format for clustering
     
@@ -111,10 +111,11 @@ def do_cluster(band1, band2, band3, band4, number_clusters, make_plots=False, ou
     cluster_number = clf.predict(scaler.fit_transform(clusterdata))
 #    print cluster_number
 
-# THIS IS NOT YET WORKING!!
+# output object and cluster IDs to a file
     if output_cluster_id:
         file_name = 'ID_'+str(number_clusters)+'cl_'+band1+'-'+band2+'vs'+band3+'-'+band4+'.txt'
-        np.savetxt(file_name, (id,cluster_number))
+        tmptab = Table([id,cluster_number])
+        tmptab.write(file_name, format='ascii.no_header')
     
     #Compute the score
     # kmeans_model = KMeans(n_clusters = 3, random_state = 1).fit(clusterdata)
