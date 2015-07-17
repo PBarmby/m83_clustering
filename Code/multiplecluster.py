@@ -24,7 +24,7 @@ cluster_colours = ['y','g','b','r','c','m','k']
 # need this so that output files always have the same number of columns
 max_num_clusters = 8
 
-def do_everything(input_file = 'experiments.txt', output_file = 'results.txt', mp=False, oci=False):
+def do_everything(input_file = 'experiments.txt', output_file = 'results.txt', mp=False, oci=True):
     '''Automate clustering process
        input: input_file:  a 5-column text file with 1 line per clustering run
                            each line lists the 4 filters to be used to construct colours, plus number of clusters
@@ -53,7 +53,7 @@ def do_everything(input_file = 'experiments.txt', output_file = 'results.txt', m
     return
   
     
-def do_cluster(band1, band2, band3, band4, number_clusters, make_plots=False, output_cluster_id=False):
+def do_cluster(band1, band2, band3, band4, number_clusters, make_plots=False, output_cluster_id=True):
     '''do K-means clustering on colours constructed from HST photometry band1, band 2,
     band3, band4 are keys from band_names --- ie, names of HST  filters'''
     
@@ -236,23 +236,32 @@ def results_summary(input_file = 'results.txt'):
     smallest_clust_fract = results_table['size_smallest']/total_obj # compute fraction of objects in smallest cluster
 
     fig, ax = plt.subplots()
-    ax.plot(num_clust, score)
+    ax.scatter(num_clust, score)
     ax.set_xlabel('Number of clusters')
     ax.set_ylabel('Score')
     fig.show()
-
+    
+    filename = 'n_clusters_vs_Score.png'
+    pylab.savefig(filename)
+    
     fig, ax = plt.subplots()
-    ax.plot(num_clust, biggest_clust_fract)
-    ax.plot(num_clust, smallest_clust_fract)
+    ax.scatter(num_clust, biggest_clust_fract)
+    ax.scatter(num_clust, smallest_clust_fract)
     ax.set_xlabel('Number of clusters')
     ax.set_ylabel('Fractional size')
     fig.show()
 
+    filename = 'n_clusters_vs_FractionalSize.png'
+    pylab.savefig(filename)
+
     fig, ax = plt.subplots()
-    ax.plot(score, biggest_clust_fract)
-    ax.plot(score, smallest_clust_fract)
+    ax.scatter(score, biggest_clust_fract)
+    ax.scatter(score, smallest_clust_fract)
     ax.set_xlabel('Score')
     ax.set_ylabel('Fractional size')
     fig.show()
+    
+    filename = 'Score_vs_FractionalSize.png'
+    pylab.savefig(filename)
 
     return()
