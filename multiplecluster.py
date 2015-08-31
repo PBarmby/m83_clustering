@@ -7,12 +7,15 @@ Created on Fri Apr 03 13:24:41 2015
 import numpy as np 
 import pylab as pylab
 from matplotlib import pyplot as plt 
+
 from astropy.table import Table, Column
+
 
 from sklearn.cluster import KMeans
 from sklearn import preprocessing 
 from sklearn import metrics 
 from sklearn.metrics import pairwise_distances
+
 
 from matplotlib.patches import Ellipse
 from scipy.stats import norm
@@ -25,10 +28,10 @@ from sklearn import preprocessing
 band_names = {'05_225': 11, '3_225': 13, '05_336': 15,  '3_336': 17, '05_373': 19, '3_373': 21, '05_438':23,    '3_438':25,  '05_487':27, '3_487': 29, '05_502':31, '3_502':33, '05_555': 35, '3_555': 37, '05_657': 39 ,'3_657':41 ,'05_673':43, '3_673':45 , '05_814':47 , '3_814':49 }
 
 # used for plots
-cluster_colours = ['y','g','b','r','c','m','k','m','w'] 
+cluster_colours = ['y','g','b','r','c','m','k','m','w','y','g','b','r','c','m','k','m','w','y','g','b','r','c','m','k','m','w'] 
 
 # need this so that output files always have the same number of columns
-max_num_clusters = 8
+max_num_clusters = 20
 
 def do_everything(input_file = 'experiments.txt', output_file = 'results.txt', mp=True, oci=False, rs = True):
     '''Automate clustering process
@@ -178,6 +181,7 @@ def make_ms_plots(colour1, colour2, n_clusters, X, ms, band1, band2, band3, band
     return ()
     
 def do_kmeans(band1, band2, band3, band4, number_clusters, make_plots, output_cluster_id):
+
     '''do K-means clustering on colours constructed from HST photometry band1, band 2,
     band3, band4 are keys from band_names --- ie, names of HST  filters'''
     
@@ -216,6 +220,7 @@ def do_kmeans(band1, band2, band3, band4, number_clusters, make_plots, output_cl
     y = data[:,1][greatdata]
     r = data[:,2][greatdata]
     d = data[:,3][greatdata]
+
     id = data[:,4][greatdata].astype(np.int32)
 
     #Put data in the right format for clustering
@@ -233,6 +238,7 @@ def do_kmeans(band1, band2, band3, band4, number_clusters, make_plots, output_cl
     clf.fit(scaler.fit_transform(clusterdata))
     
     cluster_number = clf.predict(scaler.fit_transform(clusterdata))
+
 #    print cluster_number
 
 # output object and cluster IDs to a file
@@ -305,6 +311,7 @@ def colour_kmeans_plot(band1, band2, band3, band4, clf, scaler, colour1, colour2
         
     H = clf.predict(scaler.transform(clusterdatagrid)).reshape((50,50))
         
+
     for i in range(number_clusters):
         Hcp = H.copy()
         flag = (Hcp == i)
@@ -312,6 +319,7 @@ def colour_kmeans_plot(band1, band2, band3, band4, clf, scaler, colour1, colour2
         Hcp[~flag] = 0
         
         ax.contour(C1_centers, C2_centers, Hcp, [-0.5, 0.5],
+
                        linewidths=1, c='k')
                        
     ax.xaxis.set_major_locator(plt.MultipleLocator(0.3))
@@ -327,6 +335,7 @@ def colour_kmeans_plot(band1, band2, band3, band4, clf, scaler, colour1, colour2
 def xy_plot (x, y, number_clusters, cluster_number, band1, band2, band3, band4):
         # plot xy positions of objects in different clusters
    
+
     fig2 = plt.figure(figsize=(5,5))
     ax2 = fig2.add_subplot(111)
     
@@ -334,13 +343,14 @@ def xy_plot (x, y, number_clusters, cluster_number, band1, band2, band3, band4):
         x_cluster = x[cluster_number == i]
         y_cluster = y[cluster_number == i]
         ax2.scatter(x_cluster, y_cluster, label = i, c=cluster_colours[i])
-            
+
     #ax2.title('Clustering in colours '+band1+' - '+band2+' vs '+band3+' - '+band4)
     ax2.set_xlabel('X [pixels]')
     ax2.set_ylabel('Y [pixels]')
     ax2.legend()
     #plt.show()
     
+
     filename = 'XY_'+str(number_clusters)+'cl_'+band1+'-'+band2+'vs'+band3+'-'+band4+'.png'
     pylab.savefig(filename)
     
@@ -526,3 +536,4 @@ def results_summary(input_file = 'results.txt'):
     #pylab.savefig(filename)
 
     return()
+
