@@ -33,31 +33,32 @@ cluster_colours = ['y','g','b','r','c','m','k','m','w','y','g','b','r','c','m','
 # need this so that output files always have the same number of columns
 max_num_clusters = 20
 
-def do_everything(input_file = 'experiments.txt', output_file = 'results.txt', mp=True, oci=False, rs = True):
+def do_everything(input_file = 'experiments.txt', output_file = 'results.txt', mp=False, oci=False, rs = True):
     '''Automate clustering process
-       input: input_file:  a 5-column text file with 1 line per clustering run
-                           each line lists the 4 filters to be used to construct colours, plus number of clusters
+       input: input_file:  a 4-column text file with 1 line per clustering run
+                           each line lists the 4 filters to be used to construct colours
               mp: make output plots
               oci: output cluster IDs for each object
+              rs: make graphs to summarize results
        output: output_file: a text file listing input+results from each clustering run'''
     
     run = np.genfromtxt(input_file, dtype='str')
 
-    # TODO: check whether results file already exists; if not, open it and print a header line
+    # check whether results file already exists; if not, open it and print a header line
     # if it does already exist, just open it
     results = open(output_file, 'a') 
     
     for i in range(0, len(run)):
         
         
-        #New MEANSHIFT
+        # MEANSHIFT to find the appropriate number of clusters
         numberofclusters = do_meanshift (run[i,0], run[i,1], run[i,2], run[i,3], mp)
         print "Estimated number of clusters: ", numberofclusters 
         
-        input_str =  '{} {}'.format(np.array_str(run[i][:-1])[1:-1],numberofclusters) # list of input parameters: bands and num of clusters
+        input_str =  '{} {}'.format(np.array_str(run[i][:])[1:-1],numberofclusters) # list of input parameters: bands and num of clusters
         
                
-        
+        # run KMEANS clustering based on the number of clusters found using MEANSHIFT
         score, num_obj =  do_kmeans(run[i,0], run[i,1], run[i,2], run[i,3], numberofclusters, make_plots=mp, output_cluster_id=oci)
         total_obj = num_obj.sum()
         output_str = ' {:.4f} {:5d} {}'.format(score, total_obj, np.array_str(num_obj)[1:-1])
@@ -121,11 +122,10 @@ def do_meanshift (band1, band2, band3, band4, make_plots):
     X_scaled = preprocessing.scale(X)
 
     # The following bandwidth can be automatically detected using
-    # the routine estimate_bandwidth().  Because bandwidth estimation
-    # is very expensive in memory and computation, we'll skip it here.
+    # the routine estimate_bandwidth().
 
     bandwidth = estimate_bandwidth(X)
-    #bandwidth = 0.7
+    
 
     ms = MeanShift(bandwidth=bandwidth, bin_seeding=True, cluster_all=False)
     ms.fit(X_scaled)
@@ -137,9 +137,7 @@ def do_meanshift (band1, band2, band3, band4, make_plots):
         make_ms_plots(colour1, colour2, n_clusters, X, ms, band1, band2, band3, band4)
     
     return(n_clusters)
-    #print labels_unique
-    #print bandwidth
-    #print "number of estimated clusters : %d" % n_clusters
+    
 
     #------------------------------------------------------------
     
@@ -158,7 +156,7 @@ def make_ms_plots(colour1, colour2, n_clusters, X, ms, band1, band2, band3, band
               cmap=plt.cm.binary)
 
     # plot clusters
-    #colors = ['b', 'g', 'r', 'k']
+    
 
     for i in range(n_clusters):
         Xi = X[ms.labels_ == i]
@@ -171,8 +169,7 @@ def make_ms_plots(colour1, colour2, n_clusters, X, ms, band1, band2, band3, band
                H.T, bins, colors='r')
 
     ax.xaxis.set_major_locator(plt.MultipleLocator(0.3))
-    #ax.set_xlim(-1.101, 0.101)
-    #ax.set_ylim(C2_bins[0], C2_bins[-1])
+   
     ax.set_xlabel(band1+' - '+band2)
     ax.set_ylabel(band3+' - '+band4)
     
@@ -239,7 +236,7 @@ def do_kmeans(band1, band2, band3, band4, number_clusters, make_plots, output_cl
     
     cluster_number = clf.predict(scaler.fit_transform(clusterdata))
 
-#    print cluster_number
+
 
 # output object and cluster IDs to a file
     if output_cluster_id:
@@ -248,20 +245,16 @@ def do_kmeans(band1, band2, band3, band4, number_clusters, make_plots, output_cl
         tmptab.write(file_name, format='ascii.no_header')
     
     #Compute the score
-    # kmeans_model = KMeans(n_clusters = 3, random_state = 1).fit(clusterdata)
+    
         
     labels = clf.labels_
     score = metrics.silhouette_score(scaler.fit_transform(clusterdata), labels, metric = 'euclidean')
-#    print >> results, 'Silhouette score for bands %s %s %s %s: %f' % (band1, band2, band3, band4, score)
-    
-    #Print number of objects per cluster and send to txt file 'results'
-#    print >> results, 'Cluster# #objects'
+
         
     objects_per_cluster = np.zeros(max_num_clusters,dtype=np.int16)
     for i in range(0, number_clusters):
         x_cluster = x[cluster_number == i]
         objects_per_cluster[i] = len(x_cluster)
-#       print >> results, i, len(x_cluster)
 
     objects_per_cluster.sort() # sort from smallest to largest 
     objects_per_cluster = objects_per_cluster[::-1] # reverse sort
@@ -271,14 +264,12 @@ def do_kmeans(band1, band2, band3, band4, number_clusters, make_plots, output_cl
         xy_plot (x, y, number_clusters, cluster_number, band1, band2, band3, band4)
             
     return(score, objects_per_cluster)
-    # Do some stats 
-    # (TBD) -- results of this should perhaps be included in return()
-
-    #--------------------------------------------------------------------------
     
-    #Visualize results -- should probably be a separate function
+    
+    
 def colour_kmeans_plot(band1, band2, band3, band4, clf, scaler, colour1, colour2, number_clusters):
     
+    # Visualize results
     fig = plt.figure(figsize=(5,5))
     ax = fig.add_subplot(111)
         
@@ -301,7 +292,7 @@ def colour_kmeans_plot(band1, band2, band3, band4, clf, scaler, colour1, colour2
         ax.scatter(cluster_centers[i, 0], cluster_centers[i, 1],
                        s=40, c=cluster_colours[i], edgecolors='k')
         
-        #Plot cluster boundaries 
+    #Plot cluster boundaries 
         
     C1_centers = 0.5 * (C1_bins[1:] + C1_bins[:-1])
     C2_centers = 0.5 * (C2_bins[1:] + C2_bins[:-1])
@@ -333,9 +324,9 @@ def colour_kmeans_plot(band1, band2, band3, band4, clf, scaler, colour1, colour2
     return ()
 
 def xy_plot (x, y, number_clusters, cluster_number, band1, band2, band3, band4):
-        # plot xy positions of objects in different clusters
+    
+    # plot xy positions of objects in different clusters
    
-
     fig2 = plt.figure(figsize=(5,5))
     ax2 = fig2.add_subplot(111)
     
@@ -344,11 +335,10 @@ def xy_plot (x, y, number_clusters, cluster_number, band1, band2, band3, band4):
         y_cluster = y[cluster_number == i]
         ax2.scatter(x_cluster, y_cluster, label = i, c=cluster_colours[i])
 
-    #ax2.title('Clustering in colours '+band1+' - '+band2+' vs '+band3+' - '+band4)
+    
     ax2.set_xlabel('X [pixels]')
     ax2.set_ylabel('Y [pixels]')
     ax2.legend()
-    #plt.show()
     
 
     filename = 'XY_'+str(number_clusters)+'cl_'+band1+'-'+band2+'vs'+band3+'-'+band4+'.png'
@@ -386,8 +376,22 @@ def results_summary(input_file = 'results.txt'):
     filename = 'n_clusters_vs_Score.png'
     #pylab.savefig(filename)
     
-    #N = results_table['col5']
-    
+    # ?    
+    for i in range (0,max(num_clust)):
+        fig, ax = plt.subplots()
+        if i == num_clust: 
+            numberoftrials = len(num_clust[num_clust==i])
+            X = np.arange(0,numberoftrials)
+            
+            for n in range(0,X):
+                Y = results_table['col7'+n]/results_table['col7'].astype('float')
+                ax.bar(n,Y,color[n], bottom = Y[n]+Y[n+1])
+
+           
+            
+                
+            
+        
     
    
     results_3 = results_table[results_table['col5']==3]
