@@ -1,3 +1,0 @@
-#Experiments run using multiplecluster.py 
-#Silhouette score and the number of objects in each cluster recorded
-
