@@ -1,2 +1,0 @@
-#   band1    band2    band3   band4   n_clusters
-
