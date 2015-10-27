@@ -1,10 +1,14 @@
-from astropy.table import Table
+from astropy.table import Table, Column
 import numpy as np
 import os
 
 #usage:
-#process_tab(ned_in, ned_out, type_col='Type',select_list = table_proc.within_galaxy_types_ned, rfmt_fn=table_proc.rfmt_ned)
-#process_tab(simbad_in, simbad_out, type_col='OTYPE_S',select_list = table_proc.within_galaxy_types_simbad,rfmt_fn=table_proc.rfmt_simbad)
+#table_proc.process_tab(ned_in, ned_out, type_col='Type',select_list = table_proc.within_galaxy_types_ned, rfmt_fn=table_proc.rfmt_ned)
+#table_proc.process_tab(simbad_in, simbad_out, type_col='OTYPE_S',select_list = table_proc.within_galaxy_types_simbad,rfmt_fn=table_proc.rfmt_simbad
+#(match output of these with TOPCAT)
+#matchtab = Table.read('ned_simbad_match.fits')
+#matchtab2 = table_proc.process_match(matchtab,'ned_simbad_match2.fits')
+)
 
 within_galaxy_types_ned = ['*Cl','HII','PofG','Neb','SN','SNR', 'V*','WR*']
 background_types_ned = ['G','GClstr','GGroup','QSO']
@@ -28,7 +32,7 @@ def process_tab(tab_in, tab_out, type_col, select_list = within_galaxy_types_ned
 
     # do some reformatting
     if rfmt_fn != None:
-        rfmt_fn(wanted_types)
+        wanted_types = rfmt_fn(wanted_types)
 
     if tab_out != None: # write to file
         if os.path.exists(tab_out):
@@ -43,7 +47,7 @@ def rfmt_ned(in_tab):
     in_tab['Object Name'] = np.char.replace(in_tab['Object Name'],"NGC 5236:","")
     in_tab['Object Name'] = np.char.replace(in_tab['Object Name'], " ", "") # strip spaces
     in_tab.rename_column('Object Name','Name_NED')
-    return
+    return(in_tab)
 
 def rfmt_simbad(in_tab):
     ''' change some object types to better match NED
@@ -51,5 +55,25 @@ def rfmt_simbad(in_tab):
     in_tab['Type'] = np.char.strip(in_tab['Type'],"?") # only applies to "SNR?"
     in_tab['Type'][in_tab['Type']=='Cl*'] = '*Cl' 
     in_tab.rename_column('MAIN_ID','Name_SIMBAD')
+    in_tab['Name_SIMBAD'] = np.char.replace(in_tab['Name_SIMBAD'],"M83-","")
     in_tab['Name_SIMBAD'] = np.char.replace(in_tab['Name_SIMBAD']," ", "") # strip spaces
-    return
+    return(in_tab)
+
+
+def process_match(matched_tab_in, matched_tab_out=None):
+    '''find secure matches btw NED and SIMBAD'''
+    goodmatch = np.logical_or(name_match(matched_tab_in['Name_SIMBAD'],matched_tab_in['Name_NED']),
+                              matched_tab_in['Type_1'] == matched_tab_in['Type_2'])
+    matched_tab_in.add_column(Column(goodmatch, name='Secure'))
+    if matched_tab_out != None: # write to file
+        if os.path.exists(matched_tab_out):
+            os.unlink(matched_tab_out)
+        matched_tab_in.write(matched_tab_out, format='fits')
+    return(matched_tab_in)
+
+def name_match(simbad_name, ned_name):
+    matched = np.zeros(len(simbad_name),dtype='bool')
+    matched[np.char.replace(simbad_name," ", "")==np.char.replace(ned_name," ", "")] = True
+    ## TODO: account for cases where one name has leading zero in an ID (eg [WLC2001]03) and other doesn't
+
+    return(matched)
