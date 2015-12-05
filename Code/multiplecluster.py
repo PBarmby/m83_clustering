@@ -33,12 +33,12 @@ cluster_colours = ['y','g','b','r','c','m','k','m','w','y','g','b','r','c','m','
 #Input file, columns correspond to different wavelengths 
 
 inputdata  = 'hlsp_wfc3ers_hst_wfc3_m83_cat_all_v1.txt'
-data = np.loadtxt(inputdata)
+data = Table.read(inputdata, format = 'ascii.commented_header', guess = False)
    
 # need this so that output files always have the same number of columns
 max_num_clusters = 20
 
-def do_everything(input_file = 'experiments.txt', output_file = 'results.txt', mp=True, oci=False, rs = False):
+def do_everything(input_file = 'experiments.txt', output_file = 'results.txt', mp_MS=True, mp_KM_COLOUR=False, mp_KM_XY=True, oci=False, rs = False):
     '''Automate clustering process
        input: input_file:  a 4-column text file with 1 line per clustering run
                            each line lists the 4 filters to be used to construct colours
@@ -57,12 +57,12 @@ def do_everything(input_file = 'experiments.txt', output_file = 'results.txt', m
     for i in range(0, len(run)):
         
         #Colour 1 
-        wave1 = data[:, band_names[run[i,0]]]
-        wave2 = data[:, band_names[run[i,1]]]
+        wave1 = data[run[i,0]]
+        wave2 = data[run[i,1]]
     
         #Colour 2
-        wave3 = data[:, band_names[run[i,2]]]
-        wave4 = data[:, band_names[run[i,3]]]
+        wave3 = data[run[i,2]]
+        wave4 = data[run[i,3]]
     
         gooddata1 = np.logical_and(np.logical_and(wave1!=-99, wave2!=-99), np.logical_and(wave3!=-99, wave4!=-99)) # Remove data pieces with no value 
         gooddata2 = np.logical_and(np.logical_and(wave1<25, wave2<25), np.logical_and(wave3<25, wave4<25))  #Remove data above certain magnitude
@@ -72,21 +72,19 @@ def do_everything(input_file = 'experiments.txt', output_file = 'results.txt', m
         colour2 = wave3[greatdata] - wave4[greatdata]
     
         # MEANSHIFT to find the appropriate number of clusters
-        numberofclusters = do_meanshift (run[i,0], run[i,1], run[i,2], run[i,3], colour1, colour2, mp)
+        numberofclusters = do_meanshift (run[i,0], run[i,1], run[i,2], run[i,3], colour1, colour2, mp_MS)
         #print "Estimated number of clusters: ", numberofclusters 
         
         input_str =  '{} {}'.format(np.array_str(run[i][:])[1:-1],numberofclusters) # list of input parameters: bands and num of clusters
         
                
         # run KMEANS clustering based on the number of clusters found using MEANSHIFT
-        score, num_obj =  do_kmeans(run[i,0], run[i,1], run[i,2], run[i,3], colour1, colour2, greatdata, numberofclusters, make_plots=mp, output_cluster_id=oci)
+        score, num_obj =  do_kmeans(run[i,0], run[i,1], run[i,2], run[i,3], colour1, colour2, greatdata, numberofclusters, mp_KM_COLOUR, mp_KM_XY, output_cluster_id=oci)
         total_obj = num_obj.sum()
         output_str = ' {:.4f} {:5d} {}'.format(score, total_obj, np.array_str(num_obj, max_line_width = 100)[1:-1])
         
         results.write(input_str + ' ' + output_str + '\n')
-        
-       
-
+    
     results.close()
     
     if rs: 
@@ -176,7 +174,7 @@ def make_ms_plots(colour1, colour2, n_clusters, X, ms, band1, band2, band3, band
     
     return ()
     
-def do_kmeans(band1, band2, band3, band4, colour1, colour2, greatdata, number_clusters, make_plots, output_cluster_id):
+def do_kmeans(band1, band2, band3, band4, colour1, colour2, greatdata, number_clusters, make_colour, make_xy, output_cluster_id):
 
     '''do K-means clustering on colours constructed from HST photometry band1, band 2,
     band3, band4 are keys from band_names --- ie, names of HST  filters'''
@@ -220,8 +218,10 @@ def do_kmeans(band1, band2, band3, band4, colour1, colour2, greatdata, number_cl
     objects_per_cluster.sort() # sort from smallest to largest 
     objects_per_cluster = objects_per_cluster[::-1] # reverse sort
     
-    if make_plots: 
+    if make_colour: 
         colour_kmeans_plot (band1, band2, band3, band4, clf, scaler, colour1, colour2, number_clusters)
+    
+    if make_xy:        
         xy_plot (x, y, number_clusters, cluster_number, band1, band2, band3, band4)
             
     return(score, objects_per_cluster)
