@@ -97,13 +97,13 @@ def do_meanshift (band1, band2, band3, band4, colour1, colour2, make_plots):
         data, which is passed to KMEANS function'''
         
     #Input Checking
-    if band1 == band2 or band3 == band4: 
-        print "Not a good idea to use the same band in one colour, try again"
-        return
-    for band in [band1, band2, band3, band4]:
-        if band not in band_names.keys():
-            print "Can't find %s in band_name list" %band
-            return
+    #if band1 == band2 or band3 == band4: 
+        #print "Not a good idea to use the same band in one colour, try again"
+        #return
+    #for band in [band1, band2, band3, band4]:
+        #if band not in band_names.keys():
+            #print "Can't find %s in band_name list" %band
+            #return
         
   
     #Truncate data
@@ -179,9 +179,9 @@ def do_kmeans(band1, band2, band3, band4, colour1, colour2, greatdata, number_cl
     '''do K-means clustering on colours constructed from HST photometry band1, band 2,
     band3, band4 are keys from band_names --- ie, names of HST  filters'''
    
-    x = data[:,0][greatdata]
-    y = data[:,1][greatdata]
-    id = data[:,4][greatdata].astype(np.int32)
+    x = data['x'][greatdata]
+    y = data['y'][greatdata]
+    id = data['id'][greatdata].astype(np.int32)
 
     #Put data in the right format for clustering
     
@@ -192,6 +192,7 @@ def do_kmeans(band1, band2, band3, band4, colour1, colour2, greatdata, number_cl
     #Data pre-processing
     scaler = preprocessing.StandardScaler() 
     clf = KMeans(number_clusters, random_state = 10)
+    
     clf.fit(scaler.fit_transform(clusterdata))
     
     cluster_number = clf.predict(scaler.fit_transform(clusterdata))
@@ -315,10 +316,10 @@ def results_summary(input_file = 'results.txt'):
     '''compute and plot summaries for clustering analysis'''
 
     # read in the data -- this is not an ideal way to do it since it requires knowledge of file structure
-    results_table = Table.read(input_file, format='ascii.no_header')
-    num_clust = results_table['col5']
-    score = results_table['col6']
-    total_obj = results_table['col7'].astype('float')
+    results_table = Table.read(input_file, format='ascii.commented_header', guess = False)
+    num_clust = results_table['n_clusters']
+    score = results_table['s_score']
+    total_obj = results_table['total_objects'].astype('float')
 
     # add a column with the size of the smallest cluster
     # have to do some tricky stuff since column corresponding to smallest cluster varies dep on number of clusters
@@ -328,7 +329,7 @@ def results_summary(input_file = 'results.txt'):
         lastcol = 'col{}'.format(last_clust_col[i])
         results_table['size_smallest'][i] = results_table[lastcol][i]
 
-    biggest_clust_fract = results_table['col8']/total_obj # compute fraction of objects in largest cluster
+    biggest_clust_fract = results_table['c_1']/total_obj # compute fraction of objects in largest cluster
     smallest_clust_fract = results_table['size_smallest']/total_obj # compute fraction of objects in smallest cluster
 
     fig, ax = plt.subplots()
