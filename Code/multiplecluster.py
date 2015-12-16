@@ -38,6 +38,53 @@ data = Table.read(inputdata, format = 'ascii.commented_header', guess = False)
 # need this so that output files always have the same number of columns
 max_num_clusters = 20
 
+# Choose analysis and output
+
+def userinput(): 
+    
+    print "**Please enter a space between each input**" 
+    analysis = raw_input("What analysis would you like to perform? (meanshift, kmeans, mst): ")
+    
+    if analysis in ['kmeans']: 
+        KMEANS_number_cluster = raw_input("Would you like to use the number of clusters estimated by MEANSHIFT as input to KMEANS? (Yes/No): ")
+    
+    make_plots = raw_input("What plots would you like(cluster, color, xy, mst): ")
+    classification_ID = raw_input("Would you like the objects to be catalogued (Yes/No): ")
+    make_results_summary = raw_input("Would you like a results summary (Yes/No): ")
+
+    #Save the inputs 
+    
+    inputs = [analysis, KMEANS_number_cluster, make_plots, classification_ID, make_results_summary]
+
+    #Check Inputs
+
+    for i in range (0,3):
+    
+        while inputs[i] not in ['meanshift', 'kmeans', 'mst', 'cluster', 'color', 'xy', 'mst', 'Yes', 'yes', 'No', 'no']: 
+       
+            print "Invalid input, please try again."
+            print "**Please enter a space between each input**"
+            analysis = raw_input("What analysis would you like to perform? (meanshift, kmeans, mst): ")
+            make_plots = raw_input("What plots would you like(cluster, color, xy, mst): ")
+            classification_ID = raw_input("Would you like the objects to be catalogued (Yes/No): ")
+            make_results_summary = raw_input("Would you like a results summary (Yes/No): ")
+    
+    confirm = raw_input("Start clustering now? (Yes/Change my inputs): ")
+    
+    while confirm not in ['Yes', 'yes']:
+    
+        print "**Please enter a space between each input**" 
+        analysis = raw_input("What analysis would you like to perform? (meanshift, kmeans, mst): ")
+        make_plots = raw_input("What plots would you like(cluster, color, xy, tree): ")
+        classification_ID = raw_input("Would you like the objects to be catalogued (Yes/No): ")
+        make_results_summary = raw_input("Would you like a results summary (Yes/No): ")
+        
+        confirm = raw_input("Start clustering now? (Yes/Change my inputs): ")
+    
+    #do_everything(inputs)   # Pass user inputs to clustering functions 
+
+    return
+
 def do_everything(input_file = 'experiments.txt', output_file = 'results.txt', mp_MS=True, mp_KM_COLOUR=False, mp_KM_XY=True, oci=False, rs = False):
     '''Automate clustering process
        input: input_file:  a 4-column text file with 1 line per clustering run
@@ -48,14 +95,21 @@ def do_everything(input_file = 'experiments.txt', output_file = 'results.txt', m
        output: output_file: a text file listing input+results from each clustering run'''
     
     #Run experiments listed in experiments.txt file 
+    #Perform analysis based on user input
+    
     run = np.genfromtxt(input_file, dtype='str')
-
+       # perform_analysis = user_inputs  
+    
     # check whether results file already exists; if not, open it and print a header line
     # if it does already exist, just open it
+    
     results = open(output_file, 'a') 
+    
+    #Run clustering 
     
     for i in range(0, len(run)):
         
+        '''Get Data'''
         #Colour 1 
         wave1 = data[run[i,0]]
         wave2 = data[run[i,1]]
@@ -71,9 +125,20 @@ def do_everything(input_file = 'experiments.txt', output_file = 'results.txt', m
         colour1 = wave1[greatdata] - wave2[greatdata]
         colour2 = wave3[greatdata] - wave4[greatdata]
     
+        
+    
+    
+    
+    
         # MEANSHIFT to find the appropriate number of clusters
         numberofclusters = do_meanshift (run[i,0], run[i,1], run[i,2], run[i,3], colour1, colour2, mp_MS)
-        #print "Estimated number of clusters: ", numberofclusters 
+        
+          
+        
+        
+        
+        
+        
         
         input_str =  '{} {}'.format(np.array_str(run[i][:])[1:-1],numberofclusters) # list of input parameters: bands and num of clusters
         
@@ -81,16 +146,49 @@ def do_everything(input_file = 'experiments.txt', output_file = 'results.txt', m
         # run KMEANS clustering based on the number of clusters found using MEANSHIFT
         score, num_obj =  do_kmeans(run[i,0], run[i,1], run[i,2], run[i,3], colour1, colour2, greatdata, numberofclusters, mp_KM_COLOUR, mp_KM_XY, output_cluster_id=oci)
         total_obj = num_obj.sum()
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         output_str = ' {:.4f} {:5d} {}'.format(score, total_obj, np.array_str(num_obj, max_line_width = 100)[1:-1])
+        
+        
+        
+        
         
         results.write(input_str + ' ' + output_str + '\n')
     
     results.close()
     
+    
+    
+    
+    
+    
+    
+    
     if rs: 
         results_summary()
     
     return
+
+
+
+
+
+
+
+
+
+
+
+
 
 def do_meanshift (band1, band2, band3, band4, colour1, colour2, make_plots):
     '''Does meanshift clustering to determine a number of clusters in the 
@@ -138,42 +236,7 @@ def do_meanshift (band1, band2, band3, band4, colour1, colour2, make_plots):
     
     
     
-def make_ms_plots(colour1, colour2, n_clusters, X, ms, band1, band2, band3, band4):    
-    ''' Plot the results of mean shift clustering if needed''' 
-    
-    fig = plt.figure(figsize=(5, 5))
-    ax = fig.add_subplot(111)
 
-    # plot density
-    H, C1_bins, C2_bins = np.histogram2d(colour1, colour2, 51)
-
-    ax.imshow(H.T, origin='lower', interpolation='nearest', aspect='auto',
-              extent=[C1_bins[0], C1_bins[-1],
-                  C2_bins[0], C2_bins[-1]],
-              cmap=plt.cm.binary)
-
-    # plot clusters
-    
-
-    for i in range(n_clusters):
-        Xi = X[ms.labels_ == i]
-        H, b1, b2 = np.histogram2d(Xi[:, 0], Xi[:, 1], (C1_bins, C2_bins))
-
-        bins = [0.1]
-
-        ax.contour(0.5 * (C1_bins[1:] + C1_bins[:-1]),
-               0.5 * (C2_bins[1:] + C2_bins[:-1]),
-               H.T, bins, colors='r')
-
-    ax.xaxis.set_major_locator(plt.MultipleLocator(0.3))
-   
-    ax.set_xlabel(band1+' - '+band2)
-    ax.set_ylabel(band3+' - '+band4)
-    
-    plt.show()
-    
-    return ()
-    
 def do_kmeans(band1, band2, band3, band4, colour1, colour2, greatdata, number_clusters, make_colour, make_xy, output_cluster_id):
 
     '''do K-means clustering on colours constructed from HST photometry band1, band 2,
@@ -226,6 +289,56 @@ def do_kmeans(band1, band2, band3, band4, colour1, colour2, greatdata, number_cl
         xy_plot (x, y, number_clusters, cluster_number, band1, band2, band3, band4)
             
     return(score, objects_per_cluster)
+    
+    
+    
+    
+    
+    
+def make_ms_plots(colour1, colour2, n_clusters, X, ms, band1, band2, band3, band4):    
+    ''' Plot the results of mean shift clustering if needed''' 
+    
+    fig = plt.figure(figsize=(5, 5))
+    ax = fig.add_subplot(111)
+
+    # plot density
+    H, C1_bins, C2_bins = np.histogram2d(colour1, colour2, 51)
+
+    ax.imshow(H.T, origin='lower', interpolation='nearest', aspect='auto',
+              extent=[C1_bins[0], C1_bins[-1],
+                  C2_bins[0], C2_bins[-1]],
+              cmap=plt.cm.binary)
+
+    # plot clusters
+    
+
+    for i in range(n_clusters):
+        Xi = X[ms.labels_ == i]
+        H, b1, b2 = np.histogram2d(Xi[:, 0], Xi[:, 1], (C1_bins, C2_bins))
+
+        bins = [0.1]
+
+        ax.contour(0.5 * (C1_bins[1:] + C1_bins[:-1]),
+               0.5 * (C2_bins[1:] + C2_bins[:-1]),
+               H.T, bins, colors='r')
+
+    ax.xaxis.set_major_locator(plt.MultipleLocator(0.3))
+   
+    ax.set_xlabel(band1+' - '+band2)
+    ax.set_ylabel(band3+' - '+band4)
+    
+    plt.show()
+    
+    return ()
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -288,6 +401,17 @@ def colour_kmeans_plot(band1, band2, band3, band4, clf, scaler, colour1, colour2
         
     return ()
 
+
+
+
+
+
+
+
+
+
+
+
 def xy_plot (x, y, number_clusters, cluster_number, band1, band2, band3, band4):
     '''Plot xy positions of objects in different clusters'''
    
@@ -311,6 +435,15 @@ def xy_plot (x, y, number_clusters, cluster_number, band1, band2, band3, band4):
     
     return ()
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
 def results_summary(input_file = 'results.txt'):
     '''compute and plot summaries for clustering analysis'''
