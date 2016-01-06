@@ -1,5 +1,5 @@
-#   band1    band2    band3   band4   
+# band1    band2    band3   band4   n_clusters
 
-05_225 05_373	05_438 05_814
-05_225 05_373	05_336 05_555
+mag05_225 mag05_373	mag05_814 mag05_555	4
+mag05_225 mag05_373	mag05_336 mag05_555	4
 
