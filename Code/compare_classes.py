@@ -32,15 +32,14 @@ def matched_tabs(tab1, tab2, tab_out, id1 = 'ID', id2='ID'):
 def plot_classes(match_tab, class1, class2, class1_lab = 'NED', class2_lab='K-means'):
     # group data by class1
     grouped_tab = match_tab.group_by(class1)
-
     class1_types = grouped_tab.groups.keys
-    class1_ind = range(0,class1_types)
 
     # make plot
     fig,ax = plt.subplots()
-# needs fix, see http://docs.astropy.org/en/stable/table/operations.html#grouped-operations
-    for key, group in izip(class1_types, grouped_tab.groups):
-        ax.plot(c1, group[c2])
+    # loop over types
+    for i, group in enumerate(grouped_tab.groups):
+        ax.plot(i, group[c2], label=class1_types[i])
     ax.set_xlabel(class1_lab)
     ax.set_ylabel(class2_lab)
+    ax.legend()
     return
