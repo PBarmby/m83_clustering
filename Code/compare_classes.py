@@ -28,7 +28,30 @@ def matched_tabs(tab1, tab2, id1 = 'ID', id2='ID'):
     match_tab = join(t1, t2, keys = 'ID')
     return(match_tab)
 
-def plot_classes(match_tab, class1, class2, class1_lab = 'NED', class2_lab='K-means'):
+# although this works technically, it's not very easy to interpret visually
+def plot_classes_v1(match_tab, class1, class2, class1_lab = 'NED', class2_lab='K-means'):
+    # group data by class1
+    grouped_tab = match_tab.group_by(class1)
+    class1_types = grouped_tab.groups.keys[class1]
+    ngroups_class1 = len(class1_types)
+    ngroups_class2 = len(unique(match_tab,class2))
+
+    # make plot
+    fig,ax = plt.subplots()
+    # loop over types
+    for i, group in enumerate(grouped_tab.groups):
+        ax.plot(0*group[class2]+i, group[class2], label=class1_types[i], ls='None',marker='s')
+    ax.set_xlabel(class1_lab, fontweight='bold',fontsize=14)
+    ax.set_ylabel(class2_lab, fontweight='bold',fontsize=14)
+    ax.set_xlim(-1,ngroups_class1+1)
+    ax.set_ylim(-1,ngroups_class2+1)
+    ax.legend()
+    fig.show()
+    return
+
+# TODO: try a set of bar charts, where the horizontal axis is class1
+#  and the vertical axis counts the different classes in class2 (or vice versa)
+def plot_classes_v2(match_tab, class1, class2, class1_lab = 'NED', class2_lab='K-means'):
     # group data by class1
     grouped_tab = match_tab.group_by(class1)
     class1_types = grouped_tab.groups.keys[class1]
