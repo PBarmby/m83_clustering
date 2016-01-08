@@ -32,7 +32,8 @@ def plot_classes(match_tab, class1, class2, class1_lab = 'NED', class2_lab='K-me
     # group data by class1
     grouped_tab = match_tab.group_by(class1)
     class1_types = grouped_tab.groups.keys[class1]
-    ngroups = len(class1_types)
+    ngroups_class1 = len(class1_types)
+    ngroups_class2 = len(unique(match_tab,class2))
 
     # make plot
     fig,ax = plt.subplots()
@@ -41,7 +42,8 @@ def plot_classes(match_tab, class1, class2, class1_lab = 'NED', class2_lab='K-me
         ax.plot(0*group[class2]+i, group[class2], label=class1_types[i], ls='None',marker='s')
     ax.set_xlabel(class1_lab, fontweight='bold',fontsize=14)
     ax.set_ylabel(class2_lab, fontweight='bold',fontsize=14)
-    ax.set_xlim(-1,ngroups+1)
+    ax.set_xlim(-1,ngroups_class1+1)
+    ax.set_ylim(-1,ngroups_class2+1)
     ax.legend()
     fig.show()
     return
