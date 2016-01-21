@@ -397,7 +397,7 @@ def mst_clustering(data_to_cluster):
     x = data['x'][data_to_cluster]
     y = data['y'][data_to_cluster]
     
-    X = [x, y]
+    X = np.vstack([x, y]).T
 
     xmin, xmax = (0, 5000)
     ymin, ymax = (0, 5000)

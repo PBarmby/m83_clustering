@@ -268,7 +268,7 @@ def do_everything(analysis, KMEANS_number_cluster, MST_xy_data, make_plots, KMPL
         
     results.close()
 
-    if ('Yes', 'yes') in generate_results_summary: 
+    if "Yes" in generate_results_summary: 
         results_summary()
     
     return
