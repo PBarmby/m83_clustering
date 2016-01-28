@@ -42,7 +42,7 @@ data = Table.read(inputdata, format = 'ascii.commented_header', guess = False)
 max_num_clusters = 20
 
 # Choose analysis and output
-def userinput():
+def user_input():
     
     confirm = 'no'
     
@@ -84,11 +84,11 @@ def userinput():
         #Confirm correct inputs
         confirm = raw_input("Start clustering now? (Yes/No): ").split(' ')
  
-    do_everything(analysis, KMEANS_number_cluster, MST_xy_data, make_plots, KMPLOT_xy, ID_table, make_results_summary)
+    main(analysis, KMEANS_number_cluster, MST_xy_data, make_plots, KMPLOT_xy, ID_table, make_results_summary)
   
     return
-
-def do_everything(analysis, KMEANS_number_cluster, MST_xy_data, make_plots, KMPLOT_xy, ID_table, make_results_summary, input_file = 'experiments.txt', output_file = 'results.txt', rs = False):
+        
+def main(analysis, KMEANS_number_cluster, MST_xy_data, make_plots, KMPLOT_xy, ID_table, make_results_summary, input_file = 'experiments.txt', output_file = 'results.txt', rs = False):
     '''Automate clustering process
        input: input_file:  a 5-column text file with 1 line per clustering run
                            each line lists the 4 filters and 1 cluster to be used to construct colours
@@ -100,15 +100,17 @@ def do_everything(analysis, KMEANS_number_cluster, MST_xy_data, make_plots, KMPL
     #User criteria 
     analysis_criteria = analysis
     kmeans_input = KMEANS_number_cluster 
-    mst_input = MST_xy_data 
+    #mst_input = MST_xy_data 
     generate_plots = make_plots
     kmeans_plot_xy = KMPLOT_xy 
     id_output = ID_table
     generate_results_summary = make_results_summary 
     
-    #Experiments listed in experiments.txt file 
+    # Import experiments listed in experiments.txt file 
     run = np.genfromtxt(input_file, dtype='str')
+    
     #Input Checking
+    
     #if band1 == band2 or band3 == band4: 
         #print "Not a good idea to use the same band in one colour, try again"
         #return
@@ -124,17 +126,7 @@ def do_everything(analysis, KMEANS_number_cluster, MST_xy_data, make_plots, KMPL
     #Run analysis 
     for i in range(0, len(run)):
         '''Get Data'''
-        #Colour 1 
-        wave1 = data[run[i,0]]
-        wave2 = data[run[i,1]]
-        #Colour 2
-        wave3 = data[run[i,2]]
-        wave4 = data[run[i,3]]
-        gooddata1 = np.logical_and(np.logical_and(wave1!=-99, wave2!=-99), np.logical_and(wave3!=-99, wave4!=-99)) # Remove data pieces with no value 
-        gooddata2 = np.logical_and(np.logical_and(wave1<25, wave2<25), np.logical_and(wave3<25, wave4<25))  #Remove data above certain magnitude
-        greatdata = np.logical_and(gooddata1, gooddata2)    #Only data that match criteria for both colours
-        colour1 = wave1[greatdata] - wave2[greatdata]
-        colour2 = wave3[greatdata] - wave4[greatdata]
+        colour1, colour2, greatdata, x_data, y_data, id_data = organize_data(run[i])
         
         '''Run Analysis''' 
         meanshift_result = 0
@@ -146,17 +138,15 @@ def do_everything(analysis, KMEANS_number_cluster, MST_xy_data, make_plots, KMPL
         
         if "meanshift" in analysis_criteria: 
             meanshift_result = do_meanshift (run[i,0], run[i,1], run[i,2], run[i,3], colour1, colour2, generate_plots)
-        elif "kmeans" in analysis_criteria:
+        if "kmeans" in analysis_criteria:
             if "no" in kmeans_input:
                 numberofclusters = int(run[i,4])
             else: 
                 numberofclusters = meanshift_result 
             silhouette_score, num_obj = do_kmeans(run[i,0], run[i,1], run[i,2], run[i,3], colour1, colour2, greatdata, numberofclusters, generate_plots, kmeans_plot_xy, id_output)
             total_obj = num_obj.sum()
-        elif "mst" in analysis_criteria: 
-            mst_scale = mst_clustering(greatdata)
-        else: 
-            print "Please run .userinput() and select analysis" 
+        if "mst" in analysis_criteria: 
+            mst_scale = mst_clustering(greatdata, generate_plots)
         
         '''Results File'''
         input_str =  '{} {}'.format(np.array_str(run[i][:])[1:-1], numberofclusters) # list of input parameters: bands and num of clusters
@@ -168,11 +158,33 @@ def do_everything(analysis, KMEANS_number_cluster, MST_xy_data, make_plots, KMPL
         
     results.close()
 
-    if "Yes" in generate_results_summary: 
+    if "yes" in generate_results_summary: 
         results_summary()
     
     return
       
+def organize_data(band_combination):
+    '''Select data for analysis'''
+    #Colour 1 
+    wave1 = data[band_combination[0]]
+    wave2 = data[band_combination[1]]
+    #Colour 2
+    wave3 = data[band_combination[2]]
+    wave4 = data[band_combination[3]]
+    
+    #Change parameters to match data_file
+    gooddata1 = np.logical_and(np.logical_and(wave1!=-99, wave2!=-99), np.logical_and(wave3!=-99, wave4!=-99)) # Remove data pieces with no value 
+    gooddata2 = np.logical_and(np.logical_and(wave1<25, wave2<25), np.logical_and(wave3<25, wave4<25))  #Remove data above certain magnitude
+    greatdata = np.logical_and(gooddata1, gooddata2)    #Only data that match criteria for both colours
+    colour1 = wave1[greatdata] - wave2[greatdata]
+    colour2 = wave3[greatdata] - wave4[greatdata]
+    
+    x = data['x'][greatdata]
+    y = data['y'][greatdata]
+    id_ = int(data['id'][greatdata])
+    
+    return (colour1, colour2, greatdata, x, y, id_)
+    
 def do_meanshift (band1, band2, band3, band4, colour1, colour2, make_plot):
     '''Does meanshift clustering to determine a number of clusters in the 
         data, which is passed to KMEANS function'''
@@ -204,7 +216,7 @@ def do_kmeans(band1, band2, band3, band4, colour1, colour2, greatdata, number_cl
     band3, band4 are keys from band_names --- ie, names of HST  filters'''
     x = data['x'][greatdata]
     y = data['y'][greatdata]
-    id = data['id'][greatdata].astype(np.int32)
+    id_data = data['id'][greatdata].astype(np.int32)
 
     #Put data in the right format for clustering
     clusterdata = np.vstack([colour1, colour2]).T
@@ -218,10 +230,8 @@ def do_kmeans(band1, band2, band3, band4, colour1, colour2, greatdata, number_cl
 
     # Output object and cluster IDs to ID.txt file
     if "yes" in output_cluster_id:
-        file_name = 'ID_'+str(number_clusters)+'cl_'+band1+'-'+band2+'vs'+band3+'-'+band4+'.txt'
-        tmptab = Table([id,cluster_number])
-        tmptab.write(file_name, format='ascii.no_header')
-    
+        id_catologue(number_clusters, cluster_number, band1, band2, band3, band4, id_data)        
+           
     #Compute the silhouette score
     labels = clf.labels_
     score = metrics.silhouette_score(scaler.fit_transform(clusterdata), labels, metric = 'euclidean')
@@ -242,7 +252,7 @@ def do_kmeans(band1, band2, band3, band4, colour1, colour2, greatdata, number_cl
             
     return(score, objects_per_cluster)
  
-def mst_clustering(data_to_cluster):
+def mst_clustering(data_to_cluster, make_plots):
     
     #Data
     x = data['x'][data_to_cluster]
@@ -281,38 +291,20 @@ def mst_clustering(data_to_cluster):
     dens = np.exp(gmm.score(Xgrid))
     density += dens / dens.max()
     density = density.reshape((Ny, Nx))
-           
-    # Plot the results
-    fig = plt.figure(figsize=(5, 6))
-    fig.subplots_adjust(hspace=0, left=0.1, right=0.95, bottom=0.1, top=0.9)
-        
-    ax = fig.add_subplot(311, aspect='equal')
-    ax.scatter(X[:, 1], X[:, 0], s=1, lw=0, c='k')
-    ax.set_xlim(ymin, ymax)
-    ax.set_ylim(xmin, xmax)
-    ax.xaxis.set_major_formatter(plt.NullFormatter())
-    ax.set_ylabel('(Mpc)')
-        
-    ax = fig.add_subplot(312, aspect='equal')
-    ax.plot(T_y, T_x, c='k', lw=0.5)
-    ax.set_xlim(ymin, ymax)
-    ax.set_ylim(xmin, xmax)
-    ax.xaxis.set_major_formatter(plt.NullFormatter())
-    ax.set_ylabel('(Mpc)')
-        
-    ax = fig.add_subplot(313, aspect='equal')
-    ax.plot(T_trunc_y, T_trunc_x, c='k', lw=0.5)
-    ax.imshow(density.T, origin='lower', cmap=plt.cm.hot_r, extent=[ymin, ymax, xmin, xmax])
-                  
-    ax.set_xlim(ymin, ymax)
-    ax.set_ylim(xmin, xmax)
-    ax.set_xlabel('(Mpc)')
-    ax.set_ylabel('(Mpc)')
-                  
-    plt.show()
+    
+    if "MSTplot" in make_plots:
+        mst_plots(X, ymin, ymax, xmin, xmax, T_x, T_y, T_trunc_x, T_trunc_y, density)
+    
+    return(scale)
 
-    return(scale)    
-       
+def id_catologue(number_clusters, cluster_number, band1, band2, band3, band4, id_data):
+    '''Create file with list of object ID and cluster number'''
+    file_name = 'ID_'+str(number_clusters)+'cl_'+band1+'-'+band2+'vs'+band3+'-'+band4+'.txt'
+    tmptab = Table([id_data, cluster_number])
+    tmptab.write(file_name, format='ascii.no_header')
+    
+    return()
+    
 def make_ms_plots(colour1, colour2, n_clusters, X, ms, band1, band2, band3, band4):   
     
     ''' Plot the results of mean shift clustering if needed''' 
@@ -409,7 +401,39 @@ def xy_plot (x, y, number_clusters, cluster_number, band1, band2, band3, band4):
     pylab.savefig(filename)
     
     return ()
+    
+def mst_plots(X, ymin, ymax, xmin, xmax, T_x, T_y, T_trunc_x, T_trunc_y, density):
+    # Plot the results
+    fig = plt.figure(figsize=(5, 6))
+    fig.subplots_adjust(hspace=0, left=0.1, right=0.95, bottom=0.1, top=0.9)
+        
+    ax = fig.add_subplot(311, aspect='equal')
+    ax.scatter(X[:, 1], X[:, 0], s=1, lw=0, c='k')
+    ax.set_xlim(ymin, ymax)
+    ax.set_ylim(xmin, xmax)
+    ax.xaxis.set_major_formatter(plt.NullFormatter())
+    ax.set_ylabel('(Mpc)')
+        
+    ax = fig.add_subplot(312, aspect='equal')
+    ax.plot(T_y, T_x, c='k', lw=0.5)
+    ax.set_xlim(ymin, ymax)
+    ax.set_ylim(xmin, xmax)
+    ax.xaxis.set_major_formatter(plt.NullFormatter())
+    ax.set_ylabel('(Mpc)')
+        
+    ax = fig.add_subplot(313, aspect='equal')
+    ax.plot(T_trunc_y, T_trunc_x, c='k', lw=0.5)
+    ax.imshow(density.T, origin='lower', cmap=plt.cm.hot_r, extent=[ymin, ymax, xmin, xmax])
+                  
+    ax.set_xlim(ymin, ymax)
+    ax.set_ylim(xmin, xmax)
+    ax.set_xlabel('(Mpc)')
+    ax.set_ylabel('(Mpc)')
+                  
+    plt.show()
 
+    return  
+    
 def results_summary(input_file = 'results.txt'):
     '''Compute and plot summaries for clustering analysis'''
 
@@ -468,4 +492,3 @@ def results_summary(input_file = 'results.txt'):
     pylab.savefig(filename)
 
     return()
-
