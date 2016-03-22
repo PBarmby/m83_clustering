@@ -38,14 +38,14 @@ from astroML.clustering import HierarchicalClustering, get_graph_segments
 band_names = {'05_225': 11, '3_225': 13, '05_336': 15,  '3_336': 17, '05_373': 19, '3_373': 21, '05_438':23,    '3_438':25,  '05_487':27, '3_487': 29, '05_502':31, '3_502':33, '05_555': 35, '3_555': 37, '05_657': 39 ,'3_657':41 ,'05_673':43, '3_673':45 , '05_814':47 , '3_814':49 }
 
 # used for plots
-cluster_colours = ['y','g','b','r','c','m','k','m','w','y','g','b','r','c','m','k','m','w','y','g','b','r','c','m','k','m','w'] 
+cluster_colours = ['y','g','b','r','c','m','k','m','w','y','g','b','r','c','m','k','m','w','y','g','b','r','c','m','k','m','w','y','g','b','r','c','m','k','m','w','y','g','b','r','c','m','k','m','w','y','g','b','r','c','m','k','m','w','y','g','b','r','c','m','k','m','w','y','g','b','r','c','m','k','m','w','y','g','b','r','c','m','k','m','w','y','g','b','r','c','m','k','m','w','y','g','b','r','c','m','k','m','w','y','g','b','r','c','m','k','m','w'] 
 
 #Input file, columns correspond to different wavelengths 
 #inputdata  = 'data.txt'
 #data = Table.read(inputdata, format = 'ascii.commented_header', guess = False)
    
 # need this so that output files always have the same number of columns
-max_num_clusters = 20
+max_num_clusters = 60
 
 # Choose analysis and output
 
@@ -101,8 +101,8 @@ def clustering(save_path, analysis, kmeans_input, plots, id_list, results_, data
         write_results(results_path, analysis_criteria, run[i,0], run[i,1], run[i,2], run[i,3], numberofclusters, silhouette_score, total_obj, num_obj, mst_scale, generate_results_summary)
         #counter = counter + 1
         
-        if 'yes' in generate_results_summary: 
-            results_summary('kmeans_results.txt')
+    if 'yes' in generate_results_summary: 
+        results_summary('kmeans_results.txt')
 
     return()
     
