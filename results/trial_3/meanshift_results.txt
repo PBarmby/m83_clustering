@@ -1,0 +1,8 @@
+# clustering band1 band2 band3 band4 number_of_clusters
+['meanshift', 'kmeans'] mag3_336 mag3_225 mag3_673 mag3_814 25 
+['meanshift', 'kmeans'] mag3_336 mag3_438 mag3_673 mag3_555 20 
+['meanshift', 'kmeans'] mag3_336 mag3_555 mag3_673 mag3_438 11 
+['meanshift', 'kmeans'] mag3_373 mag3_225 mag3_673 mag3_814 18 
+['meanshift', 'kmeans'] mag3_373 mag3_438 mag3_673 mag3_555 57 
+['meanshift', 'kmeans'] mag3_373 mag3_555 mag3_673 mag3_438 19 
+['meanshift', 'kmeans'] mag3_373 mag3_814 mag3_673 mag3_225 2 
