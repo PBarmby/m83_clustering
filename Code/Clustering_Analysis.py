@@ -88,7 +88,7 @@ def clustering(save_path, analysis, kmeans_input, plots, id_list, results_, data
         mst_scale = 0 
         
         if "meanshift" in analysis_criteria: 
-            numberofclusters = do_meanshift (results_path, run[i,0], run[i,1], run[i,2], run[i,3], colour1, colour2, generate_plots)
+            numberofclusters, bandwidth = do_meanshift (results_path, run[i,0], run[i,1], run[i,2], run[i,3], colour1, colour2, generate_plots)
         if "kmeans" in analysis_criteria:
             if "experiments.txt" in kmeans_input:
                 numberofclusters = int(run[i,4])
@@ -98,11 +98,11 @@ def clustering(save_path, analysis, kmeans_input, plots, id_list, results_, data
             mst_scale = mst_clustering(greatdata, generate_plots, x_data, y_data)
         
         '''WRITE RESULTS FILE'''
-        write_results(results_path, analysis_criteria, run[i,0], run[i,1], run[i,2], run[i,3], numberofclusters, silhouette_score, total_obj, num_obj, mst_scale, generate_results_summary)
+        write_results(results_path, analysis_criteria, run[i,0], run[i,1], run[i,2], run[i,3], numberofclusters, silhouette_score, total_obj, num_obj, mst_scale, generate_results_summary, bandwidth)
         #counter = counter + 1
         
     if 'yes' in generate_results_summary: 
-        results_summary('kmeans_results.txt')
+        results_summary(results_path, 'kmeans_results.txt')
 
     return()
     
@@ -169,7 +169,7 @@ def do_meanshift (s_path, band1, band2, band3, band4, colour1, colour2, make_plo
     # The following bandwidth can be automatically detected using
     # the routine estimate_bandwidth(). Bandwidth can also be set manually.
     bandwidth = estimate_bandwidth(X)
-    
+    print bandwidth
     # Meanshift clustering 
     ms = MeanShift(bandwidth=bandwidth, bin_seeding=True, cluster_all=False)
     ms.fit(X_scaled)
@@ -180,7 +180,7 @@ def do_meanshift (s_path, band1, band2, band3, band4, colour1, colour2, make_plo
     if "meanshift" in make_plot: 
         make_ms_plots(s_path, colour1, colour2, n_clusters, X, ms, band1, band2, band3, band4)
     
-    return(n_clusters)
+    return(n_clusters, bandwidth)
 
 def do_kmeans(s_path, band1, band2, band3, band4, colour1, colour2, greatdata, number_clusters, make_plots, output_cluster_id, x, y, id_data):
 
@@ -409,7 +409,7 @@ def mst_plots(X, ymin, ymax, xmin, xmax, T_x, T_y, T_trunc_x, T_trunc_y, density
 
     return()
     
-def write_results (save_path, methods, band1, band2, band3, band4, numberofclusters, silhouette_score, total_obj, num_obj, mst_scale, results_summary_gen):
+def write_results (save_path, methods, band1, band2, band3, band4, numberofclusters, silhouette_score, total_obj, num_obj, mst_scale, results_summary_gen, ms_bandwidth):
     #new_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\{}'.format(save_path)
     #if not os.path.exists(new_path):
      #   os.makedirs(new_path)
@@ -419,7 +419,7 @@ def write_results (save_path, methods, band1, band2, band3, band4, numberofclust
         name = 'meanshift_results.txt'
         file_path = '{}'.format(save_path)
         test_path = '{}\\{}'.format(file_path, name)
-        header = '# clustering band1 band2 band3 band4 number_of_clusters'
+        header = '# clustering band1 band2 band3 band4 number_of_clusters bandwidth'
         
         if not os.path.exists(test_path):
             header_path = os.path.join(file_path, name)
@@ -429,7 +429,7 @@ def write_results (save_path, methods, band1, band2, band3, band4, numberofclust
             
         name_path = os.path.join(file_path, name)
         meanshift_results_file = open(name_path, "a")
-        output = '{} {} {} {} {} {} '.format(methods, band1, band2, band3, band4, numberofclusters)
+        output = '{} {} {} {} {} {} {}'.format(methods, band1, band2, band3, band4, numberofclusters, ms_bandwidth)
         meanshift_results_file.write(output + '\n')
         meanshift_results_file.close()
                         
@@ -471,21 +471,22 @@ def write_results (save_path, methods, band1, band2, band3, band4, numberofclust
     
     return()
     
-def results_summary(input_file):
+def results_summary(path, input_file):
     '''Compute and plot summaries for clustering analysis'''
-
+    
+    results_file = os.path.join (path, input_file)
     # read in the data -- this is not an ideal way to do it since it requires knowledge of file structure
-    results_table = Table.read(input_file, format='ascii.commented_header', guess = False)
-    num_clust = results_table['n_clusters']
-    score = results_table['s_score']
+    results_table = Table.read(results_file, format='ascii.commented_header', guess = False)
+    num_clust = results_table['number_of_clusters']
+    score = results_table['silhouette_score']
     total_obj = results_table['total_objects'].astype('float')
 
     # add a column with the size of the smallest cluster
     # have to do some tricky stuff since column corresponding to smallest cluster varies dep on number of clusters
-    last_clust_col = 9 + num_clust
+    #last_clust_col = 9 + num_clust
     results_table.add_column(Column(name='size_smallest', data=np.zeros(len(results_table)),dtype=np.int16))
     for i in range(0,len(results_table)):
-        lastcol = 'c_{}'.format(last_clust_col[i])
+        lastcol = 'c_{}'.format(num_clust[i])
         results_table['size_smallest'][i] = results_table[lastcol][i]
 
     biggest_clust_fract = results_table['c_1']/total_obj # compute fraction of objects in largest cluster
@@ -498,7 +499,7 @@ def results_summary(input_file):
     fig.show()
     
     filename = 'n_clusters_vs_Score.png'
-    pylab.savefig(filename)
+    pylab.savefig(os.path.join (path, filename))
     
     #Bar graph
     for i in range (1,max(num_clust)+1):
@@ -516,7 +517,7 @@ def results_summary(input_file):
                 ax.bar(X,Y,color = cluster_colours[n], bottom = yprev)  #Plot bar graph
                 #print "{} {} {}".format(X, results_table[colname][num_clust==i], results_table['total_objects'][num_clust==i])
             filename = '{}_clusters_vs_FractionalSize.png'.format(i)
-            pylab.savefig(filename)
+            pylab.savefig(os.path.join (path, filename))
     
 
     fig, ax = plt.subplots()
@@ -527,7 +528,7 @@ def results_summary(input_file):
     fig.show()
     
     filename = 'Score_vs_FractionalSize.png'
-    pylab.savefig(filename)
+    pylab.savefig(os.path.join (path, filename))
 
     return()
     
