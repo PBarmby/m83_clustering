@@ -14,12 +14,13 @@ import numpy as np
 import pylab as pylab
 from matplotlib import pyplot as plt
 from astropy.table import Table, Column
+import shutil
 
 # Kmeans imports
 from sklearn.cluster import KMeans
 from sklearn import preprocessing
-from sklearn import metrics
-from sklearn.metrics import pairwise_distances
+from sklearn import metrics 
+from sklearn.metrics import pairwise_distances, silhouette_samples
 from matplotlib.patches import Ellipse
 from scipy.stats import norm
 
@@ -33,7 +34,7 @@ from sklearn.mixture import GMM
 from astroML.clustering import HierarchicalClustering, get_graph_segments
 
 # used for plots
-cluster_colours = ['y', 'g', 'b', 'r', 'c', 'm', 'k', 'm', 'w', 'y', 'g', 'b',
+cluster_colours = ['y', 'g', 'b', 'r', 'c', 'm', 'k', 'w', 'brown', 'darkgray', 'orange', 'pink','gold', 'lavender', 'salmon', 'g', 'b',
                    'r', 'c', 'm', 'k', 'm', 'w', 'y', 'g', 'b', 'r', 'c', 'm',
                    'k','m','w','y','g','b','r','c','m','k','m','w','y','g','b',
                    'r','c','m','k','m','w','y','g','b','r','c','m','k','m','w',
@@ -67,18 +68,20 @@ def clustering(save_plots, save_results, analysis, kmeans_input, plots,
 
     # Import experiments listed in experiments.txt file
     run = np.genfromtxt(input_file, dtype='str')
-
+    run_results = 'no'
     # Run analysis
     for i in range(0, len(run)):
         '''Get Data'''
-        colour1, colour2, greatdata, x_data, y_data, id_data = organize_data(run[i], data)
+        colour1, colour2, greatdata, x_data, y_data, id_data = \
+            organize_data(run[i], data)
+
         results_title = ' '
         if "mag05" in run[i][0]:
             results_title = '05aperture_results.txt'
         elif "mag3" in run[i][0]:
             results_title = '3aperture_results.txt'
         '''Run Analysis'''
-        run_results = 'no'
+        
         numberofclusters = 0
         total_obj = 0
         num_obj = 0
@@ -114,6 +117,9 @@ def clustering(save_plots, save_results, analysis, kmeans_input, plots,
                           numberofclusters, silhouette_score, total_obj,
                           num_obj, mst_scale, generate_results_summary,
                           bandwidth)
+    if run_results == 'yes':
+        shutil.copy2('C:\Users\Owner\Documents\GitHub\m83_clustering\Code\experiments.txt',
+                     plot_path+'\\colours.txt')
     if 'yes' in generate_results_summary:
         results_summary(results_path, results_title)
     return()
@@ -147,6 +153,7 @@ def load_data_file(file_):
 def organize_data(band_combinations, data_file):
     '''Select data for analysis'''
     # Colour 1
+    data_file = data_file[:10000]
     wave1 = data_file[band_combinations[0]]
     wave2 = data_file[band_combinations[1]]
     # Colour 2
@@ -158,8 +165,8 @@ def organize_data(band_combinations, data_file):
     gooddata1 = np.logical_and(np.logical_and(wave1 != -99, wave2 != -99),
                                np.logical_and(wave3 != -99, wave4 != -99))
     # Remove data above certain magnitude
-    gooddata2 = np.logical_and(np.logical_and(wave1 < 25, wave2 < 25),
-                               np.logical_and(wave3 < 25, wave4 < 25))
+    gooddata2 = np.logical_and(np.logical_and(wave1 < 26, wave2 < 26),
+                               np.logical_and(wave3 < 26, wave4 < 26))
     # Only data that match criteria for both colours
     greatdata = np.logical_and(gooddata1, gooddata2)
 
@@ -183,17 +190,20 @@ def do_meanshift(s_path, band1, band2, band3, band4, colour1, colour2,
     # Scale data because meanshift generates circular clusters
     X_scaled = preprocessing.scale(X)
     # The following bandwidth can be automatically detected using
-    # the routine estimate_bandwidth(). Bandwidth can also be set manually.
+    # the routine estimate_bandwidth(X). Bandwidth can also be set manually.
     bandwidth = estimate_bandwidth(X)
+    #bandwidth = 0.65
     # Meanshift clustering
     ms = MeanShift(bandwidth=bandwidth, bin_seeding=True, cluster_all=False)
     ms.fit(X_scaled)
     labels_unique = np.unique(ms.labels_)
+
+    objects = ms.labels_[ms.labels_ >= 0]
     n_clusters = len(labels_unique[labels_unique >= 0])
     # Make plot
     if "meanshift" in make_plot:
         make_ms_plots(s_path, colour1, colour2, n_clusters, X, ms,
-                      band1, band2, band3, band4)
+                      band1, band2, band3, band4, objects)
     return(n_clusters, bandwidth)
 
 
@@ -220,9 +230,15 @@ def do_kmeans(s_path, band1, band2, band3, band4, colour1, colour2, greatdata,
 
     # Compute the silhouette score
     labels = clf.labels_
-    score = metrics.silhouette_score(scaler.fit_transform(clusterdata),
-                                     labels, metric='euclidean')
-
+    score = 0
+    if number_clusters > 1:
+        score = metrics.silhouette_score(scaler.fit_transform(clusterdata),
+                                         labels)
+    else:
+        score = 'N/A'
+        #sample_score = silhouette_samples(scaler.fit_transform(clusterdata), labels)
+        #print sample_score
+        #print "Average: {}".format(score)
     # Identify which cluster each object belongs to
     objects_per_cluster = np.zeros(max_num_clusters, dtype=np.int16)
     for i in range(0, number_clusters):
@@ -236,8 +252,8 @@ def do_kmeans(s_path, band1, band2, band3, band4, colour1, colour2, greatdata,
         colour_kmeans_plot(s_path, band1, band2, band3, band4, clf, scaler,
                            colour1, colour2, number_clusters)
     if "kmeans_xy" in make_plots:
-        xy_plot(s_path, x, y, number_clusters, cluster_number, band1, band2,
-                band3, band4)
+        xy_plot(s_path, colour1, colour2, number_clusters, cluster_number,
+                band1, band2, band3, band4)
 
     return(score, objects_per_cluster)
 
@@ -292,9 +308,9 @@ def mst_clustering(make_plots, x, y, band1, band2, band3, band4, p_path):
         ind = (labels == i)
         Npts = ind.sum()
         Nclusters = min(12, Npts / 5)
-    gmm = GMM(Nclusters).fit(X[ind])
-    dens = np.exp(gmm.score(Xgrid))
-    density += dens / dens.max()
+        gmm = GMM(Nclusters).fit(X[ind])
+        dens = np.exp(gmm.score(Xgrid))
+        density += dens / dens.max()
     density = density.reshape((Ny, Nx))
 
     if "mst" in make_plots:
@@ -305,7 +321,7 @@ def mst_clustering(make_plots, x, y, band1, band2, band3, band4, p_path):
 
 
 def make_ms_plots(path, colour1, colour2, n_clusters, X, ms,
-                  band1, band2, band3, band4):
+                  band1, band2, band3, band4, cluster_number):
     ''' Plot the results of mean shift clustering if needed'''
     fig = plt.figure(figsize=(8, 8))
     ax = fig.add_subplot(111)
@@ -328,6 +344,8 @@ def make_ms_plots(path, colour1, colour2, n_clusters, X, ms,
     ax.xaxis.set_major_locator(plt.MultipleLocator(0.5))
     ax.set_xlabel(band1+' - '+band2)
     ax.set_ylabel(band3+' - '+band4)
+    ax.set_title('mean-shift: '+band1+'-'+band2+' vs. '+band3+'-'+band4,
+                 fontsize=16)
 
     '''Display interactive figure if # removed, if not, figures saved'''
     # plt.show
@@ -335,6 +353,8 @@ def make_ms_plots(path, colour1, colour2, n_clusters, X, ms,
                                                          band1, band2,
                                                          band3, band4)
     pylab.savefig(os.path.join(path, file_name))
+    plt.close()
+
     return()
 
 
@@ -381,11 +401,13 @@ def colour_kmeans_plot(path, band1, band2, band3, band4, clf, scaler, colour1,
 
     ax.set_xlabel(band1+' - '+band2)
     ax.set_ylabel(band3+' - '+band4)
-
+    ax.set_title('k-means: '+band1+'-'+band2+' vs. '+band3+'-'+band4,
+                 fontsize=12)
     file_name = 'k_means_{}cl_{}-{}vs{}-{}.png'.format(str(number_clusters),
                                                        band1, band2, band3,
                                                        band4)
     pylab.savefig(os.path.join(path, file_name))
+    plt.close()
 
     return ()
 
@@ -404,14 +426,17 @@ def xy_plot(path, x, y, number_clusters, cluster_number, band1, band2, band3,
         x_cluster = x[cluster_number == i]
         y_cluster = y[cluster_number == i]
         ax2.scatter(x_cluster, y_cluster, label=i, c=cluster_colours[i])
-        
-    ax2.set_xlabel('X [pixels]')
-    ax2.set_ylabel('Y [pixels]')
-    ax2.legend()
+
+    ax2.set_xlabel(band1+' - '+band2)
+    ax2.set_ylabel(band3+' - '+band4)
+    ax2.set_title('kmeans: '+band1+'-'+band2+' vs. '+band3+'-'+band4,
+                  fontsize=16)
+    ax2.legend(loc='upper left')
 
     file_name = 'xy_{}cl_{}-{}vs{}-{}.png'.format(str(number_clusters),
                                                   band1, band2, band3, band4)
     pylab.savefig(os.path.join(path, file_name))
+    plt.close()
 
     return ()
 
@@ -419,7 +444,7 @@ def xy_plot(path, x, y, number_clusters, cluster_number, band1, band2, band3,
 def mst_plots(X, ymin, ymax, xmin, xmax, T_x, T_y, T_trunc_x, T_trunc_y,
               density, band1, band2, band3, band4, path):
     # Plot the results
-    fig = plt.figure(figsize=(5, 6))
+    fig = plt.figure(figsize=(8, 12))
     fig.subplots_adjust(hspace=0, left=0.1, right=0.95, bottom=0.1, top=0.9)
 
     ax = fig.add_subplot(311, aspect='equal')
@@ -483,7 +508,13 @@ def write_results(save_path, name, methods, band1, band2, band3, band4,
         mst_scale = "N/A"
     name_path = os.path.join(file_path, name)
     results_file = open(name_path, "a")
-    inputs = '{} {} {} {} {} {} {} {} {} {}'.format(ms, km, mst, band1,
+    if ms == "YES":
+        inputs = '{} {} {} {} {} {} {} {:.4f} {} {}'.format(ms, km, mst, band1,
+                                                    band2, band3, band4,
+                                                    ms_bandwidth, mst_scale,
+                                                    numberofclusters)
+    else: 
+        inputs = '{} {} {} {} {} {} {} {} {} {}'.format(ms, km, mst, band1,
                                                     band2, band3, band4,
                                                     ms_bandwidth, mst_scale,
                                                     numberofclusters)
@@ -538,13 +569,24 @@ def results_summary(path, input_file):
     # compute fraction of objects in smallest cluster
     smallest_clust_fract = results_table['size_smallest']/total_obj
 
-    fig, ax = plt.subplots()
+    fig = plt.figure(figsize=(12,5))
+    ax = fig.add_subplot(121)
     ax.scatter(num_clust, score)
     ax.set_xlabel('Number of clusters')
     ax.set_ylabel('Score')
-    fig.show()
+    ax.set_title('Number of Clusters vs Silhouette Score', fontsize=11)
 
-    filename = 'n_clusters_vs_Score.png'
+    ax = fig.add_subplot(122)
+    ax.scatter(score, biggest_clust_fract, c='r', marker='o',
+               label='Largest Cluster')
+    ax.scatter(score, smallest_clust_fract, c='b', marker='o',
+               label='Smallest Cluster')
+    ax.legend(loc='upper left')
+    ax.set_xlabel('Score')
+    ax.set_ylabel('Fractional size')
+    ax.set_title('Silhouette Score vs. Fractional Size of Largest/Smallest Cluster', fontsize=11)
+
+    filename = 'silhouette_score_plots.png'
     pylab.savefig(os.path.join(path, filename))
 
     # Bar graph
@@ -561,18 +603,12 @@ def results_summary(path, input_file):
                 colname = 'c_{}'.format(n+1)
                 Y = results_table[colname][num_clust==i]/results_table['total_objects'][num_clust==i].astype('float')  # Compute percentage of objects in each cluster and graph
                 ax.bar(X, Y, color=cluster_colours[n], bottom=yprev)
+                ax.set_title('Proportional Cluster Size')
+                ax.set_xlabel('Number of Trials')
+                ax.set_ylabel('Fractional Cluster Size')
+                ax.xaxis.set_major_locator(plt.MultipleLocator(1))
             filename = '{}_clusters_vs_FractionalSize.png'.format(i)
             pylab.savefig(os.path.join(path, filename))
-
-    fig, ax = plt.subplots()
-    ax.scatter(score, biggest_clust_fract)
-    ax.scatter(score, smallest_clust_fract)
-    ax.set_xlabel('Score')
-    ax.set_ylabel('Fractional size')
-    fig.show()
-
-    filename = 'Score_vs_FractionalSize.png'
-    pylab.savefig(os.path.join(path, filename))
 
     return()
 
