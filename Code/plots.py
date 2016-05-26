@@ -22,30 +22,25 @@ def plotting(data_table, path, plots, threshold, survey_objects):
     data_, trial = load_data(data_table, 'experiments.txt')
 
     for i in range(0, len(trial)):
-        trial = trial[i]
-        b1 = trial['band1']
-        b2 = trial['band2']
-        b3 = trial['band3']
-        b4 = trial['band4']
-        print threshold, survey_objects 
+        #b1 = trial['band1']
+        #b2 = trial['band2']
+        #b3 = trial['band3']
+        #b4 = trial['band4']
+        #print threshold, survey_objects 
         wave1, wave1_unc, wave2, wave2_unc, wave3, wave3_unc, wave4,\
-            wave4_unc, gd1, gd2, grd, c1, c2 = data(data_, b1, b2, b3, b4,
+            wave4_unc, gd1, gd2, grd, c1, c2 = data(data_, trial['band1'][i], trial['band2'][i], trial['band3'][i], trial['band4'][i],
                                                     threshold, survey_objects)
         if 'bvb' in plots:
-            band_v_band(wave1, wave2, wave3, wave4, grd, trial, plot_path)
-        if 'unc' in plots:
-            wave_uncertainty(wave1, wave1_unc, wave2, wave2_unc, wave3,
-                             wave3_unc, wave4, wave4_unc, grd, trial,
-                             plot_path)
+            band_v_band(wave1, wave2, wave3, wave4, grd, trial[i], plot_path)
         if 'w_hist' in plots:
-            wave_histogram(wave1, wave2, wave3, wave4, grd, trial,
+            wave_histogram(wave1, wave2, wave3, wave4, grd, trial[i],
                            plot_path)
         if 'c_hist' in plots:
-            colour_histogram(c1, c2, trial, plot_path)
+            colour_histogram(c1, c2, trial[i], plot_path)
         if 'cvc' in plots:
-            colour_v_colour(c1, c2, trial, plot_path)
+            colour_v_colour(c1, c2, trial[i], plot_path)
         if 'wvc' in plots:
-            wave_v_colour(wave1, wave2, wave3, wave4, c1, c2, grd, trial,
+            wave_v_colour(wave1, wave2, wave3, wave4, c1, c2, grd, trial[i],
                           plot_path)
     return
 
@@ -66,7 +61,7 @@ def load_data(surveyfile_, experiments):
     '''User upload data file'''
 
     d_file_name = str(surveyfile_)
-    t_file_name = experiments
+    t_file_name = str(experiments)
     data = Table.read(d_file_name, format='ascii.commented_header',
                       guess=False)
     tests = Table.read(t_file_name, format='ascii.commented_header',
@@ -113,7 +108,7 @@ def data(data, band1, band2, band3, band4, threshold, n_objects):
 
     colour1 = wave1[greatdata] - wave2[greatdata]
     colour2 = wave3[greatdata] - wave4[greatdata]
-    print "Objects: {}".format(len(colour1))
+    
     return(wave1, wave1_unc, wave2, wave2_unc, wave3, wave3_unc, wave4,
            wave4_unc, gooddata1, gooddata2, greatdata, colour1, colour2)
 
@@ -140,38 +135,6 @@ def band_v_band(wave1, wave2, wave3, wave4, greatdata, labels, path):
                                                labels['band2'],
                                                labels['band3'],
                                                labels['band4'])
-
-    pylab.savefig(os.path.join(path, file_name))
-    plt.close()
-    return
-
-
-def wave_uncertainty(wave1, wave1_unc, wave2, wave2_unc, wave3, wave3_unc,
-                     wave4, wave4_unc, greatdata, trial, path):
-
-    fig1 = plt.figure(figsize=(8, 8))
-
-    ax = fig1.add_subplot(2, 2, 1)
-    ax.scatter(wave1[greatdata], wave1_unc[greatdata], color='k', marker='.')
-    ax.set_title(trial['band1']+' vs. '+trial['band1']+'_unc', fontsize=12)
-
-    ax = fig1.add_subplot(2, 2, 2)
-    ax.scatter(wave2[greatdata], wave2_unc[greatdata], color='k', marker='.')
-    ax.set_title(trial['band2']+' vs. '+trial['band2']+'_unc', fontsize=12)
-
-    ax = fig1.add_subplot(2, 2, 3)
-    ax.scatter(wave3[greatdata], wave3_unc[greatdata], color='k', marker='.')
-    ax.set_title(trial['band3']+' vs. '+trial['band3']+'_unc', fontsize=12)
-
-    ax = fig1.add_subplot(2, 2, 4)
-    ax.scatter(wave4[greatdata], wave4_unc[greatdata], color='k', marker='.')
-    ax.set_title(trial['band4']+' vs. '+trial['band4']+'_unc', fontsize=12)
-    '''Display interactive figure if # removed, if not, figures saved'''
-    # plt.show
-    file_name = 'uncertainty_{}-{}-{}-{}.png'.format(trial['band1'],
-                                                     trial['band2'],
-                                                     trial['band3'],
-                                                     trial['band4'])
 
     pylab.savefig(os.path.join(path, file_name))
     plt.close()
@@ -308,7 +271,7 @@ def inputs():
     inputs.add_argument("-pp", "--plot_path", help="Save directory",
                         default="results")
     inputs.add_argument("-p", "--plots", help="Select plots to make",
-                        choices=['bvb', 'w_hist', 'unc', 'c_hist', 'cvc',
+                        choices=['bvb', 'w_hist', 'c_hist', 'cvc',
                                  'wvc'], nargs='*')
     # Data trimming
     inputs.add_argument("-r", "--ratio", help="Set noise to signal ratio",
