@@ -46,8 +46,6 @@ cluster_colours = ['y', 'g', 'b', 'r', 'c', 'm', 'k', 'w', 'brown', 'darkgray', 
 # need this so that output files always have the same number of columns
 max_num_clusters = 60
 
-# Choose analysis and output
-
 
 def clustering(save_plots, save_results, analysis, kmeans_input, plots,
                id_list, results_, data_file, input_file='experiments.txt'):
