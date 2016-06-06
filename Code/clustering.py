@@ -229,7 +229,7 @@ def organize_data(exp, data_file):
     # Colour 4
     wave7 = data[exp['band7']]
     wave7_unc = data[exp['band7']+'_unc']
-    wave8 = data[exp['band8']
+    wave8 = data[exp['band8']]
     wave8_unc = data[exp['band8']+'_unc']
     # Colour 5
     wave9 = data[exp['band9']]
@@ -237,7 +237,7 @@ def organize_data(exp, data_file):
     wave10 = data[exp['band10']]
     wave10_unc = data[exp['band10']+'_unc']
     # Colour 6
-    wave11 = data[exp['band11']
+    wave11 = data[exp['band11']]
     wave11_unc = data[exp['band11']+'_unc']
     wave12 = data[exp['band12']]
     wave12_unc = data[exp['band12']+'_unc']
