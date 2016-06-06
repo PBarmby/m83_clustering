@@ -1,3 +1,15 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from astropy.table import Table
+import pylab
+import os
+import os.path
+import argparse
+
+def results_plots():
+    
+
+    return()
 
 def results_summary(path, input_file):
     '''Compute and plot summaries for clustering analysis'''
@@ -78,3 +90,26 @@ def results_summary(path, input_file):
             pylab.savefig(os.path.join(path, filename))
 
     return()
+    
+def inputs():
+
+    inputs = argparse.ArgumentParser(description='Plotting functions')
+    inputs.add_argument("data_file", help="Specify data file")
+    inputs.add_argument("-pp", "--plot_path", help="Save directory",
+                        default="results")
+    inputs.add_argument("-p", "--plots", help="Select plots to make",
+                        choices=['sco_v_clust', 'bw_v_clust', '', 'cvc',
+                                 'wvc'], nargs='*')
+    # Data trimming
+    inputs.add_argument("-r", "--ratio", help="Set noise to signal ratio",
+                        default=0.1)
+    inputs.add_argument("-dp", "--data_points", help="Set objects from survey",
+                        default=10000)
+
+    criteria = inputs.parse_args()
+    plotting(criteria.data_file, criteria.plot_path, criteria.plots,
+             criteria.ratio, criteria.data_points)
+    return
+
+if __name__ == "__main__":
+    inputs()

@@ -91,10 +91,20 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
         b2 = experiments['band2'][i]
         b3 = experiments['band3'][i]
         b4 = experiments['band4'][i]
+        b5 = experiments['band5'][i]
+        b6 = experiments['band6'][i]
+        b7 = experiments['band7'][i]
+        b8 = experiments['band8'][i]
+        b9 = experiments['band9'][i]
+        b10 = experiments['band10'][i]
+        b11 = experiments['band11'][i]
+        b12 = experiments['band12'][i]
+        b13 = experiments['band13'][i]
+        b14 = experiments['band14'][i]
         '''-----------------------------------------------------------------'''
 
         # Get Data
-        colour1, colour2, greatdata, x_data, y_data, id_data = \
+        cluster_data_, greatdata, x_data, y_data, id_data = \
             organize_data(experiments[i], data)
 
         # Set title of results.txt
@@ -110,10 +120,10 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                 b_width_input = experiments['bandwidth'][i]
 
             ms_n_clusters, bandwidth, ms_score, ms_obj, ms_obj_p_cluster = \
-                do_meanshift(plot_path, b1, b2, b3, b4, colour1, colour2,
+                do_meanshift(plot_path, experiments[i], cluster_data_,
                              generate_plots, b_width_input, id_list, id_data)
 
-            meanshift_results(results_path, results_title, b1, b2, b3, b4,
+            meanshift_results(results_path, results_title, experiments[i],
                               ms_n_clusters, ms_score, bandwidth, ms_obj,
                               ms_obj_p_cluster)
 
@@ -121,9 +131,9 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
             eps = float(experiments['eps'][i])
             min_samples = float(experiments['min_samples'][i])
             db_score, db_n_clusters, db_obj, db_obj_p_cluster = \
-                dbscan(plot_path, b1, b2, b3, b4, colour1, colour2,
+                dbscan(plot_path, experiments[i], cluster_data_,
                        generate_plots, eps, min_samples)
-            dbscan_results(results_path, results_title, b1, b2, b3, b4, 
+            dbscan_results(results_path, results_title, experiments[i],
                            db_n_clusters, db_score, eps, min_samples, db_obj,
                            db_obj_p_cluster)
 
@@ -131,13 +141,12 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
             damping = float(experiments['damping'][i])
             preferences = float(experiments['preferences'][i])
             af_n_clusters, af_score, af_obj, af_obj_p_cluster = \
-                affinity_propagation(plot_path, b1, b2, b3, b4, colour1,
-                                     colour2, generate_plots, damping,
-                                     preferences)
-            affinity_propagation_results(results_path, results_title, b1, b2,
-                                         b3, b4, af_n_clusters, af_score,
-                                         damping, preferences, af_obj,
-                                         af_obj_p_cluster)
+                affinity_propagation(plot_path, experiments[i], cluster_data_,
+                                     generate_plots, damping, preferences)
+            affinity_propagation_results(results_path, results_title,
+                                         experiments[i], af_n_clusters,
+                                         af_score, damping, preferences,
+                                         af_obj, af_obj_p_cluster)
 
         if "kmeans" in analysis_criteria:
             if "experiments.txt" in kmeans_input:
@@ -155,12 +164,12 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
             else: 
                 high, low = 5, 0 
             for a in range(km_n_clusters - low, km_n_clusters + high):
-                km_score, num_obj = do_kmeans(plot_path, b1, b2, b3, b4, colour1,
-                                              colour2, greatdata,
+                km_score, num_obj = do_kmeans(plot_path, experiments[i],
+                                              cluster_data_, greatdata,
                                               a, generate_plots, id_output,
                                               x_data, y_data, id_data)
                 total_obj = num_obj.sum()
-                kmeans_results(results_path, results_title, b1, b2, b3, b4,
+                kmeans_results(results_path, results_title, experiments[i],
                                kmeans_input, a, km_score, total_obj, num_obj)
 
     # Copy experiments.txt to plots directory
@@ -198,52 +207,102 @@ def load_data_file(d_file, e_file):
     return (data, trial)
 
 
-def organize_data(band_combinations, data_file):
+def organize_data(exp, data_file):
     '''Select data for analysis'''
     data = data_file
     ratio = 0.05
-    # Colour 1
-    wave1 = data[band_combinations['band1']]
-    wave1_unc = data[band_combinations['band1']+'_unc']
-    wave2 = data[band_combinations['band2']]
-    wave2_unc = data[band_combinations['band2']+'_unc']
-    # Colour 2
-    wave3 = data[band_combinations['band3']]
-    wave3_unc = data[band_combinations['band3']+'_unc']
-    wave4 = data[band_combinations['band4']]
-    wave4_unc = data[band_combinations['band4']+'_unc']
 
+    wave1 = data[exp['band1']]
+    wave1_unc = data[exp['band1']+'_unc']
+    wave2 = data[exp['band2']]
+    wave2_unc = data[exp['band2']+'_unc']
+    # Colour 2
+    wave3 = data[exp['band3']]
+    wave3_unc = data[exp['band3']+'_unc']
+    wave4 = data[exp['band4']]
+    wave4_unc = data[exp['band4']+'_unc']
+    # Colour 3
+    wave5 = data[exp['band5']]
+    wave5_unc = data[exp['band5']+'_unc']
+    wave6 = data[exp['band6']]
+    wave6_unc = data[exp['band6']+'_unc']
+    # Colour 4
+    wave7 = data[exp['band7']]
+    wave7_unc = data[exp['band7']+'_unc']
+    wave8 = data[exp['band8']
+    wave8_unc = data[exp['band8']+'_unc']
+    # Colour 5
+    wave9 = data[exp['band9']]
+    wave9_unc = data[exp['band9']+'_unc']
+    wave10 = data[exp['band10']]
+    wave10_unc = data[exp['band10']+'_unc']
+    # Colour 6
+    wave11 = data[exp['band11']
+    wave11_unc = data[exp['band11']+'_unc']
+    wave12 = data[exp['band12']]
+    wave12_unc = data[exp['band12']+'_unc']
+    #colour 7 
+    wave13 = data[exp['band13']]
+    wave13_unc = data[exp['band13']+'_unc']
+    wave14 = data[exp['band14']]
+    wave14_unc = data[exp['band14']+'_unc']
     # Change parameters to match data_file
     # Remove data pieces with no value
-    wave1_trim = np.logical_and(wave1 != -99, wave1_unc != -99)
-    wave2_trim = np.logical_and(wave2 != -99, wave2_unc != -99)
-    wave3_trim = np.logical_and(wave3 != -99, wave3_unc != -99)
-    wave4_trim = np.logical_and(wave4 != -99, wave4_unc != -99)
-
-    colour1_ratio = np.logical_and(wave1_unc/wave1 < ratio,
-                                   wave2_unc/wave2 < ratio)
-    colour2_ratio = np.logical_and(wave3_unc/wave3 < ratio,
-                                   wave4_unc/wave4 < ratio)
-
-    gooddata1 = np.logical_and(np.logical_and(wave1_trim, wave2_trim),
-                               np.logical_and(wave3_trim, wave4_trim))
-
-    # Remove data above given noise/signal ratio
-    gooddata2 = np.logical_and(colour1_ratio, colour2_ratio)
-
+    
+    wave1_trim = np.logical_and(np.logical_and(wave1 != -99, wave1_unc != -99),wave1_unc/wave1 < ratio)
+    wave2_trim = np.logical_and(np.logical_and(wave2 != -99, wave2_unc != -99), wave2_unc/wave2 < ratio)
+    
+    wave3_trim = np.logical_and(np.logical_and(wave3 != -99, wave3_unc != -99), wave3_unc/wave3 < ratio)
+    wave4_trim = np.logical_and(np.logical_and(wave4 != -99, wave4_unc != -99), wave4_unc/wave4 < ratio)
+    
+    wave5_trim = np.logical_and(np.logical_and(wave5 != -99, wave5_unc != -99), wave5_unc/wave5 < ratio)
+    wave6_trim = np.logical_and(np.logical_and(wave6 != -99, wave6_unc != -99), wave6_unc/wave6 < ratio)
+    
+    wave7_trim = np.logical_and(np.logical_and(wave7 != -99, wave7_unc != -99), wave7_unc/wave7 < ratio)
+    wave8_trim = np.logical_and(np.logical_and(wave8 != -99, wave8_unc != -99), wave8_unc/wave8 < ratio)
+    
+    wave9_trim = np.logical_and(np.logical_and(wave9 != -99, wave9_unc != -99), wave9_unc/wave9 < ratio)
+    wave10_trim = np.logical_and(np.logical_and(wave10 != -99, wave10_unc != -99), wave10_unc/wave10 < ratio)
+    
+    wave11_trim = np.logical_and(np.logical_and(wave11 != -99, wave11_unc != -99), wave11_unc/wave11 < ratio)
+    wave12_trim = np.logical_and(np.logical_and(wave12 != -99, wave12_unc != -99), wave12_unc/wave12 < ratio)
+    
+    wave13_trim = np.logical_and(np.logical_and(wave13 != -99, wave13_unc != -99), wave13_unc/wave13 < ratio)
+    wave14_trim = np.logical_and(np.logical_and(wave14 != -99, wave14_unc != -99), wave14_unc/wave14 < ratio)
+    
+    colour1_trim = np.logical_and(wave1_trim, wave2_trim)
+    colour2_trim = np.logical_and(wave3_trim, wave4_trim)
+    colour3_trim = np.logical_and(wave5_trim, wave6_trim)
+    colour4_trim = np.logical_and(wave7_trim, wave8_trim)
+    colour5_trim = np.logical_and(wave9_trim, wave10_trim)
+    colour6_trim = np.logical_and(wave11_trim, wave12_trim)
+    colour7_trim = np.logical_and(wave13_trim, wave14_trim)
+    
+    gooddata1 = np.logical_and(colour1_trim, colour2_trim)
+    gooddata2 = np.logical_and(colour3_trim, colour4_trim)
+    gooddata3 = np.logical_and(colour5_trim, colour6_trim)
+    
     # Only data that match criteria for both colours
-    greatdata = np.logical_and(gooddata1, gooddata2)
-    colour1 = wave1[greatdata] - wave2[greatdata]
-    colour2 = wave3[greatdata] - wave4[greatdata]
+    final_data = np.logical_and(np.logical_and(gooddata1, gooddata2),
+                                np.logical_and(gooddata3, colour7_trim))
+    colour1 = wave1[final_data] - wave2[final_data]
+    colour2 = wave3[final_data] - wave4[final_data]
+    colour3 = wave5[final_data] - wave6[final_data]
+    colour4 = wave7[final_data] - wave8[final_data]
+    colour5 = wave9[final_data] - wave10[final_data]
+    colour6 = wave11[final_data] - wave12[final_data]
+    colour7 = wave13[final_data] - wave14[final_data]
+    
+    cluster_data = np.vstack(colour1, colour2, colour3, colour4, colour5,
+                             colour6, colour7).T
+    x = data['x'][final_data]
+    y = data['y'][final_data]
+    id_ = data['id'][final_data].astype(np.int32)
 
-    x = data['x'][greatdata]
-    y = data['y'][greatdata]
-    id_ = data['id'][greatdata].astype(np.int32)
-
-    return (colour1, colour2, greatdata, x, y, id_)
+    return (cluster_data, greatdata, x, y, id_)
 
 
-def do_meanshift(s_path, band1, band2, band3, band4, colour1, colour2,
+def do_meanshift(s_path, band1, band2, band3, band4, band5, band6, colour1, colour2,
                  make_plot, bw_input, output_id, id_data):
     '''Meanshift clustering to determine the number of clusters in the
         data, which is passed to KMEANS function'''
