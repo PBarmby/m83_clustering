@@ -151,23 +151,38 @@ def load_data_file(file_):
 def organize_data(band_combinations, data_file):
     '''Select data for analysis'''
     # Colour 1
-    data_file = data_file[:10000]
+    data_file = data_file[15000:25000]
+    ratio = 0.05
     wave1 = data_file[band_combinations[0]]
+    wave1_unc = data_file[band_combinations[0] + '_unc']
     wave2 = data_file[band_combinations[1]]
+    wave2_unc = data_file[band_combinations[1] + '_unc']
     # Colour 2
     wave3 = data_file[band_combinations[2]]
+    wave3_unc = data_file[band_combinations[2] + '_unc']
     wave4 = data_file[band_combinations[3]]
+    wave4_unc = data_file[band_combinations[3] + '_unc']
 
     # Change parameters to match data_file
     # Remove data pieces with no value
-    gooddata1 = np.logical_and(np.logical_and(wave1 != -99, wave2 != -99),
-                               np.logical_and(wave3 != -99, wave4 != -99))
-    # Remove data above certain magnitude
-    gooddata2 = np.logical_and(np.logical_and(wave1 < 26, wave2 < 26),
-                               np.logical_and(wave3 < 26, wave4 < 26))
+    wave1_trim = np.logical_and(wave1 != -99, wave1_unc != -99)
+    wave2_trim = np.logical_and(wave2 != -99, wave2_unc != -99)
+    wave3_trim = np.logical_and(wave3 != -99, wave3_unc != -99)
+    wave4_trim = np.logical_and(wave4 != -99, wave4_unc != -99)
+
+    colour1_ratio = np.logical_and(wave1_unc/wave1 < ratio,
+                                   wave2_unc/wave2 < ratio)
+    colour2_ratio = np.logical_and(wave3_unc/wave3 < ratio,
+                                   wave4_unc/wave4 < ratio)
+
+    gooddata1 = np.logical_and(np.logical_and(wave1_trim, wave2_trim),
+                               np.logical_and(wave3_trim, wave4_trim))
+
+    # Remove data above given noise/signal ratio
+    gooddata2 = np.logical_and(colour1_ratio, colour2_ratio)
+
     # Only data that match criteria for both colours
     greatdata = np.logical_and(gooddata1, gooddata2)
-
     colour1 = wave1[greatdata] - wave2[greatdata]
     colour2 = wave3[greatdata] - wave4[greatdata]
 

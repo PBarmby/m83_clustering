@@ -6,6 +6,8 @@ import pylab
 import os
 import os.path
 import argparse
+import pandas as pd 
+from pandas.tools.plotting import scatter_matrix
 
 cluster_colours = ['y', 'g', 'b', 'r', 'c', 'm', 'k', 'w', 'brown', 'darkgray', 'orange', 'pink','gold', 'lavender', 'salmon', 'g', 'b',
                    'r', 'c', 'm', 'k', 'm', 'w', 'y', 'g', 'b', 'r', 'c', 'm',
@@ -22,14 +24,12 @@ def plotting(data_table, path, plots, threshold, survey_objects):
     data_, trial = load_data(data_table, 'experiments.txt')
 
     for i in range(0, len(trial)):
-        #b1 = trial['band1']
-        #b2 = trial['band2']
-        #b3 = trial['band3']
-        #b4 = trial['band4']
-        #print threshold, survey_objects 
-        wave1, wave1_unc, wave2, wave2_unc, wave3, wave3_unc, wave4,\
-            wave4_unc, gd1, gd2, grd, c1, c2 = data(data_, trial['band1'][i], trial['band2'][i], trial['band3'][i], trial['band4'][i],
-                                                    threshold, survey_objects)
+
+        wave1, wave2, wave3, wave4, grd, c1, c2 = data(data_,
+                                                       trial['band1'][i],
+                                                       trial['band2'][i],
+                                                       trial['band3'][i],
+                                                       trial['band4'][i])
         if 'bvb' in plots:
             band_v_band(wave1, wave2, wave3, wave4, grd, trial[i], plot_path)
         if 'w_hist' in plots:
@@ -42,6 +42,7 @@ def plotting(data_table, path, plots, threshold, survey_objects):
         if 'wvc' in plots:
             wave_v_colour(wave1, wave2, wave3, wave4, c1, c2, grd, trial[i],
                           plot_path)
+
     return
 
 
@@ -70,10 +71,10 @@ def load_data(surveyfile_, experiments):
     return (data, tests)
 
 
-def data(data, band1, band2, band3, band4, threshold, n_objects):
+def data(data, band1, band2, band3, band4):
     '''Select data for analysis'''
     ratio = 0.05
-    data = data[:10000]
+    data = data[10000:30000]
     # Colour 1
     wave1 = data[band1]
     wave1_unc = data[band1+'_unc']
@@ -109,8 +110,7 @@ def data(data, band1, band2, band3, band4, threshold, n_objects):
     colour1 = wave1[greatdata] - wave2[greatdata]
     colour2 = wave3[greatdata] - wave4[greatdata]
     
-    return(wave1, wave1_unc, wave2, wave2_unc, wave3, wave3_unc, wave4,
-           wave4_unc, gooddata1, gooddata2, greatdata, colour1, colour2)
+    return(wave1, wave2, wave3, wave4, greatdata, colour1, colour2)
 
 
 def band_v_band(wave1, wave2, wave3, wave4, greatdata, labels, path):
@@ -135,8 +135,10 @@ def band_v_band(wave1, wave2, wave3, wave4, greatdata, labels, path):
                                                labels['band2'],
                                                labels['band3'],
                                                labels['band4'])
-
-    pylab.savefig(os.path.join(path, file_name))
+    path_ = ('{}\\band_band_plts').format(path)
+    if not os.path.exists(path_):
+        os.makedirs(path_)
+    pylab.savefig(os.path.join(path_, file_name))
     plt.close()
     return
 
@@ -174,8 +176,10 @@ def wave_histogram(wave1, wave2, wave3, wave4, greatdata, trial, path):
                                                 trial['band2'],
                                                 trial['band3'],
                                                 trial['band4'])
-
-    pylab.savefig(os.path.join(path, file_name))
+    path_ = ('{}\\wave_histogram').format(path)
+    if not os.path.exists(path_):
+        os.makedirs(path_)
+    pylab.savefig(os.path.join(path_, file_name))
     plt.close()
     return
 
@@ -200,27 +204,29 @@ def colour_histogram(colour1, colour2, trial, path):
                                                    trial['band3'],
                                                    trial['band4'])
 
-    pylab.savefig(os.path.join(path, file_name))
+    path_ = ('{}\\colour_histogram').format(path)
+    if not os.path.exists(path_):
+        os.makedirs(path_)
+    pylab.savefig(os.path.join(path_, file_name))
     plt.close()
     return
 
 
 def colour_v_colour(colour1, colour2, trial, path):
-    fig4 = plt.figure(figsize=(8, 8))
-    ax = fig4.add_subplot(111)
-    ax.scatter(colour1, colour2, color='b', marker='.')
-    ax.set_xlabel(trial['band1']+' - '+trial['band2'])
-    ax.set_ylabel(trial['band3']+' - '+trial['band4'])
-    ax.set_title(trial['band1']+' - '+trial['band2']+' vs.'\
-                 +trial['band3']+' - '+trial['band4'], fontsize=11)
-    '''Display interactive figure if # removed, if not, figures saved'''
-    # plt.show
-    file_name = 'plot_{}-{}vs{}-{}.png'.format(trial['band1'],
-                                               trial['band2'],
-                                               trial['band3'],
-                                               trial['band4'])
 
-    pylab.savefig(os.path.join(path, file_name))
+    matrix_file = 'matrix_{}-{}vs{}-{}.png'.format(trial['band1'],
+                                                   trial['band2'],
+                                                   trial['band3'],
+                                                   trial['band4'])
+
+    df = pd.DataFrame(np.vstack([colour1, colour2]).T,
+                      columns=[trial['band1'] + '-' + trial['band2'],
+                               trial['band3'] + '-' + trial['band4']])
+    scatter_matrix(df, figsize=(8, 8), alpha=0.5,  diagonal='kde')
+    path_ = ('{}\\color_color').format(path)
+    if not os.path.exists(path_):
+        os.makedirs(path_)
+    pylab.savefig(os.path.join(path_, matrix_file))
     plt.close()
     return
 
@@ -259,7 +265,10 @@ def wave_v_colour(wave1, wave2, wave3, wave4, colour1, colour2, greatdata,
                                                            trial['band3'],
                                                            trial['band4'])
 
-    pylab.savefig(os.path.join(path, file_name))
+    path_ = ('{}\\wave_color_plts').format(path)
+    if not os.path.exists(path_):
+        os.makedirs(path_)
+    pylab.savefig(os.path.join(path_, file_name))
     plt.close()
     return
 
