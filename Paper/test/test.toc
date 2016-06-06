@@ -1,10 +1,12 @@
 \contentsline {section}{\numberline {1}Introduction}{1}
 \contentsline {subsection}{\numberline {1.1}Galactic Astronomy}{1}
 \contentsline {subsection}{\numberline {1.2}Clustering}{1}
-\contentsline {section}{\numberline {2}Data}{1}
-\contentsline {subsection}{\numberline {2.1}WFC3 Survey}{1}
-\contentsline {subsection}{\numberline {2.2}Preprocessing}{1}
-\contentsline {section}{\numberline {3}Methods}{1}
-\contentsline {subsection}{\numberline {3.1}Meanshift}{1}
-\contentsline {subsection}{\numberline {3.2}KMeans}{2}
+\contentsline {section}{\numberline {2}Data}{2}
+\contentsline {subsection}{\numberline {2.1}WFC3 Survey}{2}
+\contentsline {subsection}{\numberline {2.2}Preprocessing}{2}
+\contentsline {section}{\numberline {3}Methods}{2}
+\contentsline {subsection}{\numberline {3.1}Meanshift}{2}
+\contentsline {subsection}{\numberline {3.2}DBSCAN}{2}
+\contentsline {subsection}{\numberline {3.3}Affinity Propagation}{2}
+\contentsline {subsection}{\numberline {3.4}KMeans}{2}
 \contentsline {section}{\numberline {4}Results}{2}
