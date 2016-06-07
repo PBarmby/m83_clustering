@@ -1,0 +1,59 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{sidecap}
+\usepackage{epstopdf}
+
+\begin{document}
+\title{Summary of Initial Papers} 
+\author{Alexander K. Kiar\\Department of Physics \& Astronomy\\Western University\\ \texttt{akiar@uwo.ca}}
+\maketitle 
+
+\begin{abstract}
+Summary of questions and findings from the eight initial papers from May 27, 2016.
+\end{abstract} 
+
+\section{Eight-Dimensional Mid-Infrared/Optical Bayesian Quasar Selection} 
+Explored multi-dimensional, multiwavelength selection of quasars from the IRAC and SDSS. 
+Selection traditionally in two-colour space, used a combination of 8-D and 4-D techniques. 
+Used Bayesian selection techniques and completness and contamination to evaluate selection.  
+\begin{enumerate}
+\item Converted between Vega and AB photometry
+\item IRAC channels: 3.6, 4.5, 5.8, 8.0
+\item Made 8 unique colours with ugriz magnitudes 
+\item Used all SDSS filters and two short-wave IRAC bands 
+\item Bayesian selection section 3
+\item Used mean colours to classify types of quasars. Can we use that in our classification? 
+\item Set colour limits to reduce error and removed faint and saturated objects. sec 3.1. Can we do the same? 
+\item Can we use completeness and contamination? Need a training set, could use a set of points from the data? 
+\end{enumerate}
+
+\section{Towards auto classification of all WISE sources}
+Applied support vector machines with a training sample to spectroscopic dataset to auto classify objects. 
+\begin{enumerate} 
+\item used four infrared bands 3.4 - 23 um 
+\item used signal to noise 2 in shorter wavelengths and deteriorates in longer. 
+\item significant work on colour colour space for WISE survey 
+\item used magnitude, color, and differential aperture mag space 
+\item computed completeness and contamination for training set. 
+\end{enumerate} 
+
+\section{Meaning of WISE colours} 
+Colour magnitude criteria to select AGB stars with dust shells and seperate into classes. 
+\begin{enumerate} 
+\item colour plots showing distribution of object types in survey 
+\item set magnitude limits to isolate certain objects. sec 2. 
+\item heat map distributions of colors 
+\item chose 12 colours, only 3 independent. Used the 3 to classify objects
+\item use two-sided Kolmogorov Smirnov test to test distribution hypothesis. Sec 3.3.4
+\item created model to predict object type based on colour
+\end{enumerate} 
+
+\section{CLaSPS: new method for knowledge extraction} 
+Using unspurvised clustering to identify correlations among astronomical obersvations. 
+\begin{enumerate} 
+\item use combination of features and labels. We have colour features for objects, could we use labels as well? 
+\item use a score and fraction of objects similar to our summary. 
+\item use Kmeans and vary number of clusters applied to data set
+\end{enumerate}
+
+\end{document}

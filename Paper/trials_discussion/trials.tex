@@ -1,0 +1,74 @@
+%hello.tex 
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{sidecap}
+\usepackage{epstopdf}
+
+\begin{document}
+\title{Discussion of WFC3 Filters and Colour Combinations}
+\author{Alexander K. Kiar\\Department of Physics\\Western University \\ \texttt{akiar@uwo.ca}}
+\date{\today}
+\maketitle
+
+\begin{abstract}
+Space-based astronomical observatories generate vast quantities of data, and efficient means of analyzing those data are needed. The purpose of this research is to apply machine-learning methods to classification of point sources of light emission in nearby galaxies. An object’s light emission over different wavelengths is the key data for classification as it indicates the composition of the object, along with its other physical attributes. The mean-shift, k-means, and minimum spanning tree clustering methods were applied to observations of point sources in the M83 galaxy, to identify objects that emit similar combinations of light over multiple wavelength bands. The data was collected by the Wide Field Camera 3 on the Hubble Space Telescope. To identify which combination of bands was the best at separating different classes of objects, the strength of the clustering was tested using a silhouette score. This metric measures an object’s distance from a cluster outside the one it was originally assigned to. The clustering results were also compared with the results of independent classification, to determine if each object was correctly identified. The results of this work will allow astronomers to plan observations that can be used to automatically classify objects in nearby galaxies, leading to a stronger understanding of how stars, and star clusters, form and evolve. 
+\end{abstract}
+
+\section{Introduction}
+Introduction to Multidimentional patterns in multidimentional space. 
+
+\subsection{M83 Survey} 
+In August 2009, images of M83 galaxy were gathered using visible (UVIS) and infrared (IR) filters of the Wide Field Camera 3 (WFC3) on Hubble Space Telescope (HST)
+as part of the Early Release Science program by the WFC3 committee.\cite{WFC3EarlyReleaseDocumentation}
+For this study, the filters used ranged from UV-Wide to I-band. The data was processed upon observation using MultiDrizzle, and detector artifacts were removed. 
+Two image versions were created. The first version separated the northern and southern fields of the galaxy, and was used for initial publication. The second version 
+combined both fields. Photometric catalogues were created using the version one data, providing information for the southern half of the galaxy only. 
+
+\subsection{HST Filters}
+\subsubsection{UV Filters}
+WFC3 carries many ultraviolet filters to view images with short wavelengths. Two UV filters were used in the M83 survey: 225 wide \& 336 narrow, the Stromgren-u. 
+The 225w filter is used for broad band UV imaging, and is not visible to the naked eye. Main types of objects can be detected through UV filters.
+\begin{enumerate} 
+\item Neutral Atomic Gas: 
+These clouds are detected through optical and UV absorbtion lines of various elements against bright background stars.
+They are generally cold, \~100K and warm, \~800K intercloud gases. 
+\item Ionized Gas: 
+Diffused ionized gas in the ISM can be traced by the dispersion of pulsars and through the optical and UV absorption against background sources. These structures 
+are generally detected through the H alpha line. 
+\end{enumerate} 
+
+The 336n filter only covers a few hundred Angstroms rather than thousands like broadband filters. 
+These filters require longer exposure or larger telescopes to reach the same signal-to-noise ratio of other filters. 
+However, these filters are designed to detect physically meaningful sections of an object's spectrum. The u filter lies to the left of the "Balmer Jump", which acts as 
+an indicator of an object's temperature. The Stromgren-u is used to detect an object's colour, its blanket absorbtion from heavy elements, and individual absorbtion lines. 
+In combination with the v and b bands, the three Stromgren filters can be used to predict an object's age, colour, and temperature. 
+
+
+\subsection{HST Instruments}
+
+\section{Data} 
+\subsection{Preprocessing}
+\begin{enumerate}
+\item Describe the filters applied to the data.
+\item Plots of uncertainties
+\end{enumerate}
+
+\section{Filter Selection and Colour Combinations} 
+\begin{enumerate}
+\item Bands used 
+\item Description of bands used 
+\item Plots of bands 
+\item Colour combinations 
+\item Plots of colours
+\end{enumerate}
+
+\begin{thebibliography}{9}
+
+\bibitem{WFC3EarlyReleaseDocumentation}
+Wide Field Camera 3 Science Commitee,
+\textit{WFC3 Early Release Documentation}, 
+Hubble Space Telescope, Online, 2009
+
+\end{thebibliography}
+
+\end{document}
