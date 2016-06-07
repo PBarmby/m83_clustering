@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # -*- coding: utf-8 -*-
 """
 Created on Fri Apr 03 13:24:41 2015
@@ -666,4 +667,3 @@ def user_input():
 
 if __name__ == "__main__": 
     user_input()
-    

@@ -10,11 +10,15 @@ import pylab as pylab
 from matplotlib import pyplot as plt 
 from astropy.table import Table, Column
 
+<<<<<<< HEAD
 #Kmeans imports
+
 from sklearn.cluster import KMeans
+from sklearn.cluster import MeanShift, estimate_bandwidth
 from sklearn import preprocessing 
 from sklearn import metrics 
 from sklearn.metrics import pairwise_distances
+
 from matplotlib.patches import Ellipse
 from scipy.stats import norm
 
@@ -34,10 +38,11 @@ band_names = {'05_225': 11, '3_225': 13, '05_336': 15,  '3_336': 17, '05_373': 1
 # used for plots
 cluster_colours = ['y','g','b','r','c','m','k','m','w','y','g','b','r','c','m','k','m','w','y','g','b','r','c','m','k','m','w'] 
 
+<<<<<<< HEAD
 #Input file, columns correspond to different wavelengths 
 inputdata  = 'hlsp_wfc3ers_hst_wfc3_m83_cat_all_v1.txt'
 data = Table.read(inputdata, format = 'ascii.commented_header', guess = False)
-   
+
 # need this so that output files always have the same number of columns
 max_num_clusters = 20
 
@@ -195,8 +200,8 @@ def do_everything(analysis, KMEANS_number_cluster, MST_xy_data, make_plots, KMPL
     id_output = ID_table
     generate_results_summary = make_results_summary 
     
-    print analysis_criteria
-    
+
+
     #Experiments listed in experiments.txt file 
         
     run = np.genfromtxt(input_file, dtype='str')
@@ -210,7 +215,7 @@ def do_everything(analysis, KMEANS_number_cluster, MST_xy_data, make_plots, KMPL
     
     for i in range(0, len(run)):
         
-        '''Get Data'''
+        #Get Data
         #Colour 1 
         wave1 = data[run[i,0]]
         wave2 = data[run[i,1]]
@@ -226,6 +231,7 @@ def do_everything(analysis, KMEANS_number_cluster, MST_xy_data, make_plots, KMPL
     
         colour1 = wave1[greatdata] - wave2[greatdata]
         colour2 = wave3[greatdata] - wave4[greatdata]
+
         
         '''Run Analysis''' 
         
@@ -258,7 +264,6 @@ def do_everything(analysis, KMEANS_number_cluster, MST_xy_data, make_plots, KMPL
             
             silhouette_score, num_obj, mst_scale = 0 
         
-        
                
         input_str =  '{} {}'.format(np.array_str(run[i][:])[1:-1], numberofclusters) # list of input parameters: bands and num of clusters
         
@@ -275,22 +280,18 @@ def do_everything(analysis, KMEANS_number_cluster, MST_xy_data, make_plots, KMPL
         # run KMEANS clustering based on the number of clusters found using MEANSHIFT
         #score, num_obj =  do_kmeans(run[i,0], run[i,1], run[i,2], run[i,3], colour1, colour2, greatdata, numberofclusters, mp_KM_COLOUR, mp_KM_XY, output_cluster_id=oci)
         #total_obj = num_obj.sum()
-        
-          # Kmeans Clustering 
-        
-        #if "kmeans" in analysis_criteria: 
-        
-        # MST Clustering
-          
-        #if "mst" in analysis_criteria: 
-            
-         #   mst_scale = mst_clustering(greatdata)
-        
-        
-def do_meanshift (band1, band2, band3, band4, colour1, colour2, make_plot):
+    
+
+
+
+
+
+def do_meanshift (band1, band2, band3, band4, colour1, colour2, make_plots):
     '''Does meanshift clustering to determine a number of clusters in the 
         data, which is passed to KMEANS function'''
-        
+
+    data = np.loadtxt(inputdata)
+
     #Input Checking
     #if band1 == band2 or band3 == band4: 
         #print "Not a good idea to use the same band in one colour, try again"
@@ -300,13 +301,26 @@ def do_meanshift (band1, band2, band3, band4, colour1, colour2, make_plot):
             #print "Can't find %s in band_name list" %band
             #return
         
-  
+    #Import 4 different wavelengths
+    #Colour 1: 05_mag
+    wave1 = data[:, band_names[band1]]
+    wave2 = data[:, band_names[band2]]
+    
+    #Colour 2: 05_mag
+    wave3 = data[:, band_names[band3]]
+    wave4 = data[:, band_names[band4]]
+    
+    gooddata1 = np.logical_and(np.logical_and(wave1!=badval, wave2!=badval), np.logical_and(wave3!=badval, wave4!=badval)) # Remove data pieces with no value 
+    gooddata2 = np.logical_and(np.logical_and(wave1<maglim, wave2<maglim), np.logical_and(wave3<maglim, wave4<maglim))
+    greatdata = np.logical_and(gooddata1, gooddata2)
+    
+    colour1 = wave1[greatdata] - wave2[greatdata]
+    colour2 = wave3[greatdata] - wave4[greatdata]
+    
+      
     #Truncate data
     X = np.vstack([colour1, colour2]).T
 
-   
-    # Compute clustering with MeanShift
-   
     #Scale data because meanshift generates circular clusters 
     X_scaled = preprocessing.scale(X)
 
@@ -315,7 +329,7 @@ def do_meanshift (band1, band2, band3, band4, colour1, colour2, make_plot):
     # as a value.
 
     bandwidth = estimate_bandwidth(X)
-    
+
     # Meanshift clustering 
     ms = MeanShift(bandwidth=bandwidth, bin_seeding=True, cluster_all=False)
     ms.fit(X_scaled)
@@ -329,9 +343,6 @@ def do_meanshift (band1, band2, band3, band4, colour1, colour2, make_plot):
         make_ms_plots(colour1, colour2, n_clusters, X, ms, band1, band2, band3, band4)
     
     return(n_clusters)
-    
-
-    
     
     
 
@@ -490,7 +501,6 @@ def make_ms_plots(colour1, colour2, n_clusters, X, ms, band1, band2, band3, band
               cmap=plt.cm.binary)
 
     # plot clusters
-    
 
     for i in range(n_clusters):
         Xi = X[ms.labels_ == i]
@@ -503,23 +513,12 @@ def make_ms_plots(colour1, colour2, n_clusters, X, ms, band1, band2, band3, band
                H.T, bins, colors='r')
 
     ax.xaxis.set_major_locator(plt.MultipleLocator(0.3))
-   
     ax.set_xlabel(band1+' - '+band2)
     ax.set_ylabel(band3+' - '+band4)
     
     plt.show()
     
     return ()
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
 def colour_kmeans_plot(band1, band2, band3, band4, clf, scaler, colour1, colour2, number_clusters):
@@ -530,11 +529,9 @@ def colour_kmeans_plot(band1, band2, band3, band4, clf, scaler, colour1, colour2
     ax = fig.add_subplot(111)
             
     # Compute 2D histogram of the input 
-        
     H, C1_bins, C2_bins = np.histogram2d(colour1, colour2, 50)
         
     #Plot Density 
-        
     ax = plt.axes()
     ax.imshow(H.T, origin = 'lower', interpolation ='nearest', aspect='auto', 
                   extent = [C1_bins[0], C1_bins[-1],
@@ -548,17 +545,15 @@ def colour_kmeans_plot(band1, band2, band3, band4, clf, scaler, colour1, colour2
         ax.scatter(cluster_centers[i, 0], cluster_centers[i, 1],
                        s=40, c=cluster_colours[i], edgecolors='k')
         
-    #Plot cluster centers
-        
+    #Plot cluster boundaries 
     C1_centers = 0.5 * (C1_bins[1:] + C1_bins[:-1])
     C2_centers = 0.5 * (C2_bins[1:] + C2_bins[:-1])
-        
     clusterdatagrid = np.meshgrid(C1_centers, C2_centers)
     clusterdatagrid = np.array(clusterdatagrid).reshape((2, 50 * 50)).T
         
     H = clf.predict(scaler.transform(clusterdatagrid)).reshape((50,50))
-        
     #Plot boundries 
+
     for i in range(number_clusters):
         Hcp = H.copy()
         flag = (Hcp == i)
@@ -566,13 +561,10 @@ def colour_kmeans_plot(band1, band2, band3, band4, clf, scaler, colour1, colour2
         Hcp[~flag] = 0
         
         ax.contour(C1_centers, C2_centers, Hcp, [-0.5, 0.5],
-
                        linewidths=1, c='k')
-                      
                       
     #Set axes for each plot
     ax.xaxis.set_major_locator(plt.MultipleLocator(0.3))
-        
     ax.set_xlabel(band1+' - '+band2)
     ax.set_ylabel(band3+' - '+band4)
         
@@ -594,7 +586,7 @@ def colour_kmeans_plot(band1, band2, band3, band4, clf, scaler, colour1, colour2
 
 def xy_plot (x, y, number_clusters, cluster_number, band1, band2, band3, band4):
     '''Plot xy positions of objects in different clusters'''
-   
+
     fig2 = plt.figure(figsize=(5,5))
     ax2 = fig2.add_subplot(111)
     
@@ -604,7 +596,6 @@ def xy_plot (x, y, number_clusters, cluster_number, band1, band2, band3, band4):
         y_cluster = y[cluster_number == i]
         ax2.scatter(x_cluster, y_cluster, label = i, c=cluster_colours[i])
 
-    
     ax2.set_xlabel('X [pixels]')
     ax2.set_ylabel('Y [pixels]')
     ax2.legend()
@@ -661,7 +652,6 @@ def results_summary(input_file = 'results.txt'):
          
         if numberoftrials > 0:
             fig, ax = plt.subplots()
-                                  
             X = np.arange(0,numberoftrials)
             
             
@@ -677,7 +667,7 @@ def results_summary(input_file = 'results.txt'):
                 ax.bar(X,Y,color = cluster_colours[n], bottom = yprev)  #Plot bar graph
 
     filename = 'n_clusters_vs_FractionalSize.png'
-    pylab.savefig(filename)
+    #pylab.savefig(filename)
 
     fig, ax = plt.subplots()
     ax.scatter(score, biggest_clust_fract)
@@ -687,7 +677,7 @@ def results_summary(input_file = 'results.txt'):
     fig.show()
     
     filename = 'Score_vs_FractionalSize.png'
-    pylab.savefig(filename)
+    #pylab.savefig(filename)
 
     return()
 

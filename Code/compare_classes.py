@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # -*- coding: utf-8 -*-
 """
 Created on Tue Jan 26 14:29:05 2016
@@ -91,4 +92,6 @@ def plot_classes_v2(match_tab, class1, class2, class1_lab = 'NED', class2_lab='K
     ax.set_ylim(0,n2in1.sum(axis=1).max()*1.1)
     ax.legend()
     fig.show()
+
     return
+
