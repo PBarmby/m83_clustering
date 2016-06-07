@@ -1,18 +1,73 @@
-Outline of intro:
+\Section{Introduction}
 
-\begin{enumerate}
-\item Galaxies have a lot of discrete sub-components: stars, clusters, nebulae, nucleus.
-\item One way to isolate specific components is with narrow-band filters or CMD analysis.
-\item But what if you already have all the filters, and you want to make a census? Can start
-with properties of known classes of objects \& pick out from multi-dimensional dataset.
-\item Another approach is to see what blind clustering gets you: how many groups and what are they?
-How does this depend on the (number of) wavelengths used?
-\end{enumerate}
+%\item Galaxies have a lot of discrete sub-components: stars, clusters, nebulae, nucleus.
+Galaxies are complex systems, comprised of numerous components with an enourmous range of size,
+mass, density, and composition.
+These components can be divided into baryonic (stars and their remnants,
+nebulae, star clusters, nucleus) and non-baryonic (dark matter);
+cataloging the components and describing
+the interactions between them is a key step in elucidating the natural history of galaxies.
+Only in nearby galaxies can individual sub-components be resolved.
+As observational technology has advanced,
+the definition of ``nearby'' has changed and will continue to do so, from Milky Way satellites and Local Group galaxies, to a few
+Megaparsecs \citep[distance at which stars can be resolved with HST][]{},
+to XX Mpc \citep[distance at which stars can be resolved with JWST][]{},
+to the entire observable universe with potential future facilities \citep{}.
 
-Work to be cited: 
-\begin{itemize}
-\item astro applications of k-means clustering 
-\item astro applications of other ML techniques
-\item general bkg on galaxy constituents
-\item ??
-\end{itemize}
+%\item One way to isolate specific components is with narrow-band filters or CMD analysis.
+What is the most efficient way to survey the sub-components of a nearby galaxy?
+Here we are discussing components detectable in imaging at ultraviolet through infrared wavelengths,
+i.e. with effective temperatures in the range XX--XX~K.
+Much cooler or hotter types of objects (molecular gas, accreting compact objects) are better-detected at other wavelengths.
+Particular stellar types, or star clusters, are often identified with broad-band colour-magnitude diagrams \citep[e.g.][]{}.
+Narrow-band filters can also isolate special stellar types \citep[e.g.][]{} or objects prominent in emission
+lines such as planetary nebulae or supernova remnants \citep[e.g.][]{}.
+Observations are typically designed with detection of particular classes in mind and sometimes re-used for additional purposes \citep[e.g.][]{}.
+Spectroscopic follow-up is often required to confirm candidates.
+New observational facilities which provide spatially-resolved spectroscopy  \citep[e.g.]{}{} may reduce the need for separate imaging and follow-up steps,
+but greatly increase the complexity of initial data analysis.
+
+
+Multi-wavelength surveys are extremely common in studies of unresolved galaxies in the distant universe.
+While these are often designed to select galaxies or active galactic nuclei with specific properties \citep[e.g.][]{},
+sometimes they are pure blank-field surveys.
+Broadband ($R=\Delta \lambda/\lambda \lesssim X$) filters are the most common imaging modality,
+although there have been a few attempts at narrow- or medium-band surveys as well \citep[e.g.][]{combo-17},
+Clustering in colour space can be used to select particular classes of objects from a survey,
+for example in selecting AGN via mid-infrared colours \citep[e.g.][]{},
+or high-redshift galaxies via Lyman-break dropouts \citep[e.g.][]{}. 
+{\bf give some examples here of sophisticated analysis of colour spaces.}
+
+%\item But what if you already have all the filters, and you want to make a census? 
+%Can start with properties of known classes of objects \& pick out from multi-dimensional dataset.
+%\item Another approach is to see what blind clustering gets you: how many groups and what are they?
+%How does this depend on the (number of) wavelengths used?
+The purpose of this work is to treat a nearby galaxy as if it were a blank field for surveys, and investigate the
+usefulness of different photometric colours for identifying sub-components.
+We make use of the Early Release Science (ERS) observations with the Wide-Field Camera 3 (WFC3) of the nearby spiral galaxy M83 \citep{}
+and in particular the catalog of point sources produced by \citet{}.
+We form colours from the photometric measurements in the catalog and apply several clustering techniques to two-colour datasets.
+In conjunction with published catalogs of galaxy components, we identify the optimum parameters for clustering such a photometric dataset,
+and the best choices of filter.
+
+
+
+
+%Outline of intro:
+%
+%\begin{enumerate}
+%\item Galaxies have a lot of discrete sub-components: stars, clusters, nebulae, nucleus.
+%\item One way to isolate specific components is with narrow-band filters or CMD analysis.
+%\item But what if you already have all the filters, and you want to make a census? Can start
+%with properties of known classes of objects \& pick out from multi-dimensional dataset.
+%\item Another approach is to see what blind clustering gets you: how many groups and what are they?
+%How does this depend on the (number of) wavelengths used?
+%\end{enumerate}
+%
+%Work to be cited: 
+%\begin{itemize}
+%\item astro applications of k-means clustering 
+%\item astro applications of other ML techniques
+%\item general bkg on galaxy constituents
+%\item ??
+%\end{itemize}
