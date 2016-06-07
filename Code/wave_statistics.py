@@ -29,7 +29,7 @@ def stats(path_):
     stats_path = make_directory(path_)
     file_name = "filter_statistics.txt"
     file_path = os.path.join(stats_path, file_name)
-    header = "# band wave_mean wave_median wave_std wave_var wave_min wave_max unc_mean unc_median unc_std unc_var unc_min unc_max"
+    header = "# band wave_mean wave_median wave_std wave_var wave_min wave_max num_obj unc_mean unc_median unc_std unc_var unc_min unc_max"
     if not os.path.exists(file_path):
         stats_file = open(file_path, "a")
         stats_file.write(header + '\n')
@@ -50,9 +50,9 @@ def stats(path_):
         mag_var = np.var(band_data_trim)
         mag_min = np.min(band_data_trim)
         mag_max = np.max(band_data_trim)
-        #mag_bad_obs = remove_bad_data.count('False')
+        mag_obj = len(band_data_trim)
         # Create string to write
-        mag_string = "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f}".format(mag_mean, mag_median, mag_stdev, mag_var, mag_min, mag_max)#, mag_bad_obs)
+        mag_string = "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {}".format(mag_mean, mag_median, mag_stdev, mag_var, mag_min, mag_max, mag_obj)#, mag_bad_obs)
         # Compute Uncertainty Statistics
         unc_mean = np.mean(band_unc_trim)
         unc_median = np.median(band_unc_trim)
