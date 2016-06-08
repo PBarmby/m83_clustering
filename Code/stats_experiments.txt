@@ -1,0 +1,10 @@
+# band1 band2 
+mag05_225 mag05_555
+mag05_438 mag05_555
+mag05_555 mag05_814
+mag05_336 mag05_555
+mag05_373 mag05_555
+mag05_487 mag05_555
+mag05_502 mag05_555
+mag05_555 mag05_657
+mag05_555 mag05_673 
