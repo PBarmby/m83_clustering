@@ -1,9 +1,126 @@
-Outline for data section
+\section{Data}
 
-\begin{enumerate}
-\item Intro to WFC3 ERS dataset
-\item intro to M83: global parameters (distance, size, environment)
-\item existing studies with this dataset (cluster, massive stars, etc)
-\item description of catalog (is there a ref for this??)
-\item anything about these data we don't like/didn't use?
-\end{enumerate}
+%\item intro to M83: global parameters (distance, size, environment)
+The dataset used for this study is the Wide-Field Camera-3
+Early Release Science (ERS) observations of the nearby spiral galaxy Messier 83 (M83).
+M83 is a grand-design spiral of type SAB, located at a distance of 4.66~Mpc \citep{tully13}
+and the largest member of the M83 subgroup of the nearby Centaurus group of galaxies \citep{tully15}.
+The galaxy's apparent radius of $\sim12$~arcmin \citep{} is reasonably well-matched to the camera's field of view (XX true? XX)
+{\bf And here we note some other interesting things about M83.}
+
+%\item Intro to WFC3 ERS dataset
+%\item existing studies with this dataset (cluster, massive stars, etc)
+% ref: chandar10, section. TODO: check for (unintentional!) plagiarism
+The objective of the ERS observations as a whole was to probe star formation in galaxies.
+The observations of M83 were made in broad- and narrow-band filters in order to characterize both stellar and nebular properties.
+They cover a $3.6\times3.6$~kpc$^2$ region in the northern portion of the galaxy, including the nucleus,
+a portion of a spiral arm and an interarm region.
+The spatial resolution of the images is $0\farcs0396$~arcsec~pixel$^{-1}$,
+corresponding to a linear scale of $XX$~pc~pixel$^{-1}$ at the 4.66~Mpc distance.
+A complete description of the observations and data processing is given by \citet{chandar10};
+our work here uses the observations in the UVIS channel, listed in Table~\ref{tab:filters}.
+A number of previous studies have used the ERS M83 dataset for various purposes.
+These include studies of 
+star clusters \citep{chandar10, woffard11, whitmore11, bastian11, bastian12, fousneau12, silva13, andrews14, chandar14, adamo15,ryon15,hollyhead15, sun16},
+H~{\sc ii} regions \citep{liu13}, supernova remnants and the interstellar medium \citep{dopita10, hong11, blair14, blair15}, 
+resolved stars \citep{kim12, williams15},
+and a super-Eddington off-nuclear black hole \citep{soria14}.
+
+
+\begin{table}
+\centering
+\caption{
+\label{tab:filters}
+\begin{tabular}{lll}
+\hline\hline
+Filter & Name & Exposure time\\
+\hline
+F225W &  Wide UV & 1800~s\\
+F336W &  $U$-band & 1890~s\\ 
+F373N &  [\ion{O}{iii}] & 2400~s\\
+F438W &  $B$-band & 1180~s\\
+F487N &  H$\beta$ & 2700~s\\
+F502N &  [\ion{O}{ii}] & 2484~s
+F555W &  V-band, South field & 1203~s\\
+%F547M &  V-band, North field & \\
+F657N &  H$\alpha$+[\ion{N}{ii}]& 1484~s\\ 
+F673N &  [\ion{S}{ii}] & 1850~s\\
+F814W &  $I$-band & 1203~s\\
+\hline
+\end{tabular}
+\end{table}
+
+We analyze the catalog produced by \citet{chandar10} and made available via **REF**.
+The objects in this catalog were detected on a `white-light' image produced by a weighted combination of the $UBVI$ images.
+Photometry in 0.5- and 3-pixel radius apertures at the positions of the detected sources was performed on the broad- and narrow-band images and tabulated in the Vega magnitude system. %TODO: pick one of the 2 apertures and just use that. AK: ideas on which one?
+We apply the correction to the F657N magnitude zeropoint (from 20.72 to 22.35) noted in the header of the catalog.
+\citet{chandar10} discussed aperture corrections for this catalog, but since we are primarily concerned with colours,
+we omit any aperture corrections. %TODO: make sure this is a good idea.
+The catalog contains about 68000 objects which are expected to include individual stars, star clusters,
+supernova remnants, H${\sc ii}$ regions, planetary nebulae, %TODO: check that we expect these to be detectable!
+stellar blends, and background galaxies. % TODO: anything else?
+Completeness and reliability of the catalog are not discussed by \citet{chandar10},
+but a visual inspection of the the detected sources on the white-light image suggests that %TO BE COMPLETED..
+XX objects are flagged in the catalog as being problematic %TODO: AK please compute this number using flag column
+and we remove them from our analysis.
+
+Table~\ref{tab:cat_numbers} and Figure~\ref{fig:mag_unc} characterize the catalog in terms of measurements in individual filters.
+Not all objects are detected in all filters;
+Table~\ref{tab:cat_numbers} gives the number of objects for which photometry is reported in a given filter,
+the number for which reported magnitude uncertainty is $0.2$~mag or less,
+and the aperture magnitude at which the median magnitude uncertainty is $0.2$~mag. 
+%TODO: think about whether 0.2 is the right number.
+% Catalog header says ``The  errors are probably reasonable but have not been "normalized" to truth (by comparing  subexposures), so not recomm ended for use except in a relative scale.'' Chandar paper does not discuss mag uncertainties.
+Figure~\ref{fig:mag_unc} shows the distributions of magnitudes and uncertainties in the individual filters.
+
+%AK: please calculate numbers here. For the last column scipy.stats.binned_statistic is a good way to do this.
+\begin{table}
+\centering
+\caption{
+\label{tab:cat_numbers}
+\begin{tabular}{lrrlr}
+\hline\hline
+Filter & $N_{\rm obj}$ & $N_{\rm good}$ & $m_{\rm good}$ & $N_{\rm X-555}$\\
+\hline
+F225W &  N & N & m & N\\
+F336W &  N & N & m & N\\
+F373N &  N & N & m & N\\
+F438W &  N & N & m & N\\
+F487N &  N & N & m & N\\
+F502N &  N & N & m & N\\
+F555W &  N & N & m & N\\
+F657N &  N & N & m & N\\
+F673N &  N & N & m & N\\
+F814W &  N & N & m & N\\
+\hline
+\end{tabular}
+\end{table}
+
+%AK: here's where the plots go.
+\begin{figure*}
+\centering
+%\includegraphics{fig1}
+\caption{Distribution of magnitudes and uncertainties for objects in the \citet{chandar10} M83 ERS catalog.}
+\label{fig:mag_unc}
+\end{figure*}
+
+% TODO: discuss (this might also go in a different section)
+Our analysis in this paper is primarily concerned with colours, rather than luminosities.
+Uncertainties in colours are computed as the quadrature sum of the relevant magnitudes.
+Observations in 10 bands allow the generation of 45 different colours,
+but not all of these colours are likely to be useful in characterizing components of the galaxy.
+As the F555W band has the most individual detections, %TODO: AK: is this true?
+we initially compute colours relative to this band.
+The last column of Table~\ref{tab:cat_numbers} gives the number of objects for which a `good' colour (uncertainty $<0.2$~mag) is available.
+%TODO: may use different number than 0.2.
+
+
+
+%Outline for data section
+%%\begin{enumerate}
+%\item Intro to WFC3 ERS dataset
+%\item intro to M83: global parameters (distance, size, environment)
+%\item existing studies with this dataset (cluster, massive stars, etc)
+%\item description of catalog (is there a ref for this??)
+%\item anything about these data we don't like/didn't use?
+%\end{enumerate}
