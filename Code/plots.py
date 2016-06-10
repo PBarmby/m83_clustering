@@ -73,8 +73,8 @@ def load_data(surveyfile_, experiments):
 
 def data(data, band1, band2, band3, band4):
     '''Select data for analysis'''
-    ratio = 0.05
-    data = data[10000:30000]
+    ratio = 0.25
+    data = data#[10000:30000]
     # Colour 1
     wave1 = data[band1]
     wave1_unc = data[band1+'_unc']
@@ -93,10 +93,10 @@ def data(data, band1, band2, band3, band4):
     wave3_trim = np.logical_and(wave3 != -99, wave3_unc != -99)
     wave4_trim = np.logical_and(wave4 != -99, wave4_unc != -99)
 
-    colour1_ratio = np.logical_and(wave1_unc/wave1 < ratio,
-                                   wave2_unc/wave2 < ratio)
-    colour2_ratio = np.logical_and(wave3_unc/wave3 < ratio,
-                                   wave4_unc/wave4 < ratio)
+    colour1_ratio = np.logical_and(wave1_unc < ratio,
+                                   wave2_unc < ratio)
+    colour2_ratio = np.logical_and(wave3_unc < ratio,
+                                   wave4_unc < ratio)
 
     gooddata1 = np.logical_and(np.logical_and(wave1_trim, wave2_trim),
                                np.logical_and(wave3_trim, wave4_trim))

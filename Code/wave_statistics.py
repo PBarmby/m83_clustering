@@ -5,28 +5,28 @@ from matplotlib import pyplot as plt
 from itertools import cycle
 
 
-def unc_limit(path_):
+def band_unc_limit(path_):
     data = Table.read('data.txt', format='ascii.commented_header', guess=False)
     band_names = data.colnames
     unc_limit_path = make_directory(path_)
-    file_name = "unc-mag_limits_statistics.txt"
+    file_name = "band_unc_limit_statistics.txt"
     file_path = os.path.join(unc_limit_path, file_name)
     header = "# band limit n_objects"
     if not os.path.exists(file_path):
         unc_limit_file = open(file_path, "a")
         unc_limit_file.write(header + '\n')
         unc_limit_file.close()
-    for i in range (11, len(data.colnames), 2): 
+    for i in range (11, len(data.colnames), 2):
         unc_limit_file = open(file_path, "a")
         band = band_names[i]
         band_mag = data[band]
         band_unc = data[band+'_unc']
-        trim = np.logical_and(band_mag != -99, band_unc != 99)
+        trim = np.logical_and(band_mag != -99, band_unc != -99)
         band_mag_trim = band_mag[trim]
         band_unc_trim = band_unc[trim]
         for k in range(10, 100, 10):
             limit = float(k)/100
-            gooddata = band_unc_trim[band_unc_trim/band_mag_trim < limit]
+            gooddata = band_mag_trim[band_unc_trim < limit]
             limit_string = "{} {:.4f} {}".format(band, limit, len(gooddata))
             unc_limit_file.write(limit_string + '\n')
         unc_limit_file.close()
@@ -49,21 +49,30 @@ def colour_unc(path_):
 
     for i in range(0, len(trials)):
         col_unc_file = open(file_path, "a")
+        # Load Band1
         band1 = trials['band1'][i]
-        band2 = trials['band2'][i]
         band1_mag = data[band1]
         band1_unc = data[band1 + '_unc']
+        # Remove Band1 no detections
         band1_trim = np.logical_and(band1_mag != -99, band1_unc != -99)
+        # Load Band2
+        band2 = trials['band2'][i]
         band2_mag = data[band2]
         band2_unc = data[band2 + '_unc']
+        # Remove Band2 no detections
         band2_trim = np.logical_and(band2_mag != -99, band2_unc != -99)
+        # Remove no detections in one band
         colour_trim = np.logical_and(band1_trim, band2_trim)
+        band1_mag_clean = band1_mag[colour_trim]
+        band2_mag_clean = band2_mag[colour_trim]
         band1_unc_clean = band1_unc[colour_trim]
         band2_unc_clean = band2_unc[colour_trim]
-        col_unc= np.sqrt(band1_unc_clean*band1_unc_clean+band2_unc_clean*band2_unc_clean)
+        # Compute Color and uncertainty
+        col_mag = band1_mag_clean - band2_mag_clean
+        col_unc = np.sqrt(band1_unc_clean*band1_unc_clean+band2_unc_clean*band2_unc_clean)
         for k in range(1, 10):
             limit = float(k)/10
-            gooddata = col_unc[col_unc < limit]
+            gooddata = col_mag[col_unc < limit]
             limit_string = "{} {} {} {}".format(band1, band2, limit,
                                                 len(gooddata))
             col_unc_file.write(limit_string + "\n")
@@ -95,6 +104,7 @@ def band_id(path_):
 
 
 def col_stats(path_): 
+    '''Not filtered based on uncertainty - only removed -99'''
     data = Table.read('data.txt', format='ascii.commented_header', guess=False)
     trials = Table.read('stats_experiments.txt',
                         format='ascii.commented_header', guess=False)
@@ -146,6 +156,7 @@ def col_stats(path_):
 
 
 def band_stats(path_): 
+    '''Not filtered based on uncertainty - only removed -99'''
     data = Table.read('data.txt', format='ascii.commented_header', guess=False)
     band_names = data.colnames
     stats_path = make_directory(path_)
@@ -200,4 +211,3 @@ def make_directory(p_path):
         os.makedirs(pl_path)
 
     return(pl_path)
-    

@@ -58,9 +58,10 @@ def wave_uncertainty(wave_05, wave_3, wave_05_unc, wave_3_unc, greatdata,
     ax2.set_ylabel(band_3+'unc')
     ax2.set_xlabel(band_05 + ' (top) - ' + band_3 + ' (bottom)')
     plt.setp(ax2.get_xticklabels(), fontsize=6)
+    plt.gca().set_ylim(0,0.2)
     '''Display interactive figure if # removed, if not, figures saved'''
     # plt.show
-    file_name = 'uncertainty_{}.png'.format(band_05)
+    file_name = 'uncertainty_02_lim_{}.png'.format(band_05)
 
     pylab.savefig(os.path.join(save, file_name))
     plt.close()
