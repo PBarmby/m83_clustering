@@ -109,7 +109,7 @@ def col_stats(path_):
     trials = Table.read('stats_experiments.txt',
                         format='ascii.commented_header', guess=False)
     col_path = make_directory(path_)
-    file_name = "col_statistics.txt"
+    file_name = "05_col_statistics.txt"
     file_path = os.path.join(col_path, file_name)
     header = "# band1 band2 colour_mean colour_median colour_std colour_var colour_min colour_max num_obj unc_mean unc_median unc_std unc_var unc_min unc_max"
     if not os.path.exists(file_path):
@@ -124,8 +124,10 @@ def col_stats(path_):
         band2 = trials['band2'][i]
         band2_mag = data[band2]
         band2_unc = data[band2+'_unc']
-        trim = np.logical_and(np.logical_and(band1_mag != -99, band1_unc != -99),
+        remove_bad = np.logical_and(np.logical_and(band1_mag != -99, band1_unc != -99),
                               np.logical_and(band2_mag != -99, band2_unc != -99))
+        limit = np.logical_and(band1_unc < 0.2, band2_unc < 0.2)
+        trim = np.logical_and(remove_bad, limit)
         band1_mag_trim = band1_mag[trim]
         band1_unc_trim = band1_unc[trim]
         band2_mag_trim = band2_mag[trim]
@@ -156,11 +158,11 @@ def col_stats(path_):
 
 
 def band_stats(path_): 
-    '''Not filtered based on uncertainty - only removed -99'''
+    '''Not filtered based on uncertainty - only removed -99 - now removed <0.2 unc'''
     data = Table.read('data.txt', format='ascii.commented_header', guess=False)
     band_names = data.colnames
     stats_path = make_directory(path_)
-    file_name = "filter_statistics.txt"
+    file_name = "filter_statistics-with_limit.txt"
     file_path = os.path.join(stats_path, file_name)
     header = "# band wave_mean wave_median wave_std wave_var wave_min wave_max num_obj unc_mean unc_median unc_std unc_var unc_min unc_max"
     if not os.path.exists(file_path):
@@ -173,7 +175,9 @@ def band_stats(path_):
         band_data = data[band_names[i]]
         band_unc_data = data[band_names[i+1]]
         # Remove bad data 
-        remove_bad_data = np.logical_and(band_data != -99, band_unc_data != -99)
+        remove_bad_data = np.logical_and(np.logical_and(band_data != -99,
+                                                        band_unc_data != -99),
+                                                        band_unc_data < 0.2)
         band_data_trim = band_data[remove_bad_data]
         band_unc_trim = band_unc_data[remove_bad_data]
         # Compute Magnitude Statistics
