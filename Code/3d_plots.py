@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from astropy.table import Table
 
 data = Table.read('data.txt', format='ascii.commented_header', guess=False)
-aperture = '05'
+aperture = '3'
 band1 = 'mag{}_555'.format(aperture)
 band2 = 'mag{}_814'.format(aperture)
 band3 = 'mag{}_336'.format(aperture)
