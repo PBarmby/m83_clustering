@@ -40,32 +40,23 @@
   {Soria} R.,  {Kuntz} K.~D.,  {Plucinsky} P.~P.,  {Dopita} M.~A.,
   {Stockdale} C.,  2015, \apj, 800, 118
 
+\bibitem[\protect\citeauthoryear{{Chandar} et~al.,}{{Chandar}
+  et~al.}{2010}]{chandar10}
+{Chandar} R.,  et~al., 2010, \apj, 719, 966
+
 \bibitem[\protect\citeauthoryear{{Chandar}, {Whitmore}, {Calzetti} \&
   {O'Connell}}{{Chandar} et~al.}{2014}]{chandar14}
 {Chandar} R.,  {Whitmore} B.~C.,  {Calzetti} D.,    {O'Connell} R.,  2014,
   \apj, 787, 17
 
-\bibitem[\protect\citeauthoryear{{Chandar}, {Whitmore}, {Kim}, {Kaleida},
-  {Mutchler}, {Calzetti}, {Saha}, {O'Connell}, {Balick}, {Bond}, {Carollo},
-  {Disney}, {Dopita}, {Frogel}, {Hall}, {Holtzman}, {Kimble}, {McCarthy},
-  {Paresce}, {Silk}, {Trauger}, {Walker},]{chandar10}
-{Chandar} R.,  {Whitmore} B.~C.,  {Kim} H.,  {Kaleida} C.,  {Mutchler} M.,
-  {Calzetti} D.,  {Saha} A.,  {O'Connell} R.,  {Balick} B.,  {Bond} H.,
-  {Carollo} M.,  {Disney} M.,  {Dopita} M.~A.,  {Frogel} J.~A.,  {Hall} D.,
-  {Holtzman} J.~A.,  {Kimble} R.~A.,  {McCarthy} P.,  {Paresce} F.,  {Silk} J.,
-   {Trauger} J.,  {Walker} A.~R.,  {Windhorst} R.~A.,    {Young} E.,  2010,
-  \apj, 719, 966
+\bibitem[\protect\citeauthoryear{{Dopita} et~al.,}{{Dopita}
+  et~al.}{2010}]{dopita10}
+{Dopita} M.~A.,  et~al., 2010, \apj, 710, 964
 
-\bibitem[\protect\citeauthoryear{{Dopita}, {Blair}, {Long}, {Mutchler},
-  {Whitmore}, {Kuntz}, {Balick}, {Bond}, {Calzetti}, {Carollo}, {Disney},
-  {Frogel}, {O'Connell}, {Hall}, {Holtzman}, {Kimble}, {MacKenty}, {McCarthy},
-  {Paresce}, {Saha}, {Silk}, {Sirianni},]{dopita10}
-{Dopita} M.~A.,  {Blair} W.~P.,  {Long} K.~S.,  {Mutchler} M.,  {Whitmore}
-  B.~C.,  {Kuntz} K.~D.,  {Balick} B.,  {Bond} H.~E.,  {Calzetti} D.,
-  {Carollo} M.,  {Disney} M.,  {Frogel} J.~A.,  {O'Connell} R.,  {Hall} D.,
-  {Holtzman} J.~A.,  {Kimble} R.~A.,  {MacKenty} J.,  {McCarthy} P.,  {Paresce}
-  F.,  {Saha} A.,  {Silk} J.,  {Sirianni} M.,  {Trauger} J.,  {Walker} A.~R.,
-  {Windhorst} R.,    {Young} E.,  2010, \apj, 710, 964
+\bibitem[\protect\citeauthoryear{{Fouesneau}, {Lan{\c c}on}, {Chandar} \&
+  {Whitmore}}{{Fouesneau} et~al.}{2012}]{fouesneau12}
+{Fouesneau} M.,  {Lan{\c c}on} A.,  {Chandar} R.,    {Whitmore} B.~C.,  2012,
+  \apj, 750, 60
 
 \bibitem[\protect\citeauthoryear{{Hollyhead}, {Bastian}, {Adamo},
   {Silva-Villa}, {Dale}, {Ryon} \& {Gazak}}{{Hollyhead}
@@ -73,27 +64,11 @@
 {Hollyhead} K.,  {Bastian} N.,  {Adamo} A.,  {Silva-Villa} E.,  {Dale} J.,
   {Ryon} J.~E.,    {Gazak} Z.,  2015, \mnras, 449, 1106
 
-\bibitem[\protect\citeauthoryear{{Hong}, {Calzetti}, {Dopita}, {Blair},
-  {Whitmore}, {Balick}, {Bond}, {Carollo}, {Disney}, {Frogel}, {Hall},
-  {Holtzman}, {Kimble}, {McCarthy}, {O'Connell}, {Paresce}, {Saha}, {Silk},
-  {Trauger}, {Walker}, {Windhorst}, {Young} \&]{hong11}
-{Hong} S.,  {Calzetti} D.,  {Dopita} M.~A.,  {Blair} W.~P.,  {Whitmore} B.~C.,
-  {Balick} B.,  {Bond} H.~E.,  {Carollo} M.,  {Disney} M.~J.,  {Frogel} J.~A.,
-  {Hall} D.,  {Holtzman} J.~A.,  {Kimble} R.~A.,  {McCarthy} P.~J.,
-  {O'Connell} R.~W.,  {Paresce} F.,  {Saha} A.,  {Silk} J.~I.,  {Trauger}
-  J.~T.,  {Walker} A.~R.,  {Windhorst} R.~A.,  {Young} E.~T.,    {Mutchler} M.,
-   2011, \apj, 731, 45
+\bibitem[\protect\citeauthoryear{{Hong} et~al.,}{{Hong}  et~al.}{2011}]{hong11}
+{Hong} S.,  et~al., 2011, \apj, 731, 45
 
-\bibitem[\protect\citeauthoryear{{Kim}, {Whitmore}, {Chandar}, {Saha},
-  {Kaleida}, {Mutchler}, {Cohen}, {Calzetti}, {O'Connell}, {Windhorst},
-  {Balick}, {Bond}, {Carollo}, {Disney}, {Dopita}, {Frogel}, {Hall},
-  {Holtzman}, {Kimble}, {McCarthy}, {Paresce}, {Silk}]{kim12}
-{Kim} H.,  {Whitmore} B.~C.,  {Chandar} R.,  {Saha} A.,  {Kaleida} C.~C.,
-  {Mutchler} M.,  {Cohen} S.~H.,  {Calzetti} D.,  {O'Connell} R.~W.,
-  {Windhorst} R.~A.,  {Balick} B.,  {Bond} H.~E.,  {Carollo} M.,  {Disney}
-  M.~J.,  {Dopita} M.~A.,  {Frogel} J.~A.,  {Hall} D.~N.~B.,  {Holtzman} J.~A.,
-   {Kimble} R.~A.,  {McCarthy} P.~J.,  {Paresce} F.,  {Silk} J.~I.,  {Trauger}
-  J.~T.,  {Walker} A.~R.,    {Young} E.~T.,  2012, \apj, 753, 26
+\bibitem[\protect\citeauthoryear{{Kim} et~al.,}{{Kim}  et~al.}{2012}]{kim12}
+{Kim} H.,  et~al., 2012, \apj, 753, 26
 
 \bibitem[\protect\citeauthoryear{{Liu}, {Calzetti}, {Hong}, {Whitmore},
   {Chandar}, {O'Connell}, {Blair}, {Cohen}, {Frogel} \& {Kim}}{{Liu}
@@ -113,6 +88,11 @@
   {Bastian}}{{Silva-Villa} et~al.}{2013}]{silva13}
 {Silva-Villa} E.,  {Adamo} A.,    {Bastian} N.,  2013, \mnras, 436, L69
 
+\bibitem[\protect\citeauthoryear{{Soria}, {Long}, {Blair}, {Godfrey}, {Kuntz},
+  {Lenc}, {Stockdale} \& {Winkler}}{{Soria} et~al.}{2014}]{soria14}
+{Soria} R.,  {Long} K.~S.,  {Blair} W.~P.,  {Godfrey} L.,  {Kuntz} K.~D.,
+  {Lenc} E.,  {Stockdale} C.,    {Winkler} P.~F.,  2014, Science, 343, 1330
+
 \bibitem[\protect\citeauthoryear{{Sun}, {de Grijs}, {Fan} \& {Cameron}}{{Sun}
   et~al.}{2016}]{sun16}
 {Sun} W.,  {de Grijs} R.,  {Fan} Z.,    {Cameron} E.,  2016, \apj, 816, 9
@@ -128,5 +108,23 @@
   {H{\'e}raudeau} P.,  {Jacobs} B.~A.,  {Karachentsev} I.~D.,  {Makarov} D.,
   {Makarova} L.,  {Mitronova} S.,  {Rizzi} L.,  {Shaya} E.~J.,  {Sorce} J.~G.,
     {Wu} P.-F.,  2013, \aj, 146, 86
+
+\bibitem[\protect\citeauthoryear{{Whitmore} et~al.,}{{Whitmore}
+  et~al.}{2011}]{whitmore11}
+{Whitmore} B.~C.,  et~al., 2011, \apj, 729, 78
+
+\bibitem[\protect\citeauthoryear{{Williams}, {Bonanos}, {Whitmore}, {Prieto} \&
+  {Blair}}{{Williams} et~al.}{2015}]{williams15}
+{Williams} S.~J.,  {Bonanos} A.~Z.,  {Whitmore} B.~C.,  {Prieto} J.~L.,
+  {Blair} W.~P.,  2015, \aap, 578, A100
+
+\bibitem[\protect\citeauthoryear{{Wofford}, {Leitherer} \& {Chandar}}{{Wofford}
+  et~al.}{2011}]{wofford11}
+{Wofford} A.,  {Leitherer} C.,    {Chandar} R.,  2011, \apj, 727, 100
+
+\bibitem[\protect\citeauthoryear{{Wolf}, {Meisenheimer}, {Rix}, {Borch}, {Dye}
+  \& {Kleinheinrich}}{{Wolf} et~al.}{2003}]{combo-17}
+{Wolf} C.,  {Meisenheimer} K.,  {Rix} H.-W.,  {Borch} A.,  {Dye} S.,
+  {Kleinheinrich} M.,  2003, \aap, 401, 73
 
 \end{thebibliography}

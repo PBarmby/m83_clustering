@@ -1,35 +1,48 @@
-This is BibTeX, Version 0.99dThe top-level auxiliary file: m83_clust.aux
+This is BibTeX, Version 0.99d (TeX Live 2014)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: m83_clust.aux
 The style file: mn2e.bst
 Database file #1: m83_refs.bib
 Warning--I didn't find a database entry for ""
-Warning--I didn't find a database entry for "combo-17"
-Warning--I didn't find a database entry for "woffard11"
-Warning--I didn't find a database entry for "whitmore11"
-Warning--I didn't find a database entry for "fousneau12"
-Warning--I didn't find a database entry for "williams15"
-Warning--I didn't find a database entry for "soria14"
-Warning--you've exceeded 250, the entry-string-size, for entry chandar10
-while executing--line 1184 of file mn2e.bst
-*Please notify the bibstyle designer*
-Warning--you've exceeded 250, the entry-string-size, for entry dopita10
-while executing--line 1184 of file mn2e.bst
-*Please notify the bibstyle designer*
-Warning--you've exceeded 250, the entry-string-size, for entry hong11
-while executing--line 1184 of file mn2e.bst
-*Please notify the bibstyle designer*
-Warning--you've exceeded 250, the entry-string-size, for entry kim12
-while executing--line 1184 of file mn2e.bst
-*Please notify the bibstyle designer*
-Warning--you've exceeded 250, the entry-string-size, for entry kim12
-while executing--line 1223 of file mn2e.bst
-*Please notify the bibstyle designer*
-Warning--you've exceeded 250, the entry-string-size, for entry hong11
-while executing--line 1223 of file mn2e.bst
-*Please notify the bibstyle designer*
-Warning--you've exceeded 250, the entry-string-size, for entry dopita10
-while executing--line 1223 of file mn2e.bst
-*Please notify the bibstyle designer*
-Warning--you've exceeded 250, the entry-string-size, for entry chandar10
-while executing--line 1223 of file mn2e.bst
-*Please notify the bibstyle designer*
-(There were 15 warnings)
+You've used 24 entries,
+            2601 wiz_defined-function locations,
+            671 strings with 8677 characters,
+and the built_in function-call counts, 13016 in all, are:
+= -- 1171
+> -- 1223
+< -- 6
++ -- 432
+- -- 432
+* -- 1342
+:= -- 2446
+add.period$ -- 0
+call.type$ -- 24
+change.case$ -- 235
+chr.to.int$ -- 24
+cite$ -- 24
+duplicate$ -- 264
+empty$ -- 385
+format.name$ -- 461
+if$ -- 2305
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 24
+newline$ -- 75
+num.names$ -- 96
+pop$ -- 181
+preamble$ -- 1
+purify$ -- 259
+quote$ -- 0
+skip$ -- 396
+stack$ -- 0
+substring$ -- 487
+swap$ -- 24
+text.length$ -- 0
+text.prefix$ -- 144
+top$ -- 0
+type$ -- 216
+warning$ -- 0
+while$ -- 96
+width$ -- 0
+write$ -- 242
+(There was 1 warning)
