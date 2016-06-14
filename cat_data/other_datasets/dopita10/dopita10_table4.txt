@@ -1,0 +1,22 @@
+Table 4
+
+Extended [O III] Nebulae in M83 WFC3 Field 1
+
+
+Name	R.A. (J2000)	Decl. (J2000)	D (arcsec)	D (pc)	Notes^a	
+
+M83 Nucleus	13 37 00.871	-29 51 55.97				
+
+M83-SRC-1-O1	13 37 04.120	-29 51 03.85	0.45 x 0.20	10 x 4	[O III] arc in diffuse Halpha.	
+
+M83-SRC-1-O2	13 37 06.976	-29 50 57.14	0.33	7.3	O-knots within faint Halpha; possible O-rich SNR?	
+
+M83-SRC-1-O3	13 37 07.132	-29 51 14.27	0.3 x 0.5	6.7 x 11.1	[O III] knots within Halpha ring; O-rich SNR?; R45?	
+
+M83-SRC-1-O4	13 37 09.058	-29 52 09.92	0.36	8.0	Young O-rich SNR in H II region?	
+
+M83-SRC-1-O5	13 37 09.761	-29 52 43.93	0.50	11.1	Strong [O III] and Halpha ring; possible W-R shell?	
+
+
+Note.
+a R: source number from Maddox et al. (2006; VLA data).
