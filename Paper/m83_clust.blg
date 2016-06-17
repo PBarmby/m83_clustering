@@ -6,11 +6,6 @@ Warning--I didn't find a database entry for "combo-17"
 Warning--I didn't find a database entry for "woffard11"
 Warning--I didn't find a database entry for "whitmore11"
 Warning--I didn't find a database entry for "fousneau12"
-Warning--I didn't find a database entry for "williams15"
-Warning--I didn't find a database entry for "soria14"
-Warning--you've exceeded 250, the entry-string-size, for entry chandar10
-while executing--line 1184 of file mn2e.bst
-*Please notify the bibstyle designer*
 Warning--you've exceeded 250, the entry-string-size, for entry dopita10
 while executing--line 1184 of file mn2e.bst
 *Please notify the bibstyle designer*
@@ -29,7 +24,5 @@ while executing--line 1223 of file mn2e.bst
 Warning--you've exceeded 250, the entry-string-size, for entry dopita10
 while executing--line 1223 of file mn2e.bst
 *Please notify the bibstyle designer*
-Warning--you've exceeded 250, the entry-string-size, for entry chandar10
-while executing--line 1223 of file mn2e.bst
-*Please notify the bibstyle designer*
-(There were 15 warnings)
+Warning--empty journal in vatturi09
+(There were 12 warnings)
