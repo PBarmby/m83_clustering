@@ -37,7 +37,7 @@ def go(filt_list = ubvi_list, zps=ubvi_zps, ers = '../raw_data/hlsp_wfc3ers_hst_
         # match results with ERS catalog
         idx, sep2d, sep3d = match_coordinates_sky(new_coo, ers_coo) 
         matched = sep2d < match_tol*u.arcsec
-        print matched.sum(), gooddat.sum()
+        print 'Matched {} of {} objects'.format(matched.sum(), gooddat.sum())
 
 #        # compute magnitude/uncert offsets
         dm1 = (ers_subcat[m1][idx] - new_cat['col5'])[matched]
@@ -45,9 +45,10 @@ def go(filt_list = ubvi_list, zps=ubvi_zps, ers = '../raw_data/hlsp_wfc3ers_hst_
         du1 = (ers_subcat[m1+'_unc'][idx] - new_cat['col7'])[matched]
         du2 = (ers_subcat[m2+'_unc'][idx] - new_cat['col8'])[matched]
         
-        # sele
-
+        # make some plots
 #        fig, ax = plt.subplots()
+
+        # compute some statistics
 
     #end of loop over images
     return
