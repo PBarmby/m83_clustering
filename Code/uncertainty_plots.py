@@ -5,6 +5,9 @@ import pylab
 import os
 import os.path
 
+'''Data is only trimmed by removing -99s. UNC limit can be set by limiting the
+    y-axis of the plots'''
+
 
 def unc_plot(path, pos_, unc_):
     data = Table.read('data.txt', format='ascii.commented_header', guess=False)
@@ -58,7 +61,7 @@ def wave_uncertainty(wave_05, wave_3, wave_05_unc, wave_3_unc, greatdata,
     ax2.set_ylabel(band_3+'unc')
     ax2.set_xlabel(band_05 + ' (top) - ' + band_3 + ' (bottom)')
     plt.setp(ax2.get_xticklabels(), fontsize=6)
-    plt.gca().set_ylim(0,0.2)
+    plt.gca().set_ylim(0, 0.2)
     '''Display interactive figure if # removed, if not, figures saved'''
     # plt.show
     file_name = 'uncertainty_02_lim_{}.png'.format(band_05)

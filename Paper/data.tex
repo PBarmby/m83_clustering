@@ -1,4 +1,4 @@
-\section{Data}
+%\section{Data}
 
 %\item intro to M83: global parameters (distance, size, environment)
 The dataset used for this study is the Wide-Field Camera-3
@@ -61,7 +61,7 @@ supernova remnants, H${\sc ii}$ regions, planetary nebulae, %TODO: check that we
 stellar blends, and background galaxies. % TODO: anything else?
 Completeness and reliability of the catalog are not discussed by \citet{chandar10},
 but a visual inspection of the the detected sources on the white-light image suggests that %TO BE COMPLETED..
-XX objects are flagged in the catalog as being problematic %TODO: AK please compute this number using flag column
+Nine objects are flagged in the catalog as being problematic %Counted flagged objects
 and we remove them from our analysis.
 
 Table~\ref{tab:cat_numbers} and Figure~\ref{fig:mag_unc} characterize the catalog in terms of measurements in individual filters.
@@ -74,6 +74,7 @@ and the aperture magnitude at which the median magnitude uncertainty is $0.2$~ma
 Figure~\ref{fig:mag_unc} shows the distributions of magnitudes and uncertainties in the individual filters.
 
 %AK: please calculate numbers here. For the last column scipy.stats.binned_statistic is a good way to do this.
+%Numbers are calculated based on the 3 aperture filters - can be changed if we decide otherwise
 \begin{table}
 \centering
 \caption{
@@ -82,16 +83,16 @@ Figure~\ref{fig:mag_unc} shows the distributions of magnitudes and uncertainties
 \hline\hline
 Filter & $N_{\rm obj}$ & $N_{\rm good}$ & $m_{\rm good}$ & $N_{\rm X-555}$\\
 \hline
-F225W &  N & N & m & N\\
-F336W &  N & N & m & N\\
-F373N &  N & N & m & N\\
-F438W &  N & N & m & N\\
-F487N &  N & N & m & N\\
-F502N &  N & N & m & N\\
-F555W &  N & N & m & N\\
-F657N &  N & N & m & N\\
-F673N &  N & N & m & N\\
-F814W &  N & N & m & N\\
+F225W &  57585 & 1196 & m & 1149\\
+F336W &  61787 & 3572 & m & 3493\\
+F373N &  55908 & 236 & m & 229\\
+F438W &  64692 & 5528 & m & 5490\\
+F487N &  60956 & 429 & m & 427\\
+F502N &  61715 & 461 & m & 460\\
+F555W &  66539 & 13556 & m & $-$\\
+F657N &  67819 & 3285 & m & 2406\\
+F673N &  61979 & 682 & m & 679\\
+F814W &  63759 & 11976 & m & 7199\\
 \hline
 \end{tabular}
 \end{table}

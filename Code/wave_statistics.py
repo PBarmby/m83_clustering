@@ -3,7 +3,8 @@ import os
 from astropy.table import Table
 from matplotlib import pyplot as plt
 from itertools import cycle
-
+'''Data is now trimmed with unc < 0.2 and removed all -99s
+    - Exception: ID file which records all object detections'''
 
 def band_unc_limit(path_):
     data = Table.read('data.txt', format='ascii.commented_header', guess=False)

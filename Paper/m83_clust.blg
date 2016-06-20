@@ -4,6 +4,7 @@ The top-level auxiliary file: m83_clust.aux
 The style file: mn2e.bst
 Database file #1: m83_refs.bib
 Warning--I didn't find a database entry for ""
+<<<<<<< HEAD
 You've used 24 entries,
             2601 wiz_defined-function locations,
             671 strings with 8677 characters,
@@ -46,3 +47,29 @@ while$ -- 96
 width$ -- 0
 write$ -- 242
 (There was 1 warning)
+=======
+Warning--I didn't find a database entry for "combo-17"
+Warning--I didn't find a database entry for "woffard11"
+Warning--I didn't find a database entry for "whitmore11"
+Warning--I didn't find a database entry for "fousneau12"
+Warning--you've exceeded 250, the entry-string-size, for entry dopita10
+while executing--line 1184 of file mn2e.bst
+*Please notify the bibstyle designer*
+Warning--you've exceeded 250, the entry-string-size, for entry hong11
+while executing--line 1184 of file mn2e.bst
+*Please notify the bibstyle designer*
+Warning--you've exceeded 250, the entry-string-size, for entry kim12
+while executing--line 1184 of file mn2e.bst
+*Please notify the bibstyle designer*
+Warning--you've exceeded 250, the entry-string-size, for entry kim12
+while executing--line 1223 of file mn2e.bst
+*Please notify the bibstyle designer*
+Warning--you've exceeded 250, the entry-string-size, for entry hong11
+while executing--line 1223 of file mn2e.bst
+*Please notify the bibstyle designer*
+Warning--you've exceeded 250, the entry-string-size, for entry dopita10
+while executing--line 1223 of file mn2e.bst
+*Please notify the bibstyle designer*
+Warning--empty journal in vatturi09
+(There were 12 warnings)
+>>>>>>> alex
