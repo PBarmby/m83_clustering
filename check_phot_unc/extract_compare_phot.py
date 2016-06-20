@@ -20,7 +20,7 @@ def go(filt_list = ubvi_list, zps=ubvi_zps, ers = '../raw_data/hlsp_wfc3ers_hst_
         catname = 'f{}.cat'.format(filt) 
         sysstr = 'sex {} -CATALOG_NAME {} -MAG_ZEROPOINT {}'.format(img,catname,zps[i])
         # run Sextractor
-        os.system(sysstr)
+#        os.system(sysstr)
 
         # extract relevant bits of ERS catalog
         m1 = 'mag05_{}'.format(filt)
@@ -37,13 +37,16 @@ def go(filt_list = ubvi_list, zps=ubvi_zps, ers = '../raw_data/hlsp_wfc3ers_hst_
         # match results with ERS catalog
         idx, sep2d, sep3d = match_coordinates_sky(new_coo, ers_coo) 
         matched = sep2d < match_tol*u.arcsec
+        print matched.sum(), gooddat.sum()
 
-        # compute magnitude/uncert offsets
-        dm1 = ers_subcat[m1][idx] - new_cat['col5']
-        dm2 = ers_subcat[m2][idx] - new_cat['col6']
-        du1 = ers_subcat[m1+'_unc'][idx] - new_cat['col7']
-        du2 = ers_subcat[m2+'_unc'][idx] - new_cat['col8']
+#        # compute magnitude/uncert offsets
+        dm1 = (ers_subcat[m1][idx] - new_cat['col5'])[matched]
+        dm2 = (ers_subcat[m2][idx] - new_cat['col6'])[matched]
+        du1 = (ers_subcat[m1+'_unc'][idx] - new_cat['col7'])[matched]
+        du2 = (ers_subcat[m2+'_unc'][idx] - new_cat['col8'])[matched]
         
+        # sele
+
 #        fig, ax = plt.subplots()
 
     #end of loop over images
