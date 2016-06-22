@@ -15,7 +15,7 @@ import argparse
 import numpy as np
 import pylab as pylab
 from matplotlib import pyplot as plt
-from astropy.table import Table, Column
+from astropy.table import Table
 import shutil
 from itertools import cycle
 
@@ -24,7 +24,6 @@ from sklearn.cluster import KMeans
 from sklearn import preprocessing
 from sklearn import metrics 
 from sklearn.metrics import pairwise_distances, silhouette_samples
-from matplotlib.patches import Ellipse
 from scipy.stats import norm
 
 # meanshift imports
@@ -59,18 +58,8 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
     # Create saving directories
     plot_path, results_path = make_save_directory(save_plots, save_results)
 
-    # User criteria
-    analysis_criteria = analysis
-    kmeans_input = kmeans_input
-    generate_plots = plots
-    id_output = id_list
-    b_width_input = bw_in
-    
     # Load data and trials
     data, experiments = load_data_file(data_file, input_file)
-
-    # Import experiments listed in experiments.txt file
-    #run = np.genfromtxt(input_file, dtype='str')
 
     '''Run Analysis'''
     for i in range(0, len(experiments)):
@@ -81,26 +70,12 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
         km_n_clusters = 0
         total_obj = 0
         num_obj = 0
-        ms_score = 0 
+        ms_score = 0
         db_score = 0
         af_score = 0
         km_score = 0
         bandwidth = 0
         results_title = ' '
-        b1 = experiments['band1'][i]
-        b2 = experiments['band2'][i]
-        b3 = experiments['band3'][i]
-        b4 = experiments['band4'][i]
-        b5 = experiments['band5'][i]
-        b6 = experiments['band6'][i]
-        b7 = experiments['band7'][i]
-        b8 = experiments['band8'][i]
-        b9 = experiments['band9'][i]
-        b10 = experiments['band10'][i]
-        b11 = experiments['band11'][i]
-        b12 = experiments['band12'][i]
-        b13 = experiments['band13'][i]
-        b14 = experiments['band14'][i]
         '''-----------------------------------------------------------------'''
 
         # Get Data
@@ -115,40 +90,43 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
 
         # Do clustering
 
-        if "meanshift" in analysis_criteria:
-            if 'experiments.txt' in b_width_input:
+        if "meanshift" in analysis:
+            if 'experiments.txt' in bw_in:
                 b_width_input = experiments['bandwidth'][i]
+            else:
+                b_width_input = 'estimate'
 
             ms_n_clusters, bandwidth, ms_score, ms_obj, ms_obj_p_cluster = \
-                do_meanshift(plot_path, experiments[i], cluster_data_,
-                             generate_plots, b_width_input, id_list, id_data)
+                meanshift(plot_path, experiments[i], cluster_data_,
+                             plots, b_width_input, id_list, id_data)
 
             meanshift_results(results_path, results_title, experiments[i],
                               ms_n_clusters, ms_score, bandwidth, ms_obj,
                               ms_obj_p_cluster)
 
-        if "dbscan" in analysis_criteria: 
+        if "dbscan" in analysis:
             eps = float(experiments['eps'][i])
             min_samples = float(experiments['min_samples'][i])
             db_score, db_n_clusters, db_obj, db_obj_p_cluster = \
                 dbscan(plot_path, experiments[i], cluster_data_,
-                       generate_plots, eps, min_samples)
+                       plots, eps, min_samples)
             dbscan_results(results_path, results_title, experiments[i],
                            db_n_clusters, db_score, eps, min_samples, db_obj,
                            db_obj_p_cluster)
 
-        if "affinity" in analysis_criteria:
+        if "affinity" in analysis:
             damping = float(experiments['damping'][i])
             preferences = float(experiments['preferences'][i])
             af_n_clusters, af_score, af_obj, af_obj_p_cluster = \
                 affinity_propagation(plot_path, experiments[i], cluster_data_,
-                                     generate_plots, damping, preferences)
+                                     plots, damping, preferences, id_list,
+                                     id_data)
             affinity_propagation_results(results_path, results_title,
                                          experiments[i], af_n_clusters,
                                          af_score, damping, preferences,
                                          af_obj, af_obj_p_cluster)
 
-        if "kmeans" in analysis_criteria:
+        if "kmeans" in analysis:
             if "experiments.txt" in kmeans_input:
                 km_n_clusters = int(experiments['n_clusters'][i])
             elif "meanshift" in kmeans_input:
@@ -158,15 +136,16 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
             elif "affinity" in kmeans_input:
                 km_n_clusters = af_n_clusters
             if km_n_clusters >= 4:
-                high, low = 3, 2 
-            elif km_n_clusters == 3: 
+                high, low = 3, 2
+            elif km_n_clusters == 3:
                 high, low = 4, 1
-            else: 
-                high, low = 5, 0 
+            else:
+                high, low = 5, 0
+
             for a in range(km_n_clusters - low, km_n_clusters + high):
-                km_score, num_obj = do_kmeans(plot_path, experiments[i],
+                km_score, num_obj = kmeans(plot_path, experiments[i],
                                               cluster_data_, greatdata,
-                                              a, generate_plots, id_output,
+                                              a, plots, id_list,
                                               x_data, y_data, id_data)
                 total_obj = num_obj.sum()
                 kmeans_results(results_path, results_title, experiments[i],
@@ -210,7 +189,7 @@ def load_data_file(d_file, e_file):
 def organize_data(exp, data_file):
     '''Select data for analysis'''
     data = data_file
-    ratio = 0.05
+    ratio = 0.2
 
     wave1 = data[exp['band1']]
     wave1_unc = data[exp['band1']+'_unc']
@@ -249,27 +228,27 @@ def organize_data(exp, data_file):
     # Change parameters to match data_file
     # Remove data pieces with no value
     
-    wave1_trim = np.logical_and(np.logical_and(wave1 != -99, wave1_unc != -99),wave1_unc/wave1 < ratio)
-    wave2_trim = np.logical_and(np.logical_and(wave2 != -99, wave2_unc != -99), wave2_unc/wave2 < ratio)
-    
-    wave3_trim = np.logical_and(np.logical_and(wave3 != -99, wave3_unc != -99), wave3_unc/wave3 < ratio)
-    wave4_trim = np.logical_and(np.logical_and(wave4 != -99, wave4_unc != -99), wave4_unc/wave4 < ratio)
-    
-    wave5_trim = np.logical_and(np.logical_and(wave5 != -99, wave5_unc != -99), wave5_unc/wave5 < ratio)
-    wave6_trim = np.logical_and(np.logical_and(wave6 != -99, wave6_unc != -99), wave6_unc/wave6 < ratio)
-    
-    wave7_trim = np.logical_and(np.logical_and(wave7 != -99, wave7_unc != -99), wave7_unc/wave7 < ratio)
-    wave8_trim = np.logical_and(np.logical_and(wave8 != -99, wave8_unc != -99), wave8_unc/wave8 < ratio)
-    
-    wave9_trim = np.logical_and(np.logical_and(wave9 != -99, wave9_unc != -99), wave9_unc/wave9 < ratio)
-    wave10_trim = np.logical_and(np.logical_and(wave10 != -99, wave10_unc != -99), wave10_unc/wave10 < ratio)
-    
-    wave11_trim = np.logical_and(np.logical_and(wave11 != -99, wave11_unc != -99), wave11_unc/wave11 < ratio)
-    wave12_trim = np.logical_and(np.logical_and(wave12 != -99, wave12_unc != -99), wave12_unc/wave12 < ratio)
-    
-    wave13_trim = np.logical_and(np.logical_and(wave13 != -99, wave13_unc != -99), wave13_unc/wave13 < ratio)
-    wave14_trim = np.logical_and(np.logical_and(wave14 != -99, wave14_unc != -99), wave14_unc/wave14 < ratio)
-    
+    wave1_trim = np.logical_and(np.logical_and(wave1 != -99, wave1_unc != -99), wave1_unc < ratio)
+    wave2_trim = np.logical_and(np.logical_and(wave2 != -99, wave2_unc != -99), wave2_unc < ratio)
+
+    wave3_trim = np.logical_and(np.logical_and(wave3 != -99, wave3_unc != -99), wave3_unc < ratio)
+    wave4_trim = np.logical_and(np.logical_and(wave4 != -99, wave4_unc != -99), wave4_unc < ratio)
+
+    wave5_trim = np.logical_and(np.logical_and(wave5 != -99, wave5_unc != -99), wave5_unc < ratio)
+    wave6_trim = np.logical_and(np.logical_and(wave6 != -99, wave6_unc != -99), wave6_unc < ratio)
+
+    wave7_trim = np.logical_and(np.logical_and(wave7 != -99, wave7_unc != -99), wave7_unc < ratio)
+    wave8_trim = np.logical_and(np.logical_and(wave8 != -99, wave8_unc != -99), wave8_unc < ratio)
+
+    wave9_trim = np.logical_and(np.logical_and(wave9 != -99, wave9_unc != -99), wave9_unc < ratio)
+    wave10_trim = np.logical_and(np.logical_and(wave10 != -99, wave10_unc != -99), wave10_unc < ratio)
+
+    wave11_trim = np.logical_and(np.logical_and(wave11 != -99, wave11_unc != -99), wave11_unc < ratio)
+    wave12_trim = np.logical_and(np.logical_and(wave12 != -99, wave12_unc != -99), wave12_unc < ratio)
+
+    wave13_trim = np.logical_and(np.logical_and(wave13 != -99, wave13_unc != -99), wave13_unc < ratio)
+    wave14_trim = np.logical_and(np.logical_and(wave14 != -99, wave14_unc != -99), wave14_unc < ratio)
+
     colour1_trim = np.logical_and(wave1_trim, wave2_trim)
     colour2_trim = np.logical_and(wave3_trim, wave4_trim)
     colour3_trim = np.logical_and(wave5_trim, wave6_trim)
@@ -277,14 +256,16 @@ def organize_data(exp, data_file):
     colour5_trim = np.logical_and(wave9_trim, wave10_trim)
     colour6_trim = np.logical_and(wave11_trim, wave12_trim)
     colour7_trim = np.logical_and(wave13_trim, wave14_trim)
-    
+
     gooddata1 = np.logical_and(colour1_trim, colour2_trim)
     gooddata2 = np.logical_and(colour3_trim, colour4_trim)
     gooddata3 = np.logical_and(colour5_trim, colour6_trim)
-    
+
     # Only data that match criteria for both colours
     final_data = np.logical_and(np.logical_and(gooddata1, gooddata2),
                                 np.logical_and(gooddata3, colour7_trim))
+
+    # Make colours
     colour1 = wave1[final_data] - wave2[final_data]
     colour2 = wave3[final_data] - wave4[final_data]
     colour3 = wave5[final_data] - wave6[final_data]
@@ -292,37 +273,32 @@ def organize_data(exp, data_file):
     colour5 = wave9[final_data] - wave10[final_data]
     colour6 = wave11[final_data] - wave12[final_data]
     colour7 = wave13[final_data] - wave14[final_data]
-    
-    cluster_data = np.vstack(colour1, colour2, colour3, colour4, colour5,
-                             colour6, colour7).T
+
+    cluster_data = np.vstack([colour1, colour2, colour3, colour4, colour5,
+                             colour6, colour7]).T
     x = data['x'][final_data]
     y = data['y'][final_data]
-    id_ = data['id'][final_data].astype(np.int32)
+    id_ = data['id_'][final_data].astype(np.int32)
 
-    return (cluster_data, greatdata, x, y, id_)
+    return (cluster_data, final_data, x, y, id_)
 
 
-def do_meanshift(s_path, band1, band2, band3, band4, band5, band6, colour1, colour2,
-                 make_plot, bw_input, output_id, id_data):
+def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
+              output_id, id_data):
     '''Meanshift clustering to determine the number of clusters in the
         data, which is passed to KMEANS function'''
     bandwidth = 0
-    
-    # Truncate data
-    X = np.vstack([colour1, colour2]).T
-    
     if 'experiments.txt' not in bw_input:
         # The following bandwidth can be automatically detected using
-        bandwidth = estimate_bandwidth(X) #, quantile=0.1, n_samples=len(colour1))
+        bandwidth = estimate_bandwidth(cluster_data)
     else:
         bandwidth = bw_input
 
-    X_scaled = preprocessing.scale(X)
-    ms = MeanShift(bandwidth=bandwidth, bin_seeding=True, cluster_all=True)
+    X_scaled = preprocessing.scale(cluster_data)
+    ms = MeanShift(bandwidth=bandwidth, cluster_all=True)
     ms.fit(X_scaled)
     labels = ms.labels_
     cluster_centers = ms.cluster_centers_
-
     labels_unique = np.unique(labels)
     n_clusters_ = len(labels_unique)
 
@@ -334,24 +310,25 @@ def do_meanshift(s_path, band1, band2, band3, band4, band5, band6, colour1, colo
     objects_per_cluster.sort()  # sort from smallest to largest
     objects_per_cluster = objects_per_cluster[::-1]  # reverse sort
     total_objects = len(X_scaled)
-    
+
     # Compute silhouette_score for entire cluster or individuals
-    if n_clusters_ > 1: 
-        average_score = metrics.silhouette_score(X, labels)
-    else: 
+    if n_clusters_ > 1:
+        average_score = metrics.silhouette_score(cluster_data, labels)
+    else:
         average_score = -99
-    #sample_score = metrics.silhouette_samples(X, labels)
+    # sample_score = metrics.silhouette_samples(X, labels)
 
     if "yes" in output_id:
-        id_catologue(n_clusters_, labels, band1, band2, band3,
-                     band4, id_data, s_path)
+        id_catologue(n_clusters_, labels, bands[0], bands[1], bands[2],
+                     bands[3], id_data, s_path)
     # Make plot
     if "meanshift_density" in make_plot:
-        meanshift_density(s_path, colour1, colour2, n_clusters_, X, ms,
-                          band1, band2, band3, band4, labels, cluster_centers)
-    if "meanshift_colour" in make_plot: 
-        meanshift_colour(s_path, X_scaled, n_clusters_, labels, cluster_centers,
-                     band1, band2, band3, band4, )
+        meanshift_density(s_path, cluster_data, n_clusters_, cluster_data, ms,
+                          bands[0], bands[1], bands[2], bands[4], labels,
+                          cluster_centers)
+    if "meanshift_colour" in make_plot:
+        meanshift_colour(s_path, X_scaled, n_clusters_, labels,
+                         cluster_centers, bands)
 
     return(n_clusters_, bandwidth, average_score, total_objects,
            objects_per_cluster)
@@ -391,12 +368,11 @@ def dbscan(s_path, band1, band2, band3, band4, colour1, colour2, make_plots,
     return(db_score, n_clusters_, total_objects, objects_per_cluster)
 
 
-def affinity_propagation(s_path, band1, band2, band3, band4, colour1, colour2,
+def affinity_propagation(s_path, bands, cluster_data,
                          make_plots, damp, pref, output_id, id_data):
 
-    X = np.vstack([colour1, colour2]).T
     # Compute Affinity Propagation
-    af = AffinityPropagation(preference=pref, damping=damp).fit(X)
+    af = AffinityPropagation(preference=pref, damping=damp).fit(cluster_data)
     cluster_centers_indices = af.cluster_centers_indices_
     labels = af.labels_
     n_clusters_ = len(cluster_centers_indices)
@@ -404,53 +380,52 @@ def affinity_propagation(s_path, band1, band2, band3, band4, colour1, colour2,
     # Identify which cluster each object belongs to
     objects_per_cluster = np.zeros(max_num_clusters, dtype=np.int16)
     for i in range(0, n_clusters_):
-        ith_cluster = X[labels == i]
+        ith_cluster = cluster_data[labels == i]
         objects_per_cluster[i] = len(ith_cluster)
     objects_per_cluster.sort()  # sort from smallest to largest
     objects_per_cluster = objects_per_cluster[::-1]  # reverse sort
-    total_objects = len(X)
+    total_objects = len(cluster_data)
 
     # Silhouette Score
-    ap_score = metrics.silhouette_score(X, labels)
+    ap_score = metrics.silhouette_score(cluster_data, labels)
     if "yes" in output_id:
-        id_catologue(n_clusters_, labels, band1, band2, band3,
-                     band4, id_data, s_path)
+        id_catologue(n_clusters_, labels, bands, id_data, s_path)
 
     if 'affinity' in make_plots:
-        affinity_plot(labels, cluster_centers_indices, X, n_clusters_, band1,
-                      band2, band3, band4, s_path)
+        affinity_plot(labels, cluster_centers_indices, cluster_data, n_clusters_, bands, s_path)
 
     return(n_clusters_, ap_score, total_objects, objects_per_cluster)
 
 
-def do_kmeans(s_path, band1, band2, band3, band4, colour1, colour2, greatdata,
+def kmeans(s_path, bands, cluster_data, greatdata,
               number_clusters, make_plots, output_cluster_id, x, y, id_data):
 
     '''do K-means clustering on colours constructed from HST photometry band1,
     band 2, band3, band4 --- ie, names of HST  filters'''
 
     # Put data in format for clustering
-    clusterdata = np.vstack([colour1, colour2]).T
+    clusterdata = cluster_data
 
     '''Compute KMeans Clustering'''
     # Data pre-processing
     scaler = preprocessing.StandardScaler()
-    clf = KMeans(number_clusters, random_state=10)
-    clf.fit(scaler.fit_transform(clusterdata)) #change variable - data with labels
+    clf = KMeans(number_clusters, init='random')
+    clf.fit(clusterdata) #change variable - data with labels
     #clf.fit(clusterdata)
-    cluster_number = clf.predict(scaler.fit_transform(clusterdata))
+    cluster_number = clf.predict(clusterdata)
+    centers = clf.cluster_centers_
     #cluster_number = clf.predict(clusterdata)
 
     # Output object and cluster IDs to ID.txt file
     if "yes" in output_cluster_id:
-        id_catologue(number_clusters, cluster_number, band1, band2, band3,
-                     band4, id_data, s_path)
+        id_catologue(number_clusters, cluster_number, bands[0], bands[1], bands[2],
+                     bands[3], id_data, s_path)
 
     # Compute the silhouette score
     labels = clf.labels_
     score = 0
     if number_clusters > 1:
-        score = metrics.silhouette_score(scaler.fit_transform(clusterdata), labels)
+        score = metrics.silhouette_score(clusterdata, labels)
     else:
         score = -99
         #sample_score = silhouette_samples(scaler.fit_transform(clusterdata), labels)
@@ -464,11 +439,11 @@ def do_kmeans(s_path, band1, band2, band3, band4, colour1, colour2, greatdata,
 
     # Generate plots if necessary
     if "kmeans_density" in make_plots:
-        kmeans_density(s_path, band1, band2, band3, band4, clf, scaler,
-                       colour1, colour2, number_clusters, cluster_number)
+        kmeans_density(s_path, bands[0], bands[1], bands[2], bands[3], clf,
+                       scaler, clusterdata, number_clusters, cluster_number)
     if "kmeans_colour" in make_plots:
-        kmeans_colour(s_path, colour1, colour2, number_clusters, cluster_number,
-                band1, band2, band3, band4)
+        kmeans_colour(s_path, clusterdata, number_clusters, cluster_number,
+                      bands, centers)
 
     return(score, objects_per_cluster)
 
@@ -486,13 +461,13 @@ def id_catologue(number_clusters, cluster_number, band1, band2, band3, band4,
     return()
 
 
-def meanshift_density(path, colour1, colour2, n_clusters, X, ms,
+def meanshift_density(path, cluster_data, n_clusters, X, ms,
                       band1, band2, band3, band4, labels_, centers):
     ''' Plot the results of mean shift clustering if needed'''
     fig = plt.figure(figsize=(8, 8))
     ax = fig.add_subplot(111)
     # plot density
-    H, C1_bins, C2_bins = np.histogram2d(colour1, colour2, 51)
+    H, C1_bins, C2_bins = np.histogram2d(cluster_data[0], cluster_data[1], 51)
     ax.imshow(H.T, origin='lower', interpolation='nearest', aspect='auto',
               extent=[C1_bins[0], C1_bins[-1], C2_bins[0], C2_bins[-1]],
               cmap=plt.cm.binary)
@@ -532,44 +507,41 @@ def meanshift_xy(path, X, n_clusters, labels_, centers, band1, band2, band3,
     
     return
 
-def meanshift_colour(path, X, n_clusters, labels_, centers, band1, band2, band3,
-                 band4): 
-    fig = plt.figure(figsize=(8,8))
-    ax = fig.add_subplot(111)
+def meanshift_colour(path, X, n_clusters, labels_, centers, bands):
 
     colors = cycle('bgrcmykbgrcmykbgrcmykbgrcmyk')
+    markers = cycle('ooooooo**')#*****<<<<<<>>>>>>>^^^^^^^')
+    for i in range(1, 7):
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        for k, col, mark in zip(range(n_clusters), colors, markers):
+            # cluster_score = sample_score[labels == k]
+            my_members = labels_ == k
+            cluster_center = centers[k]
+            ax.scatter(X[my_members, 0], X[my_members, i], color=col,
+                       marker=mark, label=k)
+            ax.scatter(cluster_center[0], cluster_center[i], marker=mark,
+                       color=col, edgecolor='k', s=100)
 
-    for k, col in zip(range(n_clusters), colors):
-        #cluster_score = sample_score[labels == k]
-        my_members = labels_ == k
-        cluster_center = centers[k]
-        ax.plot(X[my_members, 0], X[my_members, 1], col + '.', label = k,
-                markersize=8)
-        #print ("objects in cluster {}: {}").format(k+1, len(X[my_members]))
-        #print("    Cluster {} Average Score: {:.4f}").format(k+1,
-              #np.average(cluster_score))
-        ax.plot(cluster_center[0], cluster_center[1], 'o', markerfacecolor=col,
-             markeredgecolor='k', markersize=10)
-    
-    # Format plot
-    ax.xaxis.set_major_locator(plt.MultipleLocator(0.5))
-    ax.set_xlabel(band1 + ' - ' + band2)
-    ax.set_ylabel(band3+' - '+band4)
-    ax.set_title('mean-shift ' + str(n_clusters) + ' : '+band1+'-'+band2+' vs. '+band3+'-'+band4,
-                 fontsize=14)
-    ax.legend(loc='upper left')
+        # Format plot
+        ax.xaxis.set_major_locator(plt.MultipleLocator(0.5))
+        ax.set_xlabel(bands[0] + ' - ' + bands[1])
+        ax.set_ylabel(bands[i*2]+' - '+bands[i*2+1])
+        ax.set_title('mean-shift ' + str(n_clusters) + ' : '+bands[0]+'-'+bands[1]+' vs. '+bands[i*2]+'-'+bands[i*2+1],
+                     fontsize=14)
+        ax.legend(loc='lower right')
 
-    '''Display interactive figure if # removed, if not, figures saved'''
-    # plt.show
-    file_name = 'meanshift_color_{}cl_{}-{}vs{}-{}.png'.format(str(n_clusters),
-                                                            band1, band2,
-                                                            band3, band4)
-    colors = ('{}-{}_{}-{}').format(band1, band2, band3, band4)
-    path_ = ('{}\\meanshift-{}').format(path, colors)
-    if not os.path.exists(path_):
-        os.makedirs(path_)
-    pylab.savefig(os.path.join(path_, file_name))
-    plt.close()
+        '''Display interactive figure if # removed, if not, figures saved'''
+        # plt.show
+        file_name = 'meanshift_color_{}cl_{}-{}vs{}-{}.png'.format(str(n_clusters),
+                                                                bands[0], bands[1],
+                                                                bands[i*2], bands[i*2+1])
+        colours = ('{}-{}_{}-{}').format(bands[0], bands[1], bands[i*2], bands[i*2+1])
+        path_ = ('{}\\{}').format(path, colours)
+        if not os.path.exists(path_):
+            os.makedirs(path_)
+        pylab.savefig(os.path.join(path_, file_name))
+        plt.close()
     return()
 
 
@@ -632,36 +604,39 @@ def kmeans_density(path, band1, band2, band3, band4, clf, scaler, colour1,
     return ()
 
 
-def kmeans_colour(path, x, y, number_clusters, cluster_number, band1, band2, band3,
-            band4):
+def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
+                  cluster_centers):
     '''Plot xy positions of objects in different clusters'''
-    fig2 = plt.figure()
-    ax2 = fig2.add_subplot(111)
-    colors = ('{}-{}_{}-{}').format(band1, band2, band3, band4)
-    # Plot XY coordinates of each object and label with colour that
-    # identifies cluster number
-    #ax2.set_xlim(min(x), max(x))
-    #ax2.set_ylim(min(y), max(y))
-    for i in range(0, number_clusters):
-        x_cluster = x[cluster_number == i]
-        y_cluster = y[cluster_number == i]
-        ax2.plot(x_cluster, y_cluster, cluster_colours[i] + '.', label=i)
 
-    ax2.set_xlabel(band1+' - '+band2)
-    ax2.set_ylabel(band3+' - '+band4)
-    ax2.set_title('kmeans: '+band1+'-'+band2+' vs. '+band3+'-'+band4,
-                  fontsize=16)
-    ax2.legend(loc='upper left')
+    
+    colors = cycle('bgrcmykbgrcmykbgrcmykbgrcmyk')
+    markers = cycle('ooooooo**')#*****<<<<<<>>>>>>>^^^^^^^')
+    for i in range(1, 7):
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        for k, col, mark in zip(range(number_clusters), colors, markers):
+            class_members = cluster_number == k
+            cluster_center = cluster_centers[k]
+            ax.scatter(cluster_data[class_members, 0], cluster_data[class_members, i],
+                       color=col, marker=mark, label=k)
+            ax.scatter(cluster_center[0], cluster_center[i], marker=mark, color=col,
+                       edgecolor='k', s=100)
 
-    file_name = 'kmeans_xy_{}cl_{}-{}vs{}-{}.png'.format(str(number_clusters),
-                                                         band1, band2, band3,
-                                                         band4)
-    path_ = ('{}\\kmeans-{}').format(path, colors)
-    if not os.path.exists(path_):
-        os.makedirs(path_)
-    pylab.savefig(os.path.join(path_, file_name))
-    plt.close()
+        ax.set_xlabel(bands[0]+' - '+bands[1])
+        ax.set_ylabel(bands[i*2]+' - '+bands[i*2+1])
+        ax.set_title('kmeans: '+bands[0]+'-'+bands[1]+' vs. '+bands[i*2]+'-'+bands[i*2+1],
+                     fontsize=16)
+        ax.legend(loc='lower right')
 
+        file_name = 'kmeans_xy_{}cl_{}-{}vs{}-{}.png'.format(str(number_clusters),
+                                                             bands[0], bands[1], bands[i*2],
+                                                             bands[i*2+1])
+        colours = ('{}-{}_{}-{}').format(bands[0], bands[1], bands[i*2], bands[i*2+1])
+        path_ = ('{}\\{}').format(path, colours, number_clusters)
+        if not os.path.exists(path_):
+            os.makedirs(path_)
+        pylab.savefig(os.path.join(path_, file_name))
+        plt.close()
     return ()
 
 
@@ -697,37 +672,38 @@ def db_plot(u_labels, labels_, X, core_samples_mask_, n_clusters, band1, band2,
     return()
 
 
-def affinity_plot(labels, cluster_center_indices, X, n_clusters, band1, band2,
-                  band3, band4, s_path):
-    fig1 = plt.figure()
-    ax = fig1.add_subplot(111)
-
-    colors = cycle('bgrcmykwbgrcmykwbgrcmykwbgrcmykw')
-    for k, col in zip(range(n_clusters), colors):
-        class_members = labels == k
-        cluster_center = X[cluster_center_indices[k]]
-        ax.plot(X[class_members, 0], X[class_members, 1], col + '.')
-        ax.plot(cluster_center[0], cluster_center[1], 'o', markerfacecolor=col,
-                 markeredgecolor='k', markersize=14)
-        #for x in X[class_members]:
-        #   plt.plot([cluster_center[0], x[0]], [cluster_center[1], x[1]], col)
-    ax.xaxis.set_major_locator(plt.MultipleLocator(0.5))
-    ax.set_title('affinity ' + str(n_clusters) +': '+band1+'-'+band2+' vs. '+band3+'-'+band4,
-                  fontsize=16)
-    ax.set_xlabel(band1 + ' - ' + band2)
-    ax.set_ylabel(band1 + ' - ' + band2)  
-    file_name = 'affinity_{}cl_{}-{}vs{}-{}.png'.format(str(n_clusters),
-                                                      band1, band2, band3,
-                                                      band4)
-    colors = ('{}-{}_{}-{}').format(band1, band2, band3, band4)
-    path_ = ('{}\\affinity-{}').format(s_path, colors)
-    if not os.path.exists(path_):
-        os.makedirs(path_)
-    pylab.savefig(os.path.join(path_, file_name))
+def affinity_plot(labels, cluster_center_indices, X, n_clusters, bands,
+                  s_path):
+    colors = cycle('bgrcmykbgrcmykbgrcmykbgrcmyk')
+    markers = cycle('ooooooo**')#*****<<<<<<>>>>>>>^^^^^^^')
+    for i in range(0, 6):
+        fig1 = plt.figure()
+        ax = fig1.add_subplot(111)    
+        for k, col, mark in zip(range(n_clusters), colors, markers):
+            class_members = labels == k
+            cluster_center = X[cluster_center_indices[k]]
+            ax.scatter(X[class_members, 0], X[class_members, i], color=col,
+                       marker=mark, label=k)
+            ax.scatter(cluster_center[0], cluster_center[i], marker=mark,
+                       color=col, edgecolor='k', s=100)
+        ax.xaxis.set_major_locator(plt.MultipleLocator(0.5))
+        ax.set_title('affinity ' + str(n_clusters) +': '+bands[0]+'-'+bands[1]+' vs. '+bands[i*2]+'-'+bands[i*2+1],
+                     fontsize=16)
+        ax.set_xlabel(bands[0] + ' - ' + bands[1])
+        ax.set_ylabel(bands[i*2] + ' - ' + bands[i*2+1])  
+        file_name = 'affinity_{}cl_{}-{}vs{}-{}.png'.format(str(n_clusters),
+                                                          bands[0], bands[1], bands[i*2],
+                                                          bands[i*2+1])
+        colours = ('{}-{}_{}-{}').format(bands[0], bands[1], bands[i*2],
+                                         bands[i*2+1])
+        path_ = ('{}\\{}\\affinity').format(s_path, colours)
+        if not os.path.exists(path_):
+            os.makedirs(path_)
+        pylab.savefig(os.path.join(path_, file_name))
     return()
 
 
-def meanshift_results(save_path, name, band1, band2, band3, band4, n_clusters,
+def meanshift_results(save_path, name, bands, n_clusters,
                       s_score, b_width, total_obj, obj_per_cluster):
 
     # Create MS results file if it doesn't exist. If it does add to it.
@@ -748,8 +724,8 @@ def meanshift_results(save_path, name, band1, band2, band3, band4, n_clusters,
     ms_results_file = open(ms_results_path, "a")
 
     # Create strings for file
-    inputs = '{} {} {} {} {} {:.4f} {} {} {} {} {}'.format('meanshift', band1,
-                                                           band2, band3, band4,
+    inputs = '{} {} {} {} {} {:.4f} {} {} {} {} {}'.format('meanshift', bands[0],
+                                                           bands[1], bands[2], bands[3],
                                                            b_width, 'N/A',
                                                            'N/A', 'N/A', 'N/A',
                                                            'N/A')
@@ -763,7 +739,7 @@ def meanshift_results(save_path, name, band1, band2, band3, band4, n_clusters,
     return()
 
 
-def kmeans_results(save_path, name, band1, band2, band3, band4, input_,
+def kmeans_results(save_path, name, bands, input_,
                    n_clusters, s_score, total_obj, obj_per_cluster):
     # Create KM results file if it doesn't exist. If it does add to it.
     test_path = '{}\\{}'.format(save_path, name)
@@ -783,8 +759,9 @@ def kmeans_results(save_path, name, band1, band2, band3, band4, input_,
     km_results_file = open(km_results_path, "a")
 
     # Create strings for file
-    inputs = '{} {} {} {} {} {} {} {} {} {} {}'.format('kmeans', band1, band2,
-                                                       band3, band4, 'N/A',
+    inputs = '{} {} {} {} {} {} {} {} {} {} {}'.format('kmeans', bands[0],
+                                                       bands[1], bands[2],
+                                                       bands[3], 'N/A',
                                                        'N/A', 'N/A', 'N/A',
                                                        'N/A', input_)
     outputs = '{:.4f} {} {} {}'.format(s_score, n_clusters, total_obj,
@@ -831,7 +808,7 @@ def dbscan_results(save_path, name, band1, band2, band3, band4, n_clusters,
     return()
 
 
-def affinity_propagation_results(save_path, name, band1, band2, band3, band4,
+def affinity_propagation_results(save_path, name, bands,
                                  n_clusters, s_score, damp, pref, total_obj,
                                  obj_per_cluster):
     # Create KM results file if it doesn't exist. If it does add to it.
@@ -852,8 +829,8 @@ def affinity_propagation_results(save_path, name, band1, band2, band3, band4,
     af_results_file = open(af_results_path, "a")
 
     # Create strings for file
-    inputs = '{} {} {} {} {} {} {} {} {} {} {}'.format('affinity', band1, band2,
-                                                       band3, band4, 'N/A',
+    inputs = '{} {} {} {} {} {} {} {} {} {} {}'.format('affinity', bands[0], bands[1],
+                                                       bands[1], bands[3], 'N/A',
                                                        'N/A', 'N/A', damp,
                                                        pref,  'N/A')
     outputs = '{:.4f} {} {} {}'.format(s_score, n_clusters, total_obj,
