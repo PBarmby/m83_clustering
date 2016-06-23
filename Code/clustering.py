@@ -3,11 +3,13 @@
 Created on Fri Apr 03 13:24:41 2015
 @author: Owner
 """
-
-'''To Do'''
-# Change results to individual clustering ??? 
-# results_summary to take specific method or multiple 
-
+'''------------------------- Important Info -----------------------------------
+Currently formatted for 7 colours. 
+Must be changed for different n_dimensions: 
+    - organize_data filters must be changed
+    - headers in results files must be changed
+        - New files for different dimesions
+----------------------------------------------------------------------------'''
 
 import os
 import os.path
@@ -30,10 +32,6 @@ from scipy.stats import norm
 from sklearn.cluster import MeanShift, estimate_bandwidth
 from sklearn import preprocessing
 
-# dbscan imports
-from sklearn.preprocessing import StandardScaler
-from sklearn.cluster import DBSCAN
-
 #affinity propagation imports
 from sklearn.cluster import AffinityPropagation
 
@@ -47,15 +45,19 @@ cluster_colours = ['y', 'g', 'b', 'r', 'c', 'm', 'k', 'g', 'b',
                    'k','m','y','g','b','r','c','m','k','m','y','g','b',
                    'r','c','m','k','m','y','g','b','r','c','m','k','m',
                    'y','g','b','r','c','m','k','m']
+
 # need this so that output files always have the same number of columns
 max_num_clusters = 40
+
+# defined functions
 from numpy import average as avg
 from numpy import std as stdev
 '''-------------------------------------------------------------------------'''
 
 
 def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
-               id_list, data_file, write_res, input_file='experiments.txt'):
+               id_list, data_file, write_res, ds9_cat,
+               input_file='experiments.txt'):
     '''DESCRIBE PROCESS HERE'''
     # Create saving directories
     plot_path, results_path = make_save_directory(save_plots, save_results)
@@ -98,8 +100,9 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
 
             ms_n_clusters, bandwidth, ms_score, ms_obj, ms_obj_p_cluster = \
                 meanshift(plot_path, experiments[i], cluster_data_,
-                          plots, b_width_input, id_list, id_data)
-            if "yes" in write_res:      
+                          plots, b_width_input, id_list, id_data, x_data,
+                          y_data, ds9_cat)
+            if "yes" in write_res:
                 meanshift_results(results_path, results_title, experiments[i],
                                   ms_n_clusters, ms_score, bandwidth, ms_obj,
                                   ms_obj_p_cluster)
@@ -110,7 +113,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
             af_n_clusters, af_score, af_obj, af_obj_p_cluster = \
                 affinity_propagation(plot_path, experiments[i], cluster_data_,
                                      plots, damping, preferences, id_list,
-                                     id_data)
+                                     id_data, x_data, y_data, ds9_cat)
             if "yes" in write_res:
                 affinity_propagation_results(results_path, results_title,
                                              experiments[i], af_n_clusters,
@@ -131,14 +134,14 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                     high, low = 4, 1
                 else:
                     high, low = 5, 0
-            else: 
+            else:
                 high, low = 1, 0
 
             for a in range(km_n_clusters - low, km_n_clusters + high):
                 km_score, num_obj = kmeans(plot_path, experiments[i],
                                            cluster_data_, greatdata,
                                            a, plots, id_list,
-                                           x_data, y_data, id_data)
+                                           x_data, y_data, id_data, ds9_cat)
                 total_obj = num_obj.sum()
                 if "yes" in write_res:
                     kmeans_results(results_path, results_title, experiments[i],
@@ -278,7 +281,7 @@ def organize_data(exp, data_file):
 
 
 def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
-              output_id, id_data):
+              output_id, id_data, x, y, ds9_cat):
     '''---------------------------------------------------------------------'''
     '''Meanshift clustering to determine the number of clusters in the data,
     which can be passed to KMEANS function'''
@@ -309,7 +312,7 @@ def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
     # Compute silhouette_score for entire cluster or individuals
     if n_clusters_ > 1:
         average_score = metrics.silhouette_score(cluster_data, labels)
-        # sample_score = metrics.silhouette_samples(X, labels)
+        sample_score = metrics.silhouette_samples(cluster_data, labels)
     else:
         average_score = -99
 
@@ -320,16 +323,19 @@ def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
         objects_per_cluster[i] = len(ith_cluster)
         write_cluster_stats(s_path, 'meanshift', n_clusters_, i,
                             objects_per_cluster[i], cluster_centers[i],
-                            ith_cluster)
+                            ith_cluster, average_score,
+                            sample_score[labels == i])
 
     # Format for writing results
     objects_per_cluster.sort()  # sort from smallest to largest
     objects_per_cluster = objects_per_cluster[::-1]  # reverse sort
 
-    # Make id_lists
+    # Make catalgoues
     if "yes" in output_id:
-        id_catologue(n_clusters_, labels, bands[0], bands[1], bands[2],
-                     bands[3], id_data, s_path)
+        id_catologue('meanshift', n_clusters_, labels, bands, id_data, x, y,
+                     s_path)
+    if "yes" in ds9_cat:
+        ds9_catalogue('meanshift', n_clusters_, labels, bands, x, y, s_path)
 
     # Make plots
     if "meanshift_density" in make_plot:
@@ -344,8 +350,8 @@ def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
            objects_per_cluster)
 
 
-def affinity_propagation(s_path, bands, cluster_data,
-                         make_plots, damp, pref, output_id, id_data):
+def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
+                         output_id, id_data, x, y, ds9_cat):
     '''---------------------------------------------------------------------'''
     '''Perform Affinity Propagation clustering to determine the number of
     clusters in a given set of colours'''
@@ -365,8 +371,7 @@ def affinity_propagation(s_path, bands, cluster_data,
     total_objects = len(cluster_data)
     if n_clusters_ > 1:
         ap_score = metrics.silhouette_score(cluster_data, labels)
-        # sample_score = silhouette_samples(scaler.fit_transform(clusterdata),
-        #                                   labels)
+        sample_score = silhouette_samples(cluster_data, labels)
     else:
         ap_score = -99
 
@@ -375,6 +380,11 @@ def affinity_propagation(s_path, bands, cluster_data,
     for i in range(0, n_clusters_):
         ith_cluster = cluster_data[labels == i]
         objects_per_cluster[i] = len(ith_cluster)
+        cluster_center = cluster_data[cluster_centers_indices[i]]
+        write_cluster_stats(s_path, 'affinity', n_clusters_, i,
+                            objects_per_cluster[i], cluster_center,
+                            ith_cluster, ap_score,
+                            sample_score[labels == i])
 
     # Format for writing results
     objects_per_cluster.sort()  # sort from smallest to largest
@@ -382,7 +392,10 @@ def affinity_propagation(s_path, bands, cluster_data,
 
     # Write ID file
     if "yes" in output_id:
-        id_catologue(n_clusters_, labels, bands, id_data, s_path)
+        id_catologue('affinity', n_clusters_, labels, bands, id_data, x, y,
+                     s_path)
+    if "yes" in ds9_cat:
+        ds9_catalogue('affinity', n_clusters_, labels, bands, x, y, s_path)
 
     # Make plot
     if 'affinity' in make_plots:
@@ -393,7 +406,7 @@ def affinity_propagation(s_path, bands, cluster_data,
 
 
 def kmeans(s_path, bands, cluster_data, greatdata, number_clusters, make_plots,
-           output_cluster_id, x, y, id_data):
+           output_cluster_id, x, y, id_data, ds9_cat):
     '''---------------------------------------------------------------------'''
     '''Perform K-means clustering on colours constructed from HST photometry
     using various combinations of filters'''
@@ -409,21 +422,22 @@ def kmeans(s_path, bands, cluster_data, greatdata, number_clusters, make_plots,
     km.fit(cluster_data)
 
     # Compute clustering statistics
-    cluster_number = km.predict(cluster_data)
     centers = km.cluster_centers_
     labels = km.labels_
     if number_clusters > 1:
         score = metrics.silhouette_score(cluster_data, labels)
-        # sample_score = silhouette_samples(scaler.fit_transform(clusterdata),
-        #                                   labels)
+        sample_score = silhouette_samples(cluster_data, labels)
     else:
         score = -99
 
     # Identify which cluster each object belongs to
     objects_per_cluster = np.zeros(max_num_clusters, dtype=np.int16)
     for i in range(0, number_clusters):
-        x_cluster = x[cluster_number == i]
+        x_cluster = cluster_data[labels == i]
         objects_per_cluster[i] = len(x_cluster)
+        write_cluster_stats(s_path, 'kmeans', number_clusters, i,
+                            objects_per_cluster[i], centers[i], x_cluster,
+                            score, sample_score[labels == i])
 
     # Format for writing results
     objects_per_cluster.sort()  # sort from smallest to largest
@@ -431,30 +445,61 @@ def kmeans(s_path, bands, cluster_data, greatdata, number_clusters, make_plots,
 
     # Output object and cluster IDs to ID.txt file
     if "yes" in output_cluster_id:
-        id_catologue(number_clusters, cluster_number, bands[0], bands[1],
-                     bands[2], bands[3], id_data, s_path)
-
+        id_catologue('kmeans', number_clusters, labels, bands, id_data, x, y,
+                     s_path)
+    if "yes" in ds9_cat:
+        ds9_catalogue('kmeans', number_clusters, labels, bands, x, y, s_path)
     # Generate plots
     if "kmeans_density" in make_plots:
         kmeans_density(s_path, bands[0], bands[1], bands[2], bands[3], km,
-                       scaler, cluster_data, number_clusters, cluster_number)
+                       scaler, cluster_data, number_clusters, labels)
     if "kmeans_colour" in make_plots:
-        kmeans_colour(s_path, cluster_data, number_clusters, cluster_number,
+        kmeans_colour(s_path, cluster_data, number_clusters, labels,
                       bands, centers)
 
     return(score, objects_per_cluster)
 
 
-def id_catologue(number_clusters, cluster_number, band1, band2, band3, band4,
-                 id_data, save_):
+def id_catologue(clustering, number_clusters, cluster_number, waves, id_data,
+                 x, y, save_):
     '''Create file with list of object ID and cluster number'''
-    file_name = 'id_{}cl_{}-{}vs{}-{}.txt'.format(str(number_clusters),
-                                                  band1, band2, band3, band4)
+    file_name = 'id_{}_{}cl_{}-{}vs{}-{}.txt'.format(clustering,
+                                                     str(number_clusters),
+                                                     waves[0], waves[1],
+                                                     waves[2], waves[3])
     id_path = os.path.join(save_, file_name)
-    id_tab = Table(data=[id_data, cluster_number],
-                   names=['object_id', 'cluster_number'])
+    id_tab = Table(data=[id_data, x, y, cluster_number],
+                   names=['object_id', 'x_pix', 'y_pix', 'cluster_number'])
     id_tab.write(id_path, format='ascii.commented_header')
 
+    return()
+
+
+def ds9_catalogue(clustering, n_clust, cluster_num, waves, x, y, save_):
+    '''Create file with list of object x-y positions for each cluster'''
+    path = '{}\\{}'.format(save_, 'ds9')
+    if not os.path.exists(path): 
+        os.makedirs(path)
+    
+    for i in range(0, n_clust):
+        file_name = 'ds9_{}_{}cl_cluster-{}_{}-{}vs{}-{}.txt'.format(clustering,
+                                                          str(n_clust), str(i+1),
+                                                          waves[0], waves[1],
+                                                          waves[2], waves[3])
+        test_path = '{}\\{}'.format(path, file_name)
+        if not os.path.exists(test_path):
+            create_path = os.path.join(path, file_name)
+            ds9_file = open(create_path, "a")
+            ds9_file.write('image' + '\n')
+            ds9_file.close()
+        ds9_path = os.path.join(path, file_name)
+        data = Table([x[cluster_num == i], y[cluster_num == i]])
+        Table.write(data, ds9_path, format='ascii.no_header')
+        #ds9_file = open(ds9_path, "a")
+        #print x[cluster_num == i], y[cluster_num == i]
+        # data = np.array([x[cluster_num == i], y[cluster_num == i]], dtype=float)
+        #ds9_file.write(np.array([x[cluster_num == i], y[cluster_num == i]]).T)
+        #ds9_file.close()
     return()
 
 
@@ -780,10 +825,11 @@ def affinity_propagation_results(save_path, name, bands,
 
 
 def write_cluster_stats(save_path, clustering, n_clust, cluster, n_obj,
-                        center, c_data):
-    header = '# clustering total_clust clust_num n_obj center avg_dist '\
-             'max_dist min_dist stdev rms avg_col_1 avg_col_2 avg_col_3 '\
-             'avg_col_4 avg_col_5 avg_col_6 avg_col_7'
+                        center, c_data, t_score, c_score):
+    header = '# clustering total_clust clust_num n_obj t_scr c_scr avg_dist '\
+             'max_dist min_dist stdev rms cen_1 cen_2 cen_3 cen_4 cen_5 cen_6'\
+             ' cen_7 avg_col_1 avg_col_2 avg_col_3 avg_col_4 avg_col_5 '\
+             'avg_col_6 avg_col_7'
     name = 'cluster_statistics.txt'
     test_path = '{}\\{}'.format(save_path, name)
     if not os.path.exists(test_path):
@@ -793,62 +839,76 @@ def write_cluster_stats(save_path, clustering, n_clust, cluster, n_obj,
         cluster_statistics.close()
     cluster_statistics_path = os.path.join(save_path, name)
     cluster_statistics = open(cluster_statistics_path, "a")
-    inputs = '{} {} {} {} {}'.format(clustering, n_clust, cluster+1,
-                                     n_obj, center)
+    inputs = '{} {} {} {} {:.4f} {:.4f}'.format(clustering, n_clust, cluster+1,
+                                                n_obj, t_score, avg(c_score))
+                                                       
     distances = '{:.4f}'.format(float(stdev(c_data)))
+    centers = '{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f}'.format(center[0], center[1],
+                                                                         center[2], center[3],
+                                                                         center[4], center[5],
+                                                                         center[6])
     a = '{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f}'.format(avg(c_data[0]), avg(c_data[1]),
                                       avg(c_data[2]), avg(c_data[3]),
                                       avg(c_data[4]), avg(c_data[5]),
                                       avg(c_data[6]))
-    cluster_statistics.write(inputs + ' ' + distances + ' ' + a + '\n')
+    cluster_statistics.write(inputs + ' ' + distances + ' ' + centers + ' ' + a + '\n')
     cluster_statistics.close()
     return
 
 
 def user_input():
 
-    inputs = argparse.ArgumentParser(description="Inputs for clustering analysis.")
+    inputs = argparse.ArgumentParser(description="Inputs for analysis.")
 
     # Mandatory arguments: data_file
     inputs.add_argument("data_file", help="Choose the data file for analysis")
 
     # Optional Arguments: Save paths for results text files and figure files
-    inputs.add_argument("-pp", "--plot_path", help="Enter path for saving plot files", default="results")
-    inputs.add_argument("-rp", "--results_path", help="Enter path for saving results files", default="results")
+    inputs.add_argument("-pp", "--plot_path",
+                        help="Enter path for saving plot files",
+                        default="results")
+    inputs.add_argument("-rp", "--results_path",
+                        help="Enter path for saving results files",
+                        default="results")
 
     # Optional Arguments: Choose the clustering method and inputs for kmeans
-    inputs.add_argument("-a", "--analysis", help = "Choose the methods you would like to use",
+    inputs.add_argument("-a", "--analysis",
+                        help="Choose the methods you would like to use",
                         choices=['meanshift', 'kmeans', 'affinity'],
                         nargs='*', default=[])
 
-    # Optional Arguments: Parameter secification 
-    inputs.add_argument("-kmi", "--kmeans_input", help="Choose the number of clusters input for kmeans", 
+    # Optional Arguments: Parameter secification
+    inputs.add_argument("-kmi", "--kmeans_input",
+                        help="Choose the number of clusters input for kmeans",
                         choices=['meanshift', 'affinity', 'experiments.txt'],
-                        default = ['experiments.txt'])
-    inputs.add_argument("-bwi", "--bandwidth_input", help="Choose bandwidth for meanshift custering",
+                        default=['experiments.txt'])
+    inputs.add_argument("-bwi", "--bandwidth_input",
+                        help="Choose bandwidth for meanshift custering",
                         choices=['experiments.txt', 'estimate'],
                         default=['estimate'])
-    
+
     # Optional Arguments: Choose plots
-    inputs.add_argument("-p","--plots", help = "Choose the plots you would like to make", 
-                        choices=['meanshift_density','meanshift_colour',
+    inputs.add_argument("-p", "--plots",
+                        help="Choose the plots you would like to make",
+                        choices=['meanshift_density', 'meanshift_colour',
                                  'kmeans_density', 'kmeans_colour',
                                  'affinity'], nargs='*', default=[])
     inputs.add_argument("-wr", "--write_results", help="Write main results",
                         choices=['yes', 'no'], default=['yes'])
-    # Optional Arguments: Choose other functions to run (id, results_summary)
-    inputs.add_argument("-id", "--id_list", help = "Produces object id list",
-                        choices=['yes', 'no'],
-                        default=[])
+    # Optional Arguments: Catalogue functions
+    inputs.add_argument("-id", "--id_list", help="Produces object id list",
+                        choices=['yes', 'no'], default=['no'])
+    inputs.add_argument("-ds", "--ds_cat", help="Produces ds9 catalogue",
+                        choices=['yes', 'no'], default=['no'])
 
-    criteria = inputs.parse_args()     
-    
+    criteria = inputs.parse_args()
+
     clustering(criteria.plot_path, criteria.results_path, criteria.analysis,
                criteria.kmeans_input, criteria.bandwidth_input, criteria.plots,
-               criteria.id_list, criteria.data_file, criteria.write_results)                                                         
+               criteria.id_list, criteria.data_file, criteria.write_results,
+               criteria.ds_cat)
 
     return()
 
-if __name__ == "__main__": 
+if __name__ == "__main__":
     user_input()
-    
