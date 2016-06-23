@@ -4,8 +4,8 @@ Created on Fri Apr 03 13:24:41 2015
 @author: Owner
 """
 '''------------------------- Important Info -----------------------------------
-Currently formatted for 7 colours. 
-Must be changed for different n_dimensions: 
+Currently formatted for 7 colours.
+Must be changed for different n_dimensions:
     - organize_data filters must be changed
     - headers in results files must be changed
         - New files for different dimesions
@@ -24,15 +24,14 @@ from itertools import cycle
 # Kmeans imports
 from sklearn.cluster import KMeans
 from sklearn import preprocessing
-from sklearn import metrics 
-from sklearn.metrics import pairwise_distances, silhouette_samples
-from scipy.stats import norm
+from sklearn import metrics
+from sklearn.metrics import silhouette_samples
 
 # meanshift imports
 from sklearn.cluster import MeanShift, estimate_bandwidth
 from sklearn import preprocessing
 
-#affinity propagation imports
+# affinity propagation imports
 from sklearn.cluster import AffinityPropagation
 
 '''-----------------------Global Variables----------------------------------'''
@@ -217,34 +216,53 @@ def organize_data(exp, data_file):
     wave11_unc = data[exp['band11']+'_unc']
     wave12 = data[exp['band12']]
     wave12_unc = data[exp['band12']+'_unc']
-    #colour 7 
+    # Colour 7
     wave13 = data[exp['band13']]
     wave13_unc = data[exp['band13']+'_unc']
     wave14 = data[exp['band14']]
     wave14_unc = data[exp['band14']+'_unc']
+
     # Change parameters to match data_file
     # Remove data pieces with no value
-    
-    wave1_trim = np.logical_and(np.logical_and(wave1 != -99, wave1_unc != -99), wave1_unc < ratio)
-    wave2_trim = np.logical_and(np.logical_and(wave2 != -99, wave2_unc != -99), wave2_unc < ratio)
+    wave1_trim = np.logical_and(np.logical_and(wave1 != -99, wave1_unc != -99),
+                                wave1_unc < ratio)
+    wave2_trim = np.logical_and(np.logical_and(wave2 != -99, wave2_unc != -99),
+                                wave2_unc < ratio)
 
-    wave3_trim = np.logical_and(np.logical_and(wave3 != -99, wave3_unc != -99), wave3_unc < ratio)
-    wave4_trim = np.logical_and(np.logical_and(wave4 != -99, wave4_unc != -99), wave4_unc < ratio)
+    wave3_trim = np.logical_and(np.logical_and(wave3 != -99, wave3_unc != -99),
+                                wave3_unc < ratio)
+    wave4_trim = np.logical_and(np.logical_and(wave4 != -99, wave4_unc != -99),
+                                wave4_unc < ratio)
 
-    wave5_trim = np.logical_and(np.logical_and(wave5 != -99, wave5_unc != -99), wave5_unc < ratio)
-    wave6_trim = np.logical_and(np.logical_and(wave6 != -99, wave6_unc != -99), wave6_unc < ratio)
+    wave5_trim = np.logical_and(np.logical_and(wave5 != -99, wave5_unc != -99),
+                                wave5_unc < ratio)
+    wave6_trim = np.logical_and(np.logical_and(wave6 != -99, wave6_unc != -99),
+                                wave6_unc < ratio)
 
-    wave7_trim = np.logical_and(np.logical_and(wave7 != -99, wave7_unc != -99), wave7_unc < ratio)
-    wave8_trim = np.logical_and(np.logical_and(wave8 != -99, wave8_unc != -99), wave8_unc < ratio)
+    wave7_trim = np.logical_and(np.logical_and(wave7 != -99, wave7_unc != -99),
+                                wave7_unc < ratio)
+    wave8_trim = np.logical_and(np.logical_and(wave8 != -99, wave8_unc != -99),
+                                wave8_unc < ratio)
 
-    wave9_trim = np.logical_and(np.logical_and(wave9 != -99, wave9_unc != -99), wave9_unc < ratio)
-    wave10_trim = np.logical_and(np.logical_and(wave10 != -99, wave10_unc != -99), wave10_unc < ratio)
+    wave9_trim = np.logical_and(np.logical_and(wave9 != -99, wave9_unc != -99),
+                                wave9_unc < ratio)
+    wave10_trim = np.logical_and(np.logical_and(wave10 != -99,
+                                                wave10_unc != -99),
+                                 wave10_unc < ratio)
 
-    wave11_trim = np.logical_and(np.logical_and(wave11 != -99, wave11_unc != -99), wave11_unc < ratio)
-    wave12_trim = np.logical_and(np.logical_and(wave12 != -99, wave12_unc != -99), wave12_unc < ratio)
+    wave11_trim = np.logical_and(np.logical_and(wave11 != -99,
+                                                wave11_unc != -99),
+                                 wave11_unc < ratio)
+    wave12_trim = np.logical_and(np.logical_and(wave12 != -99,
+                                                wave12_unc != -99),
+                                 wave12_unc < ratio)
 
-    wave13_trim = np.logical_and(np.logical_and(wave13 != -99, wave13_unc != -99), wave13_unc < ratio)
-    wave14_trim = np.logical_and(np.logical_and(wave14 != -99, wave14_unc != -99), wave14_unc < ratio)
+    wave13_trim = np.logical_and(np.logical_and(wave13 != -99,
+                                                wave13_unc != -99),
+                                 wave13_unc < ratio)
+    wave14_trim = np.logical_and(np.logical_and(wave14 != -99,
+                                                wave14_unc != -99),
+                                 wave14_unc < ratio)
 
     colour1_trim = np.logical_and(wave1_trim, wave2_trim)
     colour2_trim = np.logical_and(wave3_trim, wave4_trim)
@@ -478,9 +496,9 @@ def id_catologue(clustering, number_clusters, cluster_number, waves, id_data,
 def ds9_catalogue(clustering, n_clust, cluster_num, waves, x, y, save_):
     '''Create file with list of object x-y positions for each cluster'''
     path = '{}\\{}'.format(save_, 'ds9')
-    if not os.path.exists(path): 
+    if not os.path.exists(path):
         os.makedirs(path)
-    
+
     for i in range(0, n_clust):
         file_name = 'ds9_{}_{}cl_cluster-{}_{}-{}vs{}-{}.txt'.format(clustering,
                                                           str(n_clust), str(i+1),
@@ -495,11 +513,6 @@ def ds9_catalogue(clustering, n_clust, cluster_num, waves, x, y, save_):
         ds9_path = os.path.join(path, file_name)
         data = Table([x[cluster_num == i], y[cluster_num == i]])
         Table.write(data, ds9_path, format='ascii.no_header')
-        #ds9_file = open(ds9_path, "a")
-        #print x[cluster_num == i], y[cluster_num == i]
-        # data = np.array([x[cluster_num == i], y[cluster_num == i]], dtype=float)
-        #ds9_file.write(np.array([x[cluster_num == i], y[cluster_num == i]]).T)
-        #ds9_file.close()
     return()
 
 
@@ -547,7 +560,7 @@ def meanshift_density(path, cluster_data, n_clusters, X, ms,
 def meanshift_colour(path, X, n_clusters, labels_, centers, bands):
 
     colors = cycle('bgrcmykbgrcmykbgrcmykbgrcmyk')
-    markers = cycle('ooooooo**')#*****<<<<<<>>>>>>>^^^^^^^')
+    markers = cycle('ooooooo**')  # *****<<<<<<>>>>>>>^^^^^^^')
     for i in range(1, 7):
         fig = plt.figure()
         ax = fig.add_subplot(111)
@@ -583,7 +596,7 @@ def meanshift_colour(path, X, n_clusters, labels_, centers, bands):
 
 
 def kmeans_density(path, band1, band2, band3, band4, clf, scaler, colour1,
-                       colour2, number_clusters, cluster_number):
+                   colour2, number_clusters, cluster_number):
 
     '''Plot cluster data for KMEANS clustering'''
     fig = plt.figure(figsize=(8, 8))
@@ -627,7 +640,7 @@ def kmeans_density(path, band1, band2, band3, band4, clf, scaler, colour1,
     ax.set_ylabel(band3+' - '+band4)
     ax.set_title('k-means: '+band1+'-'+band2+' vs. '+band3+'-'+band4,
                  fontsize=12)
-    
+
     file_name = 'kmeans_dens_{}cl_{}-{}vs{}-{}.png'.format(str(number_clusters),
                                                            band1, band2, band3,
                                                            band4)
@@ -643,21 +656,21 @@ def kmeans_density(path, band1, band2, band3, band4, clf, scaler, colour1,
 
 def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
                   cluster_centers):
-    '''Plot xy positions of objects in different clusters'''
+    '''Plot colour-colour diagrams for each colour space'''
 
-    
     colors = cycle('bgrcmykbgrcmykbgrcmykbgrcmyk')
-    markers = cycle('ooooooo**')#*****<<<<<<>>>>>>>^^^^^^^')
+    markers = cycle('ooooooo**')  # *****<<<<<<>>>>>>>^^^^^^^')
     for i in range(1, 7):
         fig = plt.figure()
         ax = fig.add_subplot(111)
         for k, col, mark in zip(range(number_clusters), colors, markers):
             class_members = cluster_number == k
             cluster_center = cluster_centers[k]
-            ax.scatter(cluster_data[class_members, 0], cluster_data[class_members, i],
-                       color=col, marker=mark, label=k)
-            ax.scatter(cluster_center[0], cluster_center[i], marker=mark, color=col,
-                       edgecolor='k', s=100)
+            ax.scatter(cluster_data[class_members, 0],
+                       cluster_data[class_members, i], color=col, marker=mark,
+                       label=k)
+            ax.scatter(cluster_center[0], cluster_center[i], marker=mark,
+                       color=col, edgecolor='k', s=100)
 
         ax.set_xlabel(bands[0]+' - '+bands[1])
         ax.set_ylabel(bands[i*2]+' - '+bands[i*2+1])
@@ -668,7 +681,8 @@ def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
         file_name = 'kmeans_xy_{}cl_{}-{}vs{}-{}.png'.format(str(number_clusters),
                                                              bands[0], bands[1], bands[i*2],
                                                              bands[i*2+1])
-        colours = ('{}-{}_{}-{}').format(bands[0], bands[1], bands[i*2], bands[i*2+1])
+        colours = ('{}-{}_{}-{}').format(bands[0], bands[1], bands[i*2],
+                                         bands[i*2+1])
         path_ = ('{}\\{}').format(path, colours, number_clusters)
         if not os.path.exists(path_):
             os.makedirs(path_)
@@ -680,10 +694,10 @@ def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
 def affinity_plot(labels, cluster_center_indices, X, n_clusters, bands,
                   s_path):
     colors = cycle('bgrcmykbgrcmykbgrcmykbgrcmyk')
-    markers = cycle('ooooooo**')#*****<<<<<<>>>>>>>^^^^^^^')
+    markers = cycle('ooooooo**')  # *****<<<<<<>>>>>>>^^^^^^^')
     for i in range(1, 7):
         fig1 = plt.figure()
-        ax = fig1.add_subplot(111)    
+        ax = fig1.add_subplot(111)
         for k, col, mark in zip(range(n_clusters), colors, markers):
             class_members = labels == k
             cluster_center = X[cluster_center_indices[k]]
@@ -698,8 +712,9 @@ def affinity_plot(labels, cluster_center_indices, X, n_clusters, bands,
         ax.set_ylabel(bands[i*2] + ' - ' + bands[i*2+1])
         ax.legend(loc='lower right')
         file_name = 'affinity_{}cl_{}-{}vs{}-{}.png'.format(str(n_clusters),
-                                                          bands[0], bands[1], bands[i*2],
-                                                          bands[i*2+1])
+                                                            bands[0], bands[1],
+                                                            bands[i*2],
+                                                            bands[i*2+1])
         colours = ('{}-{}_{}-{}').format(bands[0], bands[1], bands[i*2],
                                          bands[i*2+1])
         path_ = ('{}\\{}').format(s_path, colours)
