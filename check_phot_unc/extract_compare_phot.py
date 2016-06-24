@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 ubvi_list = ['336','438','555','814']
 ubvi_zps = [23.46, 24.98, 25.81, 24.67]
-ubvi_pos_offsets = [(0.0001375,0.0001375), (0.00015,0.000142), (0.00014,0.00021), (0.000137, 0.00022)]
+ubvi_pos_offsets = [(0.0001375,0.0001375), (0.000154,0.000154), (0.000148,0.000215), (0.000137, 0.00022)]
 match_tol = 1.0 # arcsec
 
 def go(filt_list = ubvi_list, zps=ubvi_zps, ers = '../raw_data/hlsp_wfc3ers_hst_wfc3_m83_cat_all_v2-corrected.txt', rerun_se=False):
