@@ -2,13 +2,13 @@ from astropy.table import Table, Column
 import numpy as np
 import os
 
-#usage:
-#table_proc.process_tab(ned_in, ned_out, type_col='Type',select_list = table_proc.within_galaxy_types_ned, rfmt_fn=table_proc.rfmt_ned)
-#table_proc.process_tab(simbad_in, simbad_out, type_col='OTYPE_S',select_list = table_proc.within_galaxy_types_simbad,rfmt_fn=table_proc.rfmt_simbad)
-#(match output of these with TOPCAT)
-#matchtab = Table.read('ned_simbad_match.fits')
-#matchtab2 = table_proc.process_match(matchtab,'ned_simbad_match2.fits')
+#Reformat and combine NED and SIMBAD data tables
+# reformat involves making object types and naming schemes match
+# combine: match on RA/dec, then check for match on name/type
+#  
 
+#usage:
+#table_proc.go(ned_in, simbad_in, combine_out)
 
 within_galaxy_types_ned = ['*Cl','HII','PofG','Neb','SN','SNR', 'V*','WR*']
 background_types_ned = ['G','GClstr','GGroup','QSO']
@@ -18,6 +18,18 @@ within_galaxy_types_simbad = ['**','Assoc*','Candidate_SN*','Candidate_WR*','Cep
 background_types_simbad = ['BLLac','ClG','EmG','Galaxy','GinCl','GroupG','Possible_G','StarburstG']
 obs_types_simbad = ['EmObj','IR','Radio','Radio(sub-mm)','UV','X']
 
+def go(ned_in, simbad_in, combine_out):
+    
+    # prelim processing
+    # TODO: do we actually want to just select within-glx types?
+    ned_proc = process_tab(ned_in, type_col='Type',select_list = within_galaxy_types_ned, rfmt_fn=rfmt_ned)
+    simb_proc = process_tab(simbad_in, type_col='OTYPE_S',select_list = within_galaxy_types_simbad,rfmt_fn=rfmt_simbad)
+
+    #(match output of these)
+    matchtab = match(ned_proc, simb_proc)
+    matchtab2 = process_match(matchtab, combine_out)
+    
+    return
 
 
 def process_tab(tab_in, tab_out, type_col, select_list = within_galaxy_types_ned, rfmt_fn=None):
