@@ -73,16 +73,9 @@ Comaniciu D.,  Meer P.,  2002, IEEE Transactions on Pattern Analysis and
   Machine Intelligence, 24, 603
 
 \bibitem[\protect\citeauthoryear{{Dopita}, {Blair}, {Long}, {Mutchler},
-  {Whitmore}, {Kuntz}, {Balick}, {Bond}, {Calzetti}, {Carollo}, {Disney},
-  {Frogel}, {O'Connell}, {Hall}, {Holtzman}, {Kimble}, {MacKenty}, {McCarthy},
-  {Paresce}, {Saha}, {Silk}, {Sirianni},]{dopita10}
+  {Whitmore}, {Kuntz} et~al.,}{{Dopita} et~al.}{2010}]{dopita10}
 {Dopita} M.~A.,  {Blair} W.~P.,  {Long} K.~S.,  {Mutchler} M.,  {Whitmore}
-  B.~C.,  {Kuntz} K.~D.,  {Balick} B.,  {Bond} H.~E.,  {Calzetti} D.,
-  {Carollo} M.,  {Disney} M.,  {Frogel} J.~A.,  {O'Connell} R.,  {Hall} D.,
-  {Holtzman} J.~A.,  {Kimble} R.~A.,  {MacKenty} J.,  {McCarthy} P.,  {Paresce}
-  F.,  {Saha} A.,  {Silk} J.,  {Sirianni} M.,  {Trauger} J.,  {Walker} A.~R.,
-  {Windhorst} R.,    {Young} E.,  2010, \apj, 710, 964
->>>>>>> alex
+  B.~C.,  {Kuntz} K.~D.,    et~al., 2010, \apj, 710, 964
 
 \bibitem[\protect\citeauthoryear{{Hollyhead}, {Bastian}, {Adamo},
   {Silva-Villa}, {Dale}, {Ryon} \& {Gazak}}{{Hollyhead}
@@ -93,19 +86,19 @@ Comaniciu D.,  Meer P.,  2002, IEEE Transactions on Pattern Analysis and
 \bibitem[\protect\citeauthoryear{{Hong} et~al.,}{{Hong}  et~al.}{2011}]{hong11}
 {Hong} S.,  et~al., 2011, \apj, 731, 45
 
-\bibitem[\protect\citeauthoryear{{Kim} et~al.,}{{Kim}  et~al.}{2012}]{kim12}
-{Kim} H.,  et~al., 2012, \apj, 753, 26
+\bibitem[\protect\citeauthoryear{{Kim}, {Whitmore}, {Chandar}, {Saha}
+  et~al.,}{{Kim} et~al.}{2012}]{kim12}
+{Kim} H.,  {Whitmore} B.~C.,  {Chandar} R.,  {Saha} A.,    et~al., 2012, \apj,
+  753, 26
 
 \bibitem[\protect\citeauthoryear{{Kuntzer}, {Tewes} \& {Courbin}}{{Kuntzer}
   et~al.}{2016}]{kuntzer16}
 {Kuntzer} T.,  {Tewes} M.,    {Courbin} F.,  2016, ArXiv e-prints
 
-\bibitem[\protect\citeauthoryear{{Liu}, {Calzetti}, {Hong}, {Whitmore},
-  {Chandar}, {O'Connell}, {Blair}, {Cohen}, {Frogel} \& {Kim}}{{Liu}
-  et~al.}{2013}]{liu13}
-{Liu} G.,  {Calzetti} D.,  {Hong} S.,  {Whitmore} B.,  {Chandar} R.,
-  {O'Connell} R.~W.,  {Blair} W.~P.,  {Cohen} S.~H.,  {Frogel} J.~A.,    {Kim}
-  H.,  2013, \apjl, 778, L41
+\bibitem[\protect\citeauthoryear{{Liu}, {Calzetti}, {Hong}, {Whitmore}
+  et~al.,}{{Liu} et~al.}{2013}]{liu13}
+{Liu} G.,  {Calzetti} D.,  {Hong} S.,  {Whitmore} B.,    et~al., 2013, \apjl,
+  778, L41
 
 \bibitem[\protect\citeauthoryear{{Ryon}, {Bastian}, {Adamo}, {Konstantopoulos},
   {Gallagher}, {Larsen}, {Hollyhead}, {Silva-Villa} \& {Smith}}{{Ryon}
@@ -144,22 +137,19 @@ Tammour A.,  Gallagher S.~C.,  Daley M.,    Richards G.~T.,  2016, Monthly
   {Makarova} L.,  {Mitronova} S.,  {Rizzi} L.,  {Shaya} E.~J.,  {Sorce} J.~G.,
     {Wu} P.-F.,  2013, \aj, 146, 86
 
-<<<<<<< HEAD
 \bibitem[\protect\citeauthoryear{{Whitmore} et~al.,}{{Whitmore}
   et~al.}{2011}]{whitmore11}
 {Whitmore} B.~C.,  et~al., 2011, \apj, 729, 78
-=======
+
 \bibitem[\protect\citeauthoryear{Vatturi \& Wong}{Vatturi \&
   Wong}{2009}]{vatturi09}
 Vatturi P.,  Wong W.-K.,  2009, pp 847--856
->>>>>>> alex
 
 \bibitem[\protect\citeauthoryear{{Williams}, {Bonanos}, {Whitmore}, {Prieto} \&
   {Blair}}{{Williams} et~al.}{2015}]{williams15}
 {Williams} S.~J.,  {Bonanos} A.~Z.,  {Whitmore} B.~C.,  {Prieto} J.~L.,
   {Blair} W.~P.,  2015, \aap, 578, A100
 
-<<<<<<< HEAD
 \bibitem[\protect\citeauthoryear{{Wofford}, {Leitherer} \& {Chandar}}{{Wofford}
   et~al.}{2011}]{wofford11}
 {Wofford} A.,  {Leitherer} C.,    {Chandar} R.,  2011, \apj, 727, 100
@@ -169,6 +159,4 @@ Vatturi P.,  Wong W.-K.,  2009, pp 847--856
 {Wolf} C.,  {Meisenheimer} K.,  {Rix} H.-W.,  {Borch} A.,  {Dye} S.,
   {Kleinheinrich} M.,  2003, \aap, 401, 73
 
-=======
->>>>>>> alex
 \end{thebibliography}
