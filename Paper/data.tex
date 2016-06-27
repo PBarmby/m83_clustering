@@ -64,13 +64,20 @@ but a visual inspection of the the detected sources on the white-light image sug
 Nine objects are flagged in the catalog as being problematic %Counted flagged objects
 and we remove them from our analysis.
 
+[to be re-organized] As a check on the catalog we used Sextractor to detect and photometer objects in the individual images.
+While the aperture photometry measurements matched well, the derived uncertainties were much smaller than those reported in the catalog.
+Indeed, the catalog uncertainties seem to be physically unreasonable, with median uncertainty values well above 1~magnitude in
+most bandpasses, and the catalog notes do not recommend them for use except in a relative sense.
+Our comparison implied that recovering a more typical magnitude uncertainty distribution would be accomplished by
+dividing the 0.5-pixel magnitude uncertainties  by 10 for the broad-band filters and 15 for the narrow-band filters.
+This allows us to use the catalog aperture magnitudes as an indicator of detected signal-to-noise: our analysis only objects with
+(scaled) 0.5-pixel magnitude uncertainties $<0.2$~mag.
+
 Table~\ref{tab:cat_numbers} and Figure~\ref{fig:mag_unc} characterize the catalog in terms of measurements in individual filters.
 Not all objects are detected in all filters;
 Table~\ref{tab:cat_numbers} gives the number of objects for which photometry is reported in a given filter,
-the number for which reported magnitude uncertainty is $0.2$~mag or less,
+the number for which scaled 0.5-pixel magnitude uncertainty is $0.2$~mag or less,
 and the aperture magnitude at which the median magnitude uncertainty is $0.2$~mag. 
-%TODO: think about whether 0.2 is the right number.
-% Catalog header says ``The  errors are probably reasonable but have not been "normalized" to truth (by comparing  subexposures), so not recomm ended for use except in a relative scale.'' Chandar paper does not discuss mag uncertainties.
 Figure~\ref{fig:mag_unc} shows the distributions of magnitudes and uncertainties in the individual filters.
 
 %AK: please calculate numbers here. For the last column scipy.stats.binned_statistic is a good way to do this.
