@@ -11,7 +11,11 @@ ubvi_zps = [23.46, 24.98, 25.81, 24.67]
 ubvi_pos_offsets = [(0.0001375,0.0001375), (0.000154,0.000154), (0.000148,0.000215), (0.000137, 0.00022)]
 match_tol = 1.0 # arcsec
 
-def go(filt_list = ubvi_list, zps=ubvi_zps, ers = '../raw_data/hlsp_wfc3ers_hst_wfc3_m83_cat_all_v2-corrected.txt', rerun_se=False):
+narrow_list = ['373','487','673']
+narrow_zps = [21.01, 22.04, 22.33]
+narrow_offsets = [(0.000132,0.00021),(0.000143,0.00022),(0.00012,0.00021)]
+
+def go(filt_list = ubvi_list, zps=ubvi_zps, offsets= ubvi_pos_offsets, ers = '../raw_data/hlsp_wfc3ers_hst_wfc3_m83_cat_all_v2-corrected.txt', rerun_se=False, doplots=True):
 
     ers_dat = Table.read(ers, format = 'ascii.commented_header')
     
@@ -34,7 +38,7 @@ def go(filt_list = ubvi_list, zps=ubvi_zps, ers = '../raw_data/hlsp_wfc3ers_hst_
        
         # read SE results
         new_cat = Table.read(catname, format = 'ascii')
-        new_coo = SkyCoord(ra=(new_cat['col3']+ubvi_pos_offsets[i][0])*u.degree, dec=(new_cat['col4']+ubvi_pos_offsets[i][1])*u.degree) 
+        new_coo = SkyCoord(ra=(new_cat['col3']+offsets[i][0])*u.degree, dec=(new_cat['col4']+offsets[i][1])*u.degree) 
 
         # match SE results with ERS catalog
         # NB: matching results cross-checked vs TOPCAT: same
@@ -63,33 +67,35 @@ def go(filt_list = ubvi_list, zps=ubvi_zps, ers = '../raw_data/hlsp_wfc3ers_hst_
         bin_c2 = bin_edges[1:] - bin_width/2
         med_u1, junk1, junk2 = binned_statistic(u1_old, u1_new, 'median', bin_edges)
         med_u2, junk1, junk2 = binned_statistic(u2_old, u2_new, 'median', bin_edges)
-                
+        print(bin_c2,"\n",med_u1,"\n",med_u2)
+        
         # make some plots
-        fig, ax = plt.subplots(2,1)
-        ax[0].plot(m2_old, m2_new, marker='.', ms=1,label= '3pix')        
-        ax[0].plot(m1_old, m1_new, marker='.', ms=1, label= '0.5pix')
-        ax[0].plot(bin_c1, med_m1, marker='None', ls='solid',color='lightgreen')
-        ax[0].plot(bin_c1, med_m2, marker='None', ls='solid',color='cyan')
-        ax[0].set_xlim(18,30)
-        ax[0].set_ylim(18,30)
-        ax[0].grid(ls='dotted')
-        ax[0].set_xlabel('ERS catalog magnitude')
-        ax[0].set_ylabel('New mag')
-        ax[0].legend(loc='upper left',numpoints=1,markerscale=5)
-        ax[0].set_title('F{}W comparison'.format(filt))
-        ax[1].plot(u2_old, u2_new, marker='.', ms=1,label= '3pix')
-        ax[1].plot(u1_old, u1_new, marker='.', ms=1,label= '0.5pix')
-        ax[1].plot(bin_c2, med_u1, marker='None', ls='solid',color='lightgreen')
-        ax[1].plot(bin_c2, med_u2, marker='None', ls='solid',color='cyan')
-        ax[1].set_xlim(-0.1,4)
-        ax[1].set_ylim(-0.02,0.4)
-        ax[1].grid(ls='dotted')
-        ax[1].set_xlabel('ERS catalog magnitude unc')
-        ax[1].set_ylabel('New mag unc')
-        fig.tight_layout()
-        figname = 'comp_{}.png'.format(filt)
-        plt.savefig(figname)
-        plt.close(fig)
+        if doplots:
+            fig, ax = plt.subplots(2,1)
+            ax[0].plot(m2_old, m2_new, marker='.', ms=1,label= '3pix')        
+            ax[0].plot(m1_old, m1_new, marker='.', ms=1, label= '0.5pix')
+            ax[0].plot(bin_c1, med_m1, marker='None', ls='solid',color='lightgreen')
+            ax[0].plot(bin_c1, med_m2, marker='None', ls='solid',color='cyan')
+            ax[0].set_xlim(18,30)
+            ax[0].set_ylim(18,30)
+            ax[0].grid(ls='dotted')
+            ax[0].set_xlabel('ERS catalog magnitude')
+            ax[0].set_ylabel('New mag')
+            ax[0].legend(loc='upper left',numpoints=1,markerscale=5)
+            ax[0].set_title('F{}W comparison'.format(filt))
+            ax[1].plot(u2_old, u2_new, marker='.', ms=1,label= '3pix')
+            ax[1].plot(u1_old, u1_new, marker='.', ms=1,label= '0.5pix')
+            ax[1].plot(bin_c2, med_u1, marker='None', ls='solid',color='lightgreen')
+            ax[1].plot(bin_c2, med_u2, marker='None', ls='solid',color='cyan')
+            ax[1].set_xlim(-0.1,4)
+            ax[1].set_ylim(-0.02,0.4)
+            ax[1].grid(ls='dotted')
+            ax[1].set_xlabel('ERS catalog magnitude unc')
+            ax[1].set_ylabel('New mag unc')
+            fig.tight_layout()
+            figname = 'comp_{}.png'.format(filt)
+            plt.savefig(figname)
+            plt.close(fig)
         
     #end of loop over images
     return
