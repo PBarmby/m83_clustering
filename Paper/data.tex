@@ -52,16 +52,17 @@ F814W &  $I$-band & 1203~s\\
 
 We analyze the catalog produced by \citet{chandar10} and made available via **REF**.
 The objects in this catalog were detected on a `white-light' image produced by a weighted combination of the $UBVI$ images.
-Photometry in 0.5- and 3-pixel radius apertures at the positions of the detected sources was performed on the broad- and narrow-band images and tabulated in the Vega magnitude system. %TODO: pick one of the 2 apertures and just use that. AK: ideas on which one?
+Photometry in 0.5- and 3-pixel radius apertures at the positions of the detected sources was performed on the broad- and narrow-band images and tabulated in the Vega magnitude system. 
 We apply the correction to the F657N magnitude zeropoint (from 20.72 to 22.35) noted in the header of the catalog.
-\citet{chandar10} discussed aperture corrections for this catalog, but since we are primarily concerned with colours,
-we omit any aperture corrections. %TODO: make sure this is a good idea.
-The catalog contains about 68000 objects which are expected to include individual stars, star clusters,
-supernova remnants, H${\sc ii}$ regions, planetary nebulae, %TODO: check that we expect these to be detectable!
-stellar blends, and background galaxies. % TODO: anything else?
+\citet{chandar10} discussed aperture corrections for this catalog, but since we are primarily concerned with colours
+and the aperture correction does not vary strongly with wavelength, we omit it.
+The catalog contains about 68000 objects which are expected to include individual stars, star clusters, stellar blends,
+supernova remnants, H${\sc ii}$ regions, planetary nebulae, and background galaxies.
+%TODO: foreground stars?
 Completeness and reliability of the catalog are not discussed by \citet{chandar10},
-but a visual inspection of the the detected sources on the white-light image suggests that %TO BE COMPLETED..
-Nine objects are flagged in the catalog as being problematic %Counted flagged objects
+but a visual inspection of the the detected sources on the white-light image suggests that a reasonable balance
+between completeness and reliability was achieved.
+Nine objects are flagged in the catalog as being problematic 
 and we remove them from our analysis.
 
 [to be re-organized] As a check on the catalog we used Sextractor to detect and photometer objects in the individual images.
@@ -70,8 +71,10 @@ Indeed, the catalog uncertainties seem to be physically unreasonable, with media
 most bandpasses, and the catalog notes do not recommend them for use except in a relative sense.
 Our comparison implied that recovering a more typical magnitude uncertainty distribution would be accomplished by
 dividing the 0.5-pixel magnitude uncertainties  by 10 for the broad-band filters and 15 for the narrow-band filters.
-This allows us to use the catalog aperture magnitudes as an indicator of detected signal-to-noise: our analysis only objects with
+This allows us to use the catalog aperture magnitudes as an indicator of detected signal-to-noise: our analysis uses only objects with
 (scaled) 0.5-pixel magnitude uncertainties $<0.2$~mag.
+For the remainder of the analysis we use magnitudes measured in the 0.5-pixel radius aperture, as these should be less affected
+by crowding and the variable galaxy background.
 
 Table~\ref{tab:cat_numbers} and Figure~\ref{fig:mag_unc} characterize the catalog in terms of measurements in individual filters.
 Not all objects are detected in all filters;
