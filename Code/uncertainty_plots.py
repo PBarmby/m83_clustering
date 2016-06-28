@@ -9,7 +9,7 @@ import os.path
     y-axis of the plots'''
 
 
-def unc_plot(path, pos_, unc_):
+def unc_plot(path):
     data = Table.read('data.txt', format='ascii.commented_header', guess=False)
     names = data.colnames
     s_path = make_directory(path)
@@ -18,14 +18,11 @@ def unc_plot(path, pos_, unc_):
         band_3 = data[names[i+2]]
         band_05_unc = data[names[i+1]]
         band_3_unc = data[names[i+3]]
-        #data = data[:10000]
         data_trim05 = np.logical_and(band_05 != -99, band_05_unc != -99)
         data_trim3 = np.logical_and(band_3 != -99, band_3_unc != -99)
         data_trim = np.logical_and(data_trim05, data_trim3)
-
-        if unc_:
-            wave_uncertainty(band_05, band_3, band_05_unc, band_3_unc,
-                             data_trim, names[i], names[i+2], s_path)
+        wave_uncertainty(band_05, band_3, band_05_unc, band_3_unc,
+                         data_trim, names[i], names[i+2], s_path)
 
     print "finished"
     return
@@ -66,21 +63,6 @@ def wave_uncertainty(wave_05, wave_3, wave_05_unc, wave_3_unc, greatdata,
     # plt.show
     file_name = 'uncertainty_02_lim_{}.png'.format(band_05)
 
-    pylab.savefig(os.path.join(save, file_name))
-    plt.close()
-    return
-
-
-def position(x, y, greatdata, band, save):
-
-    fig1 = plt.figure(figsize=(8, 8))
-    ax = fig1.add_subplot(111)
-    ax.scatter(x[greatdata], y[greatdata], marker='.', color='k')
-    ax.set_xlabel(band + '_x')
-    ax.set_ylabel(band + '_y')
-    ax.set_title(band + ' Object Position', fontsize=12)
-
-    file_name = 'xy_poosition_{}.png'.format(band)
     pylab.savefig(os.path.join(save, file_name))
     plt.close()
     return

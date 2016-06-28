@@ -5,8 +5,9 @@ from astropy.table import Table
 import os
 
 def wave_unc_hist(path_):
-    data = Table.read('data.txt', format='ascii.commented_header', guess=False)
+    data = Table.read('data_v2.txt', format='ascii.commented_header', guess=False)
     limit = 0.2
+    fig = plt.figure(figsize=(16,24))
     for i in range(11, len(data.colnames), 2):
         band1 = data.colnames[i]
         wave1 = data[band1]
@@ -15,7 +16,7 @@ def wave_unc_hist(path_):
         x = wave1[wave1_trim]
         y = wave1_unc[wave1_trim]
 
-        fig, axScatter = plt.subplots(figsize=(8, 8))
+        axScatter = fig.add_subplot(20, 2, i/2)
         axScatter.scatter(x, y)
 
         axScatter.set_xlabel(band1+' Magnitude')
@@ -53,13 +54,13 @@ def wave_unc_hist(path_):
         for tl in axHisty.get_yticklabels():
             tl.set_visible(True)
 
-        file_name = "{}_uncertainty_distribution.png".format(band1)
-        path = "C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\{}".format(path_)
-        if not os.path.exists(path):
-            os.makedirs(path)
-        plt.savefig(os.path.join(path, file_name))
-        plt.draw()
-        plt.show()
-        plt.close()
+    file_name = "band_uncertainty_distribution.png"
+    path = "C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\{}".format(path_)
+    if not os.path.exists(path):
+        os.makedirs(path)
+    plt.savefig(os.path.join(path, file_name))
+    plt.draw()
+    plt.show()
+    plt.close()
         
     return()
