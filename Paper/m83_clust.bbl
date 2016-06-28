@@ -42,10 +42,23 @@ Almeida J.~S.,  Prieto C.~A.,  2013, The Astrophysical Journal, 763, 50
 {Blair} W.~P.,  {Winkler} P.~F.,  {Long} K.~S.,  {Whitmore} B.~C.,    et~al.,
   2015, \apj, 800, 118
 
+\bibitem[\protect\citeauthoryear{{Chandar} et~al.,}{{Chandar}
+  et~al.}{2010}]{chandar10}
+{Chandar} R.,  et~al., 2010, \apj, 719, 966
+
 \bibitem[\protect\citeauthoryear{{Chandar}, {Whitmore}, {Calzetti} \&
   {O'Connell}}{{Chandar} et~al.}{2014}]{chandar14}
 {Chandar} R.,  {Whitmore} B.~C.,  {Calzetti} D.,    {O'Connell} R.,  2014,
   \apj, 787, 17
+
+\bibitem[\protect\citeauthoryear{{Dopita} et~al.,}{{Dopita}
+  et~al.}{2010}]{dopita10}
+{Dopita} M.~A.,  et~al., 2010, \apj, 710, 964
+
+\bibitem[\protect\citeauthoryear{{Fouesneau}, {Lan{\c c}on}, {Chandar} \&
+  {Whitmore}}{{Fouesneau} et~al.}{2012}]{fouesneau12}
+{Fouesneau} M.,  {Lan{\c c}on} A.,  {Chandar} R.,    {Whitmore} B.~C.,  2012,
+  \apj, 750, 60
 
 \bibitem[\protect\citeauthoryear{{Chandar}, {Whitmore}, {Kim}
   et~al.,}{{Chandar} et~al.}{2010}]{chandar10}
@@ -70,6 +83,9 @@ Comaniciu D.,  Meer P.,  2002, IEEE Transactions on Pattern Analysis and
 \bibitem[\protect\citeauthoryear{{Hong}, {Calzetti}, {Dopita} et~al.,}{{Hong}
   et~al.}{2011}]{hong11}
 {Hong} S.,  {Calzetti} D.,  {Dopita} M.~A.,    et~al., 2011, \apj, 731, 45
+
+\bibitem[\protect\citeauthoryear{{Hong} et~al.,}{{Hong}  et~al.}{2011}]{hong11}
+{Hong} S.,  et~al., 2011, \apj, 731, 45
 
 \bibitem[\protect\citeauthoryear{{Kim}, {Whitmore}, {Chandar}, {Saha}
   et~al.,}{{Kim} et~al.}{2012}]{kim12}
@@ -118,6 +134,10 @@ Tammour A.,  Gallagher S.~C.,  Daley M.,    Richards G.~T.,  2016, Monthly
 {Tully} R.~B.,  {Courtois} H.~M.,  {Dolphin} A.~E.,    et~al., 2013, \aj, 146,
   86
 
+\bibitem[\protect\citeauthoryear{{Whitmore} et~al.,}{{Whitmore}
+  et~al.}{2011}]{whitmore11}
+{Whitmore} B.~C.,  et~al., 2011, \apj, 729, 78
+
 \bibitem[\protect\citeauthoryear{Vatturi \& Wong}{Vatturi \&
   Wong}{2009}]{vatturi09}
 Vatturi P.,  Wong W.-K.,  2009, pp 847--856
@@ -126,5 +146,14 @@ Vatturi P.,  Wong W.-K.,  2009, pp 847--856
   {Blair}}{{Williams} et~al.}{2015}]{williams15}
 {Williams} S.~J.,  {Bonanos} A.~Z.,  {Whitmore} B.~C.,  {Prieto} J.~L.,
   {Blair} W.~P.,  2015, \aap, 578, A100
+
+\bibitem[\protect\citeauthoryear{{Wofford}, {Leitherer} \& {Chandar}}{{Wofford}
+  et~al.}{2011}]{wofford11}
+{Wofford} A.,  {Leitherer} C.,    {Chandar} R.,  2011, \apj, 727, 100
+
+\bibitem[\protect\citeauthoryear{{Wolf}, {Meisenheimer}, {Rix}, {Borch}, {Dye}
+  \& {Kleinheinrich}}{{Wolf} et~al.}{2003}]{combo-17}
+{Wolf} C.,  {Meisenheimer} K.,  {Rix} H.-W.,  {Borch} A.,  {Dye} S.,
+  {Kleinheinrich} M.,  2003, \aap, 401, 73
 
 \end{thebibliography}
