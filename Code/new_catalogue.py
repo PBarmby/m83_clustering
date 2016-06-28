@@ -27,10 +27,10 @@ def mk_cat():
 
     # Narrow uncertanty correction
     for n in range(0, len(narrow)):
-        for i in range (0, len(data)):
-            if data['mag05_' + narrow[b]][i] != -99.0 and data['mag05_' + narrow[b] + '_unc'][i] != -99.0:
-                data['mag05_' + narrow[b] + '_unc'][i] = data['mag05_' + narrow[b] + '_unc'][i]/narrow_correction
-            if data['mag3_' + narrow[b]][i] != -99.0 and data['mag3_' + narrow[b] + '_unc'][i] != -99.0:
-                data['mag3_' + narrow[b] + '_unc'][i] = data['mag3_' + narrow[b] + '_unc'][i]/narrow_correction
+        for j in range (0, len(data)):
+            if data['mag05_' + narrow[n]][j] != -99.0 and data['mag05_' + narrow[n] + '_unc'][j] != -99.0:
+                data['mag05_' + narrow[n] + '_unc'][j] = data['mag05_' + narrow[n] + '_unc'][j]/narrow_correction
+            if data['mag3_' + narrow[n]][j] != -99.0 and data['mag3_' + narrow[n] + '_unc'][j] != -99.0:
+                data['mag3_' + narrow[n] + '_unc'][j] = data['mag3_' + narrow[n] + '_unc'][j]/narrow_correction
     Table.write(data, 'data_v3-test.txt', format='ascii.commented_header')
     return()

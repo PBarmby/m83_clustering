@@ -1,14 +1,20 @@
+'''Data is trimmed with unc < 0.2 and removed all -99s
+    - Exception: ID file which records all object detections
+    - Using data file: data_v3.txt in m83_clustering\Code'''
 import numpy as np 
 import os
 from astropy.table import Table
 from matplotlib import pyplot as plt
 from itertools import cycle
-'''Data is now trimmed with unc < 0.2 and removed all -99s
-    - Exception: ID file which records all object detections'''
+
 
 def band_unc_limit(path_):
-    data = Table.read('data.txt', format='ascii.commented_header', guess=False)
+    '''Creates file with each band at various uncertainty limits and counts
+    the number of objects valid at each limit. 
+        - removes all -99 objects'''
+    data = Table.read('data_v3.txt', format='ascii.commented_header', guess=False)
     band_names = data.colnames
+
     unc_limit_path = make_directory(path_)
     file_name = "band_unc_limit_statistics.txt"
     file_path = os.path.join(unc_limit_path, file_name)
@@ -17,6 +23,7 @@ def band_unc_limit(path_):
         unc_limit_file = open(file_path, "a")
         unc_limit_file.write(header + '\n')
         unc_limit_file.close()
+
     for i in range (11, len(data.colnames), 2):
         unc_limit_file = open(file_path, "a")
         band = band_names[i]
@@ -31,6 +38,7 @@ def band_unc_limit(path_):
             limit_string = "{} {:.4f} {}".format(band, limit, len(gooddata))
             unc_limit_file.write(limit_string + '\n')
         unc_limit_file.close()
+
     return()
 
 
