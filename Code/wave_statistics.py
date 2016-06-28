@@ -12,7 +12,7 @@ def band_unc_limit(path_):
     '''Creates file with each band at various uncertainty limits and counts
     the number of objects valid at each limit. 
         - removes all -99 objects'''
-    data = Table.read('data_v3.txt', format='ascii.commented_header', guess=False)
+    data = Table.read('data_v3-test.txt', format='ascii.commented_header', guess=False)
     band_names = data.colnames
 
     unc_limit_path = make_directory(path_)
