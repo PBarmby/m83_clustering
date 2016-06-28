@@ -37,12 +37,10 @@ Almeida J.~S.,  Prieto C.~A.,  2013, The Astrophysical Journal, 763, 50
   {Kuntz} K.~D.,  {Long} K.~S.,  {Soria} R.,  {Whitmore} B.~C.,    {Winkler}
   P.~F.,  2014, \apj, 788, 55
 
-\bibitem[\protect\citeauthoryear{{Blair}, {Winkler}, {Long}, {Whitmore}, {Kim},
-  {Soria}, {Kuntz}, {Plucinsky}, {Dopita} \& {Stockdale}}{{Blair}
-  et~al.}{2015}]{blair15}
-{Blair} W.~P.,  {Winkler} P.~F.,  {Long} K.~S.,  {Whitmore} B.~C.,  {Kim} H.,
-  {Soria} R.,  {Kuntz} K.~D.,  {Plucinsky} P.~P.,  {Dopita} M.~A.,
-  {Stockdale} C.,  2015, \apj, 800, 118
+\bibitem[\protect\citeauthoryear{{Blair}, {Winkler}, {Long}, {Whitmore}
+  et~al.,}{{Blair} et~al.}{2015}]{blair15}
+{Blair} W.~P.,  {Winkler} P.~F.,  {Long} K.~S.,  {Whitmore} B.~C.,    et~al.,
+  2015, \apj, 800, 118
 
 \bibitem[\protect\citeauthoryear{{Chandar}, {Whitmore}, {Calzetti} \&
   {O'Connell}}{{Chandar} et~al.}{2014}]{chandar14}
@@ -69,16 +67,9 @@ Comaniciu D.,  Meer P.,  2002, IEEE Transactions on Pattern Analysis and
 {Hollyhead} K.,  {Bastian} N.,  {Adamo} A.,  {Silva-Villa} E.,  {Dale} J.,
   {Ryon} J.~E.,    {Gazak} Z.,  2015, \mnras, 449, 1106
 
-\bibitem[\protect\citeauthoryear{{Hong}, {Calzetti}, {Dopita}, {Blair},
-  {Whitmore}, {Balick}, {Bond}, {Carollo}, {Disney}, {Frogel}, {Hall},
-  {Holtzman}, {Kimble}, {McCarthy}, {O'Connell}, {Paresce}, {Saha}, {Silk},
-  {Trauger}, {Walker}, {Windhorst}, {Young} \&]{hong11}
-{Hong} S.,  {Calzetti} D.,  {Dopita} M.~A.,  {Blair} W.~P.,  {Whitmore} B.~C.,
-  {Balick} B.,  {Bond} H.~E.,  {Carollo} M.,  {Disney} M.~J.,  {Frogel} J.~A.,
-  {Hall} D.,  {Holtzman} J.~A.,  {Kimble} R.~A.,  {McCarthy} P.~J.,
-  {O'Connell} R.~W.,  {Paresce} F.,  {Saha} A.,  {Silk} J.~I.,  {Trauger}
-  J.~T.,  {Walker} A.~R.,  {Windhorst} R.~A.,  {Young} E.~T.,    {Mutchler} M.,
-   2011, \apj, 731, 45
+\bibitem[\protect\citeauthoryear{{Hong}, {Calzetti}, {Dopita} et~al.,}{{Hong}
+  et~al.}{2011}]{hong11}
+{Hong} S.,  {Calzetti} D.,  {Dopita} M.~A.,    et~al., 2011, \apj, 731, 45
 
 \bibitem[\protect\citeauthoryear{{Kim}, {Whitmore}, {Chandar}, {Saha}
   et~al.,}{{Kim} et~al.}{2012}]{kim12}
@@ -122,14 +113,10 @@ Tammour A.,  Gallagher S.~C.,  Daley M.,    Richards G.~T.,  2016, Monthly
 \bibitem[\protect\citeauthoryear{{Tully}}{{Tully}}{2015}]{tully15}
 {Tully} R.~B.,  2015, \aj, 149, 171
 
-\bibitem[\protect\citeauthoryear{{Tully}, {Courtois}, {Dolphin}, {Fisher},
-  {H{\'e}raudeau}, {Jacobs}, {Karachentsev}, {Makarov}, {Makarova},
-  {Mitronova}, {Rizzi}, {Shaya}, {Sorce} \& {Wu}}{{Tully}
-  et~al.}{2013}]{tully13}
-{Tully} R.~B.,  {Courtois} H.~M.,  {Dolphin} A.~E.,  {Fisher} J.~R.,
-  {H{\'e}raudeau} P.,  {Jacobs} B.~A.,  {Karachentsev} I.~D.,  {Makarov} D.,
-  {Makarova} L.,  {Mitronova} S.,  {Rizzi} L.,  {Shaya} E.~J.,  {Sorce} J.~G.,
-    {Wu} P.-F.,  2013, \aj, 146, 86
+\bibitem[\protect\citeauthoryear{{Tully}, {Courtois}, {Dolphin}
+  et~al.,}{{Tully} et~al.}{2013}]{tully13}
+{Tully} R.~B.,  {Courtois} H.~M.,  {Dolphin} A.~E.,    et~al., 2013, \aj, 146,
+  86
 
 \bibitem[\protect\citeauthoryear{Vatturi \& Wong}{Vatturi \&
   Wong}{2009}]{vatturi09}

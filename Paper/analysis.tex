@@ -40,10 +40,10 @@ Where $h$ is the magnitude of the bandwidth matrix, $k(x)$ is the profile of ker
 The second element of Mean Shift is density gradient estimation. 
 The density gradient is estimated from the gradient of equation~\ref{eq:ms_de}\citet{vatturi09}.
 The density gradient is given by: 
-\begin{equation}
+\begin{multline}
 \label{eq:ms_dg}
-\nabla\hat{f}_{h,K}(x) = \frac{2c_{k,d}}{nh^(d+2)} \Bigg[ \sum_{i=1}^n k^{\prime} \Bigg( \norm{\frac{x-x_{i}}{h}}^2 \Bigg) \Bigg] \Bigg[\frac{\sum_{i=1}^n x_{i}k^{\prime} \Bigg( \norm{\frac{x-x_{i}}{h}}^2 \Bigg)}{\sum_{i=1}^n k^{\prime} \Bigg( \norm{\frac{x-x_{i}}{h}}^2 \Bigg)} - x \Bigg]
-\end{equation}
+\nabla\hat{f}_{h,K}(x) = \frac{2c_{k,d}}{nh^(d+2)} \Bigg[ \sum_{i=1}^n k^{\prime} \Bigg( \norm{\frac{x-x_{i}}{h}}^2 \Bigg) \Bigg] \\ \Bigg[\frac{\sum_{i=1}^n x_{i}k^{\prime} \Bigg( \norm{\frac{x-x_{i}}{h}}^2 \Bigg)}{\sum_{i=1}^n k^{\prime} \Bigg( \norm{\frac{x-x_{i}}{h}}^2 \Bigg)} - x \Bigg]
+\end{multline}
 The second term of equation~\ref{eq:ms_dg}, is the Mean Shift; the difference between the weighted mean using $k^{\prime}$, and $x$ \citet{vatturi09}.
 Applying a normal kernal to the Mean Shift, the second term of equation~\ref{eq:ms_dg} becomes: 
 \begin{equation} 
@@ -67,6 +67,13 @@ If the bandwidth is too low, the density estimate will be undersmoothed, and Mea
 Conversly, if the bandwidth is too large, a small number of large clusters will be detected, resulting in groupings of data that may blur the underlying structure \citet{vatturi09}.
 % Add section about bandwidth estimation
 % Discuss drawbacks
+
+\subsection{Affinity Propagation Clustering}
+
+Affinity propagation (AP) is a relatively new clustering technique developed by \citet{frey07}.
+AP takes the similarities between the data points as input for clustering, and uses a series of "updates" to determine the number of clusters and their centers. 
+The centers of AP clustering are actual data points, which makes it a useful method for segmentation as it does not create average centers for each cluster. 
+Affinity propogation 
 
 \subsection{K-Means Clustering}
 K-Means clustering is one of the most widely used clustering methods and has been used to identify a wide range of interstellar and intergalactic objects. % List papers that have done so
@@ -94,6 +101,7 @@ This posses a challenge for high dimentional data, as the number of clusters can
 \item description of clustering and classification 
 \item description of PCA
 \item description of Mean-Shift
+\item description of Affinity Propagation
 \item description of K-Means
 \item experiments with how to apply the techniques
 \item final parameters used
