@@ -18,7 +18,6 @@ In this study, PCA is conducted to determine the most significant filters, and c
 All ten filters were used in the inital analysis... % Do PCA and write the conclusions here ??
 
 
-
 \subsection{Mean Shift Clustering} 
 Mean Shift is a non-parametric clustering technique that is based on probability density function estimates of each point in the data. % Should we mentioned sklearn.cluster as the implementation? 
 Mean Shift is a very powerful algorithm, but has not been widely used in astronomy. % Find a paper using it 
@@ -71,9 +70,37 @@ Conversly, if the bandwidth is too large, a small number of large clusters will 
 \subsection{Affinity Propagation Clustering}
 
 Affinity propagation (AP) is a relatively new clustering technique developed by \citet{frey07}.
-AP takes the similarities between the data points as input for clustering, and uses a series of "updates" to determine the number of clusters and their centers. 
-The centers of AP clustering are actual data points, which makes it a useful method for segmentation as it does not create average centers for each cluster. 
-Affinity propogation 
+Here, we will breifly describe the main compoments of AP, for a full description of the technique, see \citet{frey07}.
+AP takes the similarities between the data points as input for clustering, and uses a series of "messages" between data points to determine the number of clusters and their centers.
+The centers of AP clustering are actual data points, called exemplars, which make it useful for clustering as it does not create average centers for each cluster. 
+The only input required for AP  are the \textit{preferences} of each data point which describes the likelihood of a data point to be chosen as an exemplar \citet{frey07}.
+The preferences are a measure of the similarity between a point \textit{i} and a candidate exemplar \textit{k} defined by: 
+\begin{equation}
+\label{eq:sim}
+s(i,k) = -\norm{x_i - x_k}^2
+\end{equation}
+Similarity values influence the number of clusters AP identifies, as the larger similarity values are likely chosen as eemplars \citet{frey07}.
+If all data points are equally suitable to be used as exemplars, the preference value could be common among all data points. This technique was adopted as no prior knowledge of the data set was used to determine where clusters were centered. 
+Preference values could be estimated using the median value of the similarities, the minimum value, or randomized to see the effects over various clusterings \citet{frey07}.
+
+Once the preference value is determined, two messages are computed between all the data points.
+The first message is the "responsibility" $r(i,k)$, which is sent from point \textit{i} to candidate exemplar \textit{k}:\citet{frey07}
+
+\begin{equation}
+\label{eq:resp}
+r(i,k) \leftarrow s(i,k) - max_{k^\prime s.t,  k^\prime \neq k} \{ a(i,k^\prime) + s(i,k^\prime) \}
+\end{equation}
+
+Responsibility measures the evidence of how suitable point \textit{k} is to be an exemplar of point \textit{i} \citet{frey07}, after considering other potential exemplars for point \textit{i}.
+The "availability", $a(i,k^\prime)$ in equation~\ref{eq:resp}, is sent from candidate exemplar \textit{k} to point \textit{i} to compute the evidence for how appropriate it would be for point \textit{i} to choose candidate \textit{k} as an exemplar, considering evidence from other points that believe candidate \textit{k} should be their exemplar \citet{frey07}: 
+
+\begin{equation}
+\label{eq:avail}
+a(i,k) \leftarrow min\Big\{ 0, r(k,k) + \sum\limits_{i^\prime s.t, i^\prime \notin \{i,k\}} max\{0, r(i^\prime, k)\}\Big\}
+\end{equation}
+
+The availabilities of all points are initialized to zero, and the first iteration of responsibilities are set to the input preferences \citet{frey07}. 
+The following iterations update equation~\ref{eq:resp} and equation~\ref{eq:avail} to determine the optimal exemplars for the data.
 
 \subsection{K-Means Clustering}
 K-Means clustering is one of the most widely used clustering methods and has been used to identify a wide range of interstellar and intergalactic objects. % List papers that have done so
