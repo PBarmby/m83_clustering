@@ -1,8 +1,0 @@
-# band1 band2 band3 band4 n_clusters bandwidth eps min_samples damping preferences
-
-mag05_225 mag05_555 mag05_336 mag05_438 3 0.65 0.7 5 0.7 -15
-mag05_225 mag05_555 mag05_373 mag05_438 3 0.65 0.7 5 0.7 -15
-mag05_225 mag05_555 mag05_438 mag05_487 3 0.65 0.7 5 0.7 -15
-mag05_225 mag05_555 mag05_438 mag05_502 3 0.65 0.7 5 0.7 -15
-mag05_225 mag05_555 mag05_438 mag05_657 3 0.65 0.7 5 0.7 -15
-mag05_225 mag05_555 mag05_438 mag05_673 3 0.65 0.7 5 0.7 -15
