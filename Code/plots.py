@@ -21,7 +21,7 @@ cluster_colours = ['y', 'g', 'b', 'r', 'c', 'm', 'k', 'w', 'brown', 'darkgray', 
 
 def plotting(data_table, path, plots, threshold, survey_objects):
     plot_path = make_directory(path)
-    data_, trial = load_data(data_table, 'experiments.txt')
+    data_, trial = load_data(data_table, 'plots.txt')
 
     for i in range(0, len(trial)):
 
@@ -73,8 +73,7 @@ def load_data(surveyfile_, experiments):
 
 def data(data, band1, band2, band3, band4):
     '''Select data for analysis'''
-    ratio = 0.25
-    data = data#[10000:30000]
+    ratio = 0.2
     # Colour 1
     wave1 = data[band1]
     wave1_unc = data[band1+'_unc']
@@ -109,7 +108,7 @@ def data(data, band1, band2, band3, band4):
 
     colour1 = wave1[greatdata] - wave2[greatdata]
     colour2 = wave3[greatdata] - wave4[greatdata]
-    
+
     return(wave1, wave2, wave3, wave4, greatdata, colour1, colour2)
 
 
