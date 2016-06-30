@@ -1,3 +1,0 @@
-# band1 band2 band3 band4 band5 band6 band7 band8 band9 band10 band11 band12 band13 band14 n_clusters bandwidth eps min_samples damping preferences
-
-mag3_438 mag3_555 mag3_336 mag3_814 mag3_373 mag3_814 mag3_487 mag3_814 mag3_502 mag3_814 mag3_657 mag3_814 mag3_673 mag3_814 3 0.6 0.3 10 0.5 -35
