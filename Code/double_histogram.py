@@ -1,3 +1,6 @@
+'''Makes histograms of magnitude distribution and distribution with uncertainty
+    limit
+        - data: data_v3.txt'''
 import numpy as np
 import os, os.path
 import pylab as pb
@@ -6,7 +9,7 @@ from astropy.table import Table
 
 
 def mag_hist_cut(path): 
-    data_ = load_data('data_v2.txt')
+    data_ = load_data('data_v3.txt')
     plot_path = make_directory(path)
     limit = 0.4
     filters = data_.colnames
@@ -45,7 +48,7 @@ def mag_hist_cut(path):
     return
     
 def unc_hist_cut(path):
-    data_ = load_data('data_v2.txt')
+    data_ = load_data('data_v3.txt')
     plot_path = make_directory(path)
     limit = 0.4
     filters = data_.colnames

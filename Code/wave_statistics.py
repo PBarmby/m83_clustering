@@ -248,6 +248,37 @@ def band_stats(path_):
     stats_file.close()
     return
 
+def n_detections(path_): 
+    '''Makes file with the number of objects detected in each band without an
+        uncertainty filter'''
+    data = Table.read('data_v3.txt', format='ascii.commented_header',
+                      guess=False)
+    band_names = data.colnames
+
+    stats_path = make_directory(path_)
+    file_name = "filter_detections.txt"
+    file_path = os.path.join(stats_path, file_name)
+    header = "# band n_detections"
+    if not os.path.exists(file_path):
+        detection_file = open(file_path, "a")
+        detection_file.write(header + '\n')
+        detection_file.close()
+
+    for i in range(11, len(band_names), 2):
+        detection_file = open(file_path, "a")
+        band = band_names[i]
+        band_data = data[band_names[i]]
+        band_unc_data = data[band_names[i+1]]
+
+        # Remove bad data
+        remove_bad_data = np.logical_and(band_data != -99,
+                                         band_unc_data != -99)
+        band_data_trim = band_data[remove_bad_data]
+        detection_file.write(band + ' ' + str(len(band_data_trim)) + '\n')
+    detection_file.close()
+
+    return
+
 
 def make_directory(p_path):
     '''Save results of each analysis

@@ -1,3 +1,6 @@
+'''Data is only trimmed by removing -99s. UNC limit can be set by limiting the
+    y-axis of the plots
+        - Plots made with data_v3.txt'''
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.table import Table
@@ -5,12 +8,10 @@ import pylab
 import os
 import os.path
 
-'''Data is only trimmed by removing -99s. UNC limit can be set by limiting the
-    y-axis of the plots'''
-
 
 def unc_plot(path):
-    data = Table.read('data.txt', format='ascii.commented_header', guess=False)
+    data = Table.read('data_v3.txt', format='ascii.commented_header',
+                      guess=False)
     names = data.colnames
     s_path = make_directory(path)
     for i in xrange(11, len(names), 4):
@@ -48,17 +49,17 @@ def wave_uncertainty(wave_05, wave_3, wave_05_unc, wave_3_unc, greatdata,
     ax.scatter(wave_05[greatdata], wave_05_unc[greatdata],
                color='k', marker='.')
     plt.setp(ax.get_xticklabels(), visible=False)
-    #ax.set_xlabel(band_05)
+    # ax.set_xlabel(band_05)
     ax.set_ylabel(band_05+'unc')
-    ax.set_title(band_05+' vs. '+band_05+'_unc', fontsize=12)
-    
+    ax.set_title(band_05 + ' vs. '+band_05 + '_unc', fontsize=12)
+
     ax2 = fig.add_subplot(212, sharex=ax)
     ax2.scatter(wave_3[greatdata], wave_3_unc[greatdata],
-               color='k', marker='.')
+                color='k', marker='.')
     ax2.set_ylabel(band_3+'unc')
     ax2.set_xlabel(band_05 + ' (top) - ' + band_3 + ' (bottom)')
     plt.setp(ax2.get_xticklabels(), fontsize=6)
-    plt.gca().set_ylim(0, 0.2)
+    # plt.gca().set_ylim(0, 0.2)
     '''Display interactive figure if # removed, if not, figures saved'''
     # plt.show
     file_name = 'uncertainty_02_lim_{}.png'.format(band_05)
