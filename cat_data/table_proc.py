@@ -1,4 +1,4 @@
-from astropy.table import Table, Column
+from astropy.table import Table, Column, hstack, vstack
 from astropy.coordinates import SkyCoord, match_coordinates_sky
 from astropy import units as u
 import numpy as np
@@ -20,27 +20,30 @@ within_galaxy_types_simbad = ['**','Assoc*','Candidate_SN*','Candidate_WR*','Cep
 background_types_simbad = ['BLLac','ClG','EmG','Galaxy','GinCl','GroupG','Possible_G','StarburstG']
 obs_types_simbad = ['EmObj','IR','Radio','Radio(sub-mm)','UV','X']
 
-def go(ned_in, simbad_in, combine_out, match_tol = 1.0): # match_tol in arcsec
-    
+def go(ned_name, simbad_name, combine_out, match_tol = 1.0): # match_tol in arcsec
+
+    ned_in = Table.read(ned_name)
+    simbad_in = Table.read(simbad_name)
+        
     # prelim processing
     ned_proc = reformat_cat(ned_in, old_name='Object Name', new_name='Name_N', old_type='Type', new_type='Type_N')
-    sim_proc = reformat_cat(simbad_in, old_name='MAIN_ID', new_name='Name_S', old_type='OTYPE_S', new_type='Type_S')
+    sim_proc = reformat_cat(simbad_in, old_name='MAIN_ID', new_name='Name_S', old_type='OTYPE', new_type='Type_S')
 
     # construct coordinates needed for matching
-    ned_coo = SkyCoord(ra=ned_proc['RA(deg)']*u.degree, dec=ned_proc['DEC(deg)']*u.degree)
-    sim_coo = SkyCoord(ra=sim_proc['RA_d']*u.degree, dec=sim_proc['DEC_d']*u.degree) 
+    ned_coo = SkyCoord(ra=ned_proc['RA(deg)'], dec=ned_proc['DEC(deg)'])
+    sim_coo = SkyCoord(ra=sim_proc['RA_d'], dec=sim_proc['DEC_d']) 
 
     # do the matching
-    matched_ned, matched_sim, ned_only, sim_only = symmetric_match_sky_coords(ned_coo, sim_coo)
+    matched_ned, matched_sim, ned_only, sim_only = symmetric_match_sky_coords(ned_coo, sim_coo, match_tol*u.arcsec)
 
     # generate the matched table
     matchtab = hstack([ned_proc[matched_ned], sim_proc[matched_sim]], join_type = 'outer')
 
     # add on the unmatched objects
-    finaltab = vstack([matchtab2, ned_proc[unmatched_ned], sim_proc[unmatched_sim]],join_type = 'outer')
+    matchtab2 = vstack([matchtab, ned_proc[ned_only], sim_proc[sim_only]],join_type = 'outer')
 
     # mark the really good matches
-    matchtab2 = process_match(matchtab)
+    finaltab = process_match(matchtab2)
 
     # save the result
     finaltab.write(combine_out, format='fits')
@@ -49,25 +52,30 @@ def go(ned_in, simbad_in, combine_out, match_tol = 1.0): # match_tol in arcsec
 
 
 
-ns_replace_names = [("MESSIER 083:",""),("NGC 5236:",""), ("M83-",""), (" ", "")]
-ns_replace_types = [('*Cl','Cl*'), ('PofG','Galaxy'),('X','XRayS')]
+ns_replace_names = [("MESSIER 083:",""),("NGC 5236:",""), ("M83-",""), ("NGC5236","")(" ", "")]
+ns_replace_types = [('*Cl','Cl*'), ('PofG','Galaxy'),('X','XRayS'), ('Radio','RadioS')]
 ns_remove_ids= ['NAMENGC5236Group', 'M83', 'MESSIER083', 'NGC5236GROUP']
+ra_dec_cols = ['RA(deg)','DEC(deg)','RA_d','DEC_d']
 
 def reformat_cat(in_tab, old_name, new_name, old_type, new_type, replace_names=ns_replace_names, replace_types=ns_replace_types, remove_id=ns_remove_ids):
     ''' reformat NED or SIMBAD catalog to make more intercompatible'''     
+    # change units for RA/Dec
+    for col in ra_dec_cols:
+        if col in in_tab.colnames:
+            in_tab[col].unit = u.degree
     
     # change ID for name & type columns
     in_tab.rename_column(old_name, new_name)
     in_tab.rename_column(old_type, new_type)
 
     # reformat some object names
-    for pair in replace_name:
-        in_tab[new_name] = in_tab[new_name].replace(pair[0], pair[1])
+    for pair in replace_names:
+        in_tab[new_name] = np.char.replace(in_tab[new_name],pair[0], pair[1])
 
     # reformat some object types
-    in_tab[new_type] = in_tab[new_type].strip("?") 
+    in_tab[new_type] = np.char.replace(in_tab[new_type],"?", "")
     for pair in replace_types:
-        in_tab[new_type][intab[new_type]==pair[0]] = pair[1]        
+        in_tab[new_type][in_tab[new_type]==pair[0]] = pair[1]        
     
     # delete rows whose names are in remove_id
     # there's a non-loopy way to do this but I can't remember it
@@ -113,7 +121,7 @@ def symmetric_match_sky_coords(coord1, coord2, tolerance):
     
 def process_match(matched_tab_in):
     '''find secure matches btw NED and SIMBAD'''
-    goodmatch = np.logical_or(matched_tab_in['Name_SIMBAD']==matched_tab_in['Name_NED'],
+    goodmatch = np.logical_or(matched_tab_in['Name_S']==matched_tab_in['Name_N'],
                               matched_tab_in['Type_S']==matched_tab_in['Type_N'])
     matched_tab_in.add_column(Column(goodmatch, name='Secure'))
     return(matched_tab_in)
