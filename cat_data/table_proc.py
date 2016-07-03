@@ -30,19 +30,27 @@ def go(ned_in, simbad_in, combine_out, match_tol = 1.0): # match_tol in arcsec
     ned_coo = SkyCoord(ra=ned_proc['RA(deg)']*u.degree, dec=ned_proc['DEC(deg)']*u.degree)
     sim_coo = SkyCoord(ra=sim_proc['RA_d']*u.degree, dec=sim_proc['DEC_d']*u.degree) 
 
-    idx_sim, sep2d_sim, sep3d = match_coordinates_sky(ned_coo, sim_coo) # idx is location in sim_coo for closest match to each ned_coo
-    idx_ned, sep2d_ned, sep3d = match_coordinates_sky(sim_coo, ned_coo) # idx is location in ned_coo for closest match to each sim_coo
+    # do the matching
+    matched_ned, matched_sim, ned_only, sim_only = symmetric_match_sky_coords(ned_coo, sim_coo)
 
+    # generate the matched table
+    matchtab = hstack([ned_proc[matched_ned], sim_proc[matched_sim]], join_type = 'outer')
 
-    matchtab = match(ned_proc, simb_proc)
-    matchtab2 = process_match(matchtab, combine_out)
-    
+    # add on the unmatched objects
+    finaltab = vstack([matchtab2, ned_proc[unmatched_ned], sim_proc[unmatched_sim]],join_type = 'outer')
+
+    # mark the really good matches
+    matchtab2 = process_match(matchtab)
+
+    # save the result
+    finaltab.write(combine_out, format='fits')
+            
     return
 
 
 
 ns_replace_names = [("MESSIER 083:",""),("NGC 5236:",""), ("M83-",""), (" ", "")]
-ns_replace_types = [("SNR?","SNR"), ("Cl*?", "*Cl"), ('*Cl','Cl*')]
+ns_replace_types = [('*Cl','Cl*'), ('PofG','Galaxy'),('X','XRayS')]
 ns_remove_ids= ['NAMENGC5236Group', 'M83', 'MESSIER083', 'NGC5236GROUP']
 
 def reformat_cat(in_tab, old_name, new_name, old_type, new_type, replace_names=ns_replace_names, replace_types=ns_replace_types, remove_id=ns_remove_ids):
@@ -54,12 +62,12 @@ def reformat_cat(in_tab, old_name, new_name, old_type, new_type, replace_names=n
 
     # reformat some object names
     for pair in replace_name:
-        in_tab[new_name] = np.char.replace(pair[0], pair[1])
+        in_tab[new_name] = in_tab[new_name].replace(pair[0], pair[1])
 
     # reformat some object types
+    in_tab[new_type] = in_tab[new_type].strip("?") 
     for pair in replace_types:
-        in_tab[new_type] = np.char.replace(pair[0], pair[1])        
-    in_tab[new_type] = np.char.strip(tab[new_type]) # remove whitespace -- helps with matching
+        in_tab[new_type][intab[new_type]==pair[0]] = pair[1]        
     
     # delete rows whose names are in remove_id
     # there's a non-loopy way to do this but I can't remember it
@@ -72,15 +80,42 @@ def reformat_cat(in_tab, old_name, new_name, old_type, new_type, replace_names=n
     # all done
     return(in_tab)
 
-def process_match(matched_tab_in, matched_tab_out=None):
+def symmetric_match_sky_coords(coord1, coord2, tolerance):
+    '''produce the symmetric match of coord1 to coord2
+       output:
+       index1_matched: index into coord1 for matched objects
+       index2_matched: index into coord2 for matches of objects in index1_matched
+       index1_unmatch: indices for unmatched objects in coord1
+       index2_unmatch: indices for unmatched objects in coord2
+    '''
+    closest_2to1, sep2d_2to1, sep3d = match_coordinates_sky(coord1, coord2) # location in coord2 for closest match to each coord1. len = len(coord1)
+    closest_1to2, sep2d_1to2, sep3d = match_coordinates_sky(coord2, coord1) # location in coord1 for closest match to each coord2. len = len(coord2)
+
+    index1_matched = []
+    index2_matched = []
+    index1_unmatched = []
+    index2_unmatched = []
+
+    for i in range(0, len(coord1)): # doubtless there is a more Pythonic way to do this..
+        # not sure this condition covers all of the possible corner cases. But good enough.
+        if sep2d_1to2[i] < tolerance and closest_1to2[i] == closest_2to1[closest_1to2[i]]:     
+            index1_matched.append(i)
+            index2_matched.append(closest_2to1[i])
+        else:
+            index1_unmatched.append(i)
+
+    for j in range(0, len(coord2)):
+        if j not in index2_matched:
+            index2_unmatched.append(j)
+                        
+    return(index1_matched, index2_matched, index1_unmatched, index2_unmatched)
+    
+    
+def process_match(matched_tab_in):
     '''find secure matches btw NED and SIMBAD'''
     goodmatch = np.logical_or(matched_tab_in['Name_SIMBAD']==matched_tab_in['Name_NED'],
                               matched_tab_in['Type_S']==matched_tab_in['Type_N'])
     matched_tab_in.add_column(Column(goodmatch, name='Secure'))
-    if matched_tab_out != None: # write to file
-        if os.path.exists(matched_tab_out):
-            os.unlink(matched_tab_out)
-        matched_tab_in.write(matched_tab_out, format='fits')
     return(matched_tab_in)
 
 # not used    
