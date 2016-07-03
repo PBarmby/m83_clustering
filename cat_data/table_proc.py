@@ -52,7 +52,7 @@ def go(ned_name, simbad_name, combine_out, match_tol = 1.0): # match_tol in arcs
 
 
 
-ns_replace_names = [("MESSIER 083:",""),("NGC 5236:",""), ("M83-",""), ("NGC5236","")(" ", "")]
+ns_replace_names = [(" ", ""), ("MESSIER083:",""),("NGC5236:",""), ("M83-",""), ("NGC5236","")]
 ns_replace_types = [('*Cl','Cl*'), ('PofG','Galaxy'),('X','XRayS'), ('Radio','RadioS')]
 ns_remove_ids= ['NAMENGC5236Group', 'M83', 'MESSIER083', 'NGC5236GROUP']
 ra_dec_cols = ['RA(deg)','DEC(deg)','RA_d','DEC_d']
@@ -74,6 +74,7 @@ def reformat_cat(in_tab, old_name, new_name, old_type, new_type, replace_names=n
 
     # reformat some object types
     in_tab[new_type] = np.char.replace(in_tab[new_type],"?", "")
+    in_tab[new_type] = np.char.replace(in_tab[new_type]," ", "")
     for pair in replace_types:
         in_tab[new_type][in_tab[new_type]==pair[0]] = pair[1]        
     
@@ -106,7 +107,7 @@ def symmetric_match_sky_coords(coord1, coord2, tolerance):
 
     for i in range(0, len(coord1)): # doubtless there is a more Pythonic way to do this..
         # not sure this condition covers all of the possible corner cases. But good enough.
-        if sep2d_1to2[i] < tolerance and closest_1to2[i] == closest_2to1[closest_1to2[i]]:     
+        if sep2d_1to2[i] < tolerance and i == closest_2to1[closest_1to2[i]]:     
             index1_matched.append(i)
             index2_matched.append(closest_2to1[i])
         else:
