@@ -20,13 +20,18 @@ within_galaxy_types_simbad = ['**','Assoc*','Candidate_SN*','Candidate_WR*','Cep
 background_types_simbad = ['BLLac','ClG','EmG','Galaxy','GinCl','GroupG','Possible_G','StarburstG']
 obs_types_simbad = ['EmObj','IR','Radio','Radio(sub-mm)','UV','X']
 
-def go(ned_name, simbad_name, combine_out, match_tol = 1.0): # match_tol in arcsec
+
+ned_rename = [('Name_N', 'Name'), ('RA(deg)', 'RA'), ('DEC(deg)', 'Dec'),('Type_N', 'Type')]
+sim_rename = [('Name_S', 'Name'), ('RA_d', 'RA'), ('DEC_d', 'Dec'),('Type_S', 'Type')]
+
+def go(ned_name, simbad_name, ns_combine, final_tab, match_tol = 1.0): # match_tol in arcsec
 
     ned_in = Table.read(ned_name)
     simbad_in = Table.read(simbad_name)
         
     # prelim processing
-    ned_proc = reformat_cat(ned_in, old_name='Object Name', new_name='Name_N', old_type='Type', new_type='Type_N')
+    ned_proc = reformat_cat(ned_in, old_name='Object Name', new_name='Name_N', old_type='Type', new_type='Type_N',
+                            keepcols=['Object Name','RA(deg)','DEC(deg)','Type'])
     sim_proc = reformat_cat(simbad_in, old_name='MAIN_ID', new_name='Name_S', old_type='OTYPE', new_type='Type_S')
 
     # construct coordinates needed for matching
@@ -38,27 +43,37 @@ def go(ned_name, simbad_name, combine_out, match_tol = 1.0): # match_tol in arcs
 
     # generate the matched table
     matchtab = hstack([ned_proc[matched_ned], sim_proc[matched_sim]], join_type = 'outer')
-
-    # add on the unmatched objects
-    matchtab2 = vstack([matchtab, ned_proc[ned_only], sim_proc[sim_only]],join_type = 'outer')
-
     # mark the really good matches
-    finaltab = process_match(matchtab2)
+    matchtab2 = process_match(matchtab)
+    matchtab2.write(ns_combine, format='fits')
+
+    #rename some columns
+    nedcat = process_unmatch(ned_proc[ned_only], src = 'N', rename_cols= ned_rename)
+    simcat = process_unmatch(sim_proc[sim_only], src = 'S', rename_cols = sim_rename)
+    keeplist = ['Name_N','RA(deg)','DEC(deg)','Type_N']
+    matchtab3 = process_unmatch(Table(matchtab2[keeplist]), src='NS', rename_cols = ned_rename)
+    
+    # add on the unmatched objects
+    finaltab = vstack([matchtab3, nedcat , simcat],join_type = 'outer')
 
     # save the result
-    finaltab.write(combine_out, format='fits')
+    finaltab.write(final_tab, format='fits')
             
     return
 
 
 
 ns_replace_names = [(" ", ""), ("MESSIER083:",""),("NGC5236:",""), ("M83-",""), ("NGC5236","")]
-ns_replace_types = [('*Cl','Cl*'), ('PofG','Galaxy'),('X','XRayS'), ('Radio','RadioS')]
+ns_replace_types = [('*Cl','Cl*'), ('PofG','Galaxy'),('X','XrayS'), ('Radio','RadioS')]
 ns_remove_ids= ['NAMENGC5236Group', 'M83', 'MESSIER083', 'NGC5236GROUP']
 ra_dec_cols = ['RA(deg)','DEC(deg)','RA_d','DEC_d']
 
-def reformat_cat(in_tab, old_name, new_name, old_type, new_type, replace_names=ns_replace_names, replace_types=ns_replace_types, remove_id=ns_remove_ids):
+def reformat_cat(in_tab, old_name, new_name, old_type, new_type, replace_names=ns_replace_names, replace_types=ns_replace_types, remove_id=ns_remove_ids, keepcols=None):
     ''' reformat NED or SIMBAD catalog to make more intercompatible'''     
+    # just keep selected columns
+    if keepcols!= None:
+        in_tab = in_tab[keepcols]
+        
     # change units for RA/Dec
     for col in ra_dec_cols:
         if col in in_tab.colnames:
@@ -127,6 +142,15 @@ def process_match(matched_tab_in):
     matched_tab_in.add_column(Column(goodmatch, name='Secure'))
     return(matched_tab_in)
 
+
+def process_unmatch(tab_in, src, rename_cols):
+    '''find secure matches btw NED and SIMBAD'''
+    for pair in rename_cols:
+        tab_in.rename_column(pair[0], pair[1])
+    tab_in.add_column(Column(name='Source', length = len(tab_in), dtype='S2'))
+    tab_in['Source'] = src
+    return(tab_in)
+    
 # not used    
 def name_match(simbad_name, ned_name):
     matched = np.zeros(len(simbad_name),dtype='bool')
