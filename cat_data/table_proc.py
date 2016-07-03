@@ -52,24 +52,35 @@ def process_tab(tab_in, tab_out, type_col, select_list = within_galaxy_types_ned
         wanted_types.write(tab_out, format='fits')
     return(wanted_types)
 
-def rfmt_ned(in_tab):
-    ''' strip prefixes from some NED names to better match SIMBAD
-         obvs. very specific to this dataset'''
-    in_tab['Object Name'] = np.char.replace(in_tab['Object Name'],"MESSIER 083:","")
-    in_tab['Object Name'] = np.char.replace(in_tab['Object Name'],"NGC 5236:","")
-    in_tab['Object Name'] = np.char.replace(in_tab['Object Name'], " ", "") # strip spaces
-    in_tab.rename_column('Object Name','Name_NED')
-    return(in_tab)
 
-def rfmt_simbad(in_tab):
-    ''' change some object types to better match NED
-         obvs. very specific to this dataset'''
-    in_tab['Type'] = np.char.strip(in_tab['Type'],"?") # only applies to "SNR?"
-    in_tab['Type'][in_tab['Type']=='Cl*'] = '*Cl' 
-    in_tab.rename_column('MAIN_ID','Name_SIMBAD')
-    in_tab['Name_SIMBAD'] = np.char.replace(in_tab['Name_SIMBAD'],"M83-","")
-    in_tab['Name_SIMBAD'] = np.char.replace(in_tab['Name_SIMBAD']," ", "") # strip spaces
+ned_replace_names = [("MESSIER 083:",""),("NGC 5236:",""), (" ", "")]
+simbad_replace_names = [("M83-",""), (" ", "")]
+
+ned_replace_types = [('*Cl','Cl*')]
+simbad_replace_types = [("SNR?","SNR"), ("Cl*?", "*Cl")]
+
+def reformat_cat(in_tab, old_name, new_name, old_type, new_type, replace_names, replace_types, remove_id):
+    ''' reformat NED or SIMBAD catalog to make more intercompatible'''
+
+    # change ID for name & type columns
+    in_tab.rename_column(old_name, new_name)
+    in_tab.rename_column(old_type, new_type)
+
+    # reformat some object names
+    for pair in replace_name:
+        in_tab[new_name] = np.char.replace(pair[0], pair[1])
+
+    # reformat some object types
+    for pair in replace_types:
+        in_tab[new_type] = np.char.replace(pair[0], pair[1])        
+
+    # delete rows whose names are in remove_id
+    idx = in_tab[new_name] in remove_id
+    in_tab.remove_rows(idx)
+    
+    # all done
     return(in_tab)
+        
 
 
 def process_match(matched_tab_in, matched_tab_out=None):
