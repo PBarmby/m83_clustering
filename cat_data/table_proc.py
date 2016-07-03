@@ -10,7 +10,8 @@ import os
 #  
 
 #usage:
-#table_proc.go(ned_in, simbad_in, combine_out)
+#table_proc.go('ned-20160629.fits','simbad-20160629.fits','M83_NScomb.fits','M83_NSall.fits')
+#table_proc.add_tables('M83_NSall.fits',['williams15_rsg.fits','kim12_wr.fits'],'M83_final.fits')
 
 within_galaxy_types_ned = ['*Cl','HII','PofG','Neb','SN','SNR', 'V*','WR*']
 background_types_ned = ['G','GClstr','GGroup','QSO']
@@ -54,14 +55,22 @@ def go(ned_name, simbad_name, ns_combine, final_tab, match_tol = 1.0): # match_t
     matchtab3 = process_unmatch(Table(matchtab2[keeplist]), src='NS', rename_cols = ned_rename)
     
     # add on the unmatched objects
-    finaltab = vstack([matchtab3, nedcat , simcat],join_type = 'outer')
-
+    finaltab = vstack([matchtab3, nedcat, simcat],join_type = 'outer')
+    
     # save the result
     finaltab.write(final_tab, format='fits')
             
     return
 
-
+def add_tables(basetab_file, tab_file_list, outfile, jt = 'outer'):
+    basetab = Table.read(basetab_file)
+    tablist = [basetab]
+    for filename in tab_file_list:
+        tab = Table.read(filename)
+        tablist.append(tab)
+    stack = vstack(tablist, join_type= jt)
+    stack.write(outfile)
+    return
 
 ns_replace_names = [(" ", ""), ("MESSIER083:",""),("NGC5236:",""), ("M83-",""), ("NGC5236","")]
 ns_replace_types = [('*Cl','Cl*'), ('PofG','Galaxy'),('X','XrayS'), ('Radio','RadioS')]
