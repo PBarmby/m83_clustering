@@ -59,6 +59,8 @@ simbad_replace_names = [("M83-",""), (" ", "")]
 ned_replace_types = [('*Cl','Cl*')]
 simbad_replace_types = [("SNR?","SNR"), ("Cl*?", "*Cl")]
 
+remove_ids_ned_simbad = ['NAMENGC5236Group', 'M83', 'MESSIER083', 'NGC5236GROUP']
+
 def reformat_cat(in_tab, old_name, new_name, old_type, new_type, replace_names, replace_types, remove_id):
     ''' reformat NED or SIMBAD catalog to make more intercompatible'''
 
@@ -75,9 +77,13 @@ def reformat_cat(in_tab, old_name, new_name, old_type, new_type, replace_names, 
         in_tab[new_type] = np.char.replace(pair[0], pair[1])        
 
     # delete rows whose names are in remove_id
-    idx = in_tab[new_name] in remove_id
-    in_tab.remove_rows(idx)
-    
+    # there's a non-loopy way to do this but I can't remember it
+    remove_idx = []
+    for i in range(0,len(in_tab)):
+        if in_tab[i][new_name] in remove_id:
+            remove_idx.append(i)
+    in_tab.remove_rows(remove_idx)
+                                
     # all done
     return(in_tab)
         
