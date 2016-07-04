@@ -1,0 +1,111 @@
+J/A+A/578/A100      Infrared massive stellar content of M83  (Williams+, 2015)
+================================================================================
+The infrared massive stellar content of M83.
+    Williams S.J., Bonanos A.Z., Whitmore B.C., Prieto J.L., Blair W.P.
+    <Astron. Astrophys. 578, A100 (2015)>
+    =2015A&A...578A.100W        (SIMBAD/NED BibCode)
+================================================================================
+ADC_Keywords: Galaxies, nearby ; Photometry, UBVRI ; Photometry, infrared
+Keywords: catalogs - galaxies: individual: M83 - galaxies: stellar content -
+          stars: massive - stars: evolution
+
+Abstract:
+    We present a catalog of point sources in the field of M83. Sources
+    were first cataloged that were found in both Spitzer IRAC 3.6-micron
+    and 4.5-micron images. These were then supplemented with 5.8 and
+    8.0-micron photometry. Ground-based near-IR photometry in J and
+    Ks-bands were extracted from imaging from the FourStar camera on the
+    Baade Magellan Telescope at Las Campanas Observatory. Optical
+    photometry was extracted from Hubble Space Telescope Wide Field Camera
+    3 observations of seven fields covering much of the bright disk region
+    of M83.
+
+Description:
+    We extracted the mosaic image of M83 from the Local Volume Legacy
+    Survey (LVL, Dale et al., 2009ApJ...703..517D, Cat. J/ApJ/703/517) in
+    all four of the IRAC bands. The final images analyzed here cover an
+    area of 15' x15' with a pixel scale of 0.75arcsec/pix centered on the
+    nucleus of M83 (J2000.0:RA=13:37:00.9,DE=-29:51:56).
+
+    Observations of M83 were made in J and Ks with the FourStar
+    instrument attached to the 6.5m Baade Magellan Telescope at Las
+    Campanas Observatory on UT date 2014 Jan. 2.
+
+    Blair et al. (2014ApJ...788...55B, Cat. J/ApJ/788/55) studied
+    supernova remnants in M83 with seven fields of Hubble Space Telescope
+    (HST) Wide Field Camera 3 (WFC3) observations in multiple bandpasses.
+    Two fields come from the Early Release Science Program (ID 11360; R.
+    O'Connell, PI) with the remaining five coming from the cycle 19 HST
+    General Observer program 12513 (W. Blair, PI). These seven fields
+    cover the majority of the bright disk region of M83. We
+    specifically used the imaging and photometry in the F336W (Johnson U),
+    F438W (Johnson B), F555W (Johnson V) or F547M (Stroemgren y, easily
+    converted to Johnson V), and F814W (Johnson I) bands.
+
+File Summary:
+--------------------------------------------------------------------------------
+ FileName      Lrecl  Records   Explanations
+--------------------------------------------------------------------------------
+ReadMe            80        .   This file
+table1.dat       107     4527   Infrared photometry of 4527 point sources in
+                                 the field of M83
+table3.dat       140      185   Massive evolved star candidates in M83 from HST,
+                                 near-IR, and Spitzer photometry
+--------------------------------------------------------------------------------
+
+See also:
+   J/ApJ/703/517 : The Spitzer Local Volume Legacy: IR photometry (Dale+, 2009)
+   J/ApJ/788/55  : HST/WFC3 SNR discoveries in M83 (NGC5236) (Blair+, 2014)
+
+Byte-by-byte Description of file: table1.dat
+--------------------------------------------------------------------------------
+   Bytes Format Units   Label     Explanations
+--------------------------------------------------------------------------------
+   1-  9  F9.5  deg     RAdeg     Right ascension (J2000)
+  11- 19  F9.5  deg     DEdeg     Declination (J2000)
+  21- 25  F5.2  mag     Jmag      ? FourStar J-band magnitude
+  27- 30  F4.2  mag   e_Jmag      ? FourStar J-band uncertainty
+  32- 36  F5.2  mag     Ksmag     ? FourStar Ks-band magnitude
+  38- 41  F4.2  mag   e_Ksmag     ? FourStar Ks-band uncertainty
+  43- 47  F5.2  mag     [3.6]     ? IRAC 3.6um-band magnitude
+  49- 52  F4.2  mag   e_[3.6]     ? IRAC 3.6um-band uncertainty
+  54- 58  F5.2  mag     [4.5]     ? IRAC 4.5um-band magnitude
+  60- 63  F4.2  mag   e_[4.5]     ? IRAC 4.5um-band uncertainty
+  65- 69  F5.2  mag     [5.8]     ? IRAC 5.8um-band magnitude
+  71- 74  F4.2  mag   e_[5.8]     ? IRAC 5.8um-band uncertainty
+  76- 80  F5.2  mag     [8.0]     ? IRAC 8.0um-band magnitude
+  81- 85  F5.2  mag   e_[8.0]     ? IRAC 8.0um-band uncertainty
+  87-107  A21   ---     Status    Mid-IR Source Status
+--------------------------------------------------------------------------------
+
+Byte-by-byte Description of file: table3.dat
+--------------------------------------------------------------------------------
+   Bytes Format Units   Label     Explanations
+--------------------------------------------------------------------------------
+   1-  9  F9.5  deg     RAdeg     Right ascension (J2000)
+  11- 19  F9.5  deg     DEdeg     Declination (J2000)
+  21- 25  F5.2  mag     Umag      ? HST-WFC3 U-band magnitude
+  27- 30  F4.2  mag   e_Umag      ? HST-WFC3 U-band uncertainty
+  32- 36  F5.2  mag     Bmag      ? HST-WFC3 B-band magnitude
+  38- 41  F4.2  mag   e_Bmag      ? HST-WFC3 B-band uncertainty
+  43- 47  F5.2  mag     Vmag      ? HST-WFC3 V-band magnitude
+  49- 52  F4.2  mag   e_Vmag      ? HST-WFC3 V-band uncertainty
+  54- 58  F5.2  mag     Imag      ? HST-WFC3 I-band magnitude
+  60- 63  F4.2  mag   e_Imag      ? HST-WFC3 I-band uncertainty
+  65- 69  F5.2  mag     Jmag      ? FourStar J-band magnitude
+  71- 74  F4.2  mag   e_Jmag      ? FourStar J-band uncertainty
+  76- 80  F5.2  mag     Ksmag     ? FourStar Ks-band magnitude
+  82- 85  F4.2  mag   e_Ksmag     ? FourStar Ks-band uncertainty
+  87- 91  F5.2  mag     [3.6]     ? IRAC 3.6um-band magnitude
+  93- 96  F4.2  mag   e_[3.6]     ? IRAC 3.6um-band uncertainty
+  98-102  F5.2  mag     [4.5]     ? IRAC 4.5um-band magnitude
+ 104-107  F4.2  mag   e_[4.5]     ? IRAC 4.5um-band uncertainty
+ 109-111  F3.1  ---     Qual      ? Quality Flag
+ 113-140  A28   ---     Comm      Comment about target
+--------------------------------------------------------------------------------
+
+Acknowledgements:
+     Stephen J. Williams, williams(at)noa.gr
+
+================================================================================
+(End) Stephen Williams [Nat. Obs. of Athens], Patricia Vannier [CDS] 10-Jun-2015
