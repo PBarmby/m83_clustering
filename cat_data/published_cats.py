@@ -14,7 +14,7 @@ import os
 #usage:
 #published_cats.ns_combine('ned-20160629.fits','simbad-20160629.fits','M83_NScomb.fits','M83_NSall.fits')
 #published_cats.add_tables('M83_NSall.fits',['williams15_rsg.fits','kim12_wr.fits'],'M83_final.fits')
-#published_cats.catalog_match('M83_final.fits', 'hlsp_wfc3ers_hst_wfc3_m83_cat_all_v2-corrected.txt','M83_ers_pubcat.txt'_
+#published_cats.catalog_match('M83_final.fits', 'hlsp_wfc3ers_hst_wfc3_m83_cat_all_v2-corrected.txt','M83_ers_pubcat.txt')
 
 ned_rename = [('Name_N', 'Name'), ('RA(deg)', 'RA'), ('DEC(deg)', 'Dec'),('Type_N', 'Type')]
 sim_rename = [('Name_S', 'Name'), ('RA_d', 'RA'), ('DEC_d', 'Dec'),('Type_S', 'Type')]
@@ -70,6 +70,30 @@ ns_replace_names = [(" ", ""), ("MESSIER083:",""),("NGC5236:",""), ("M83-",""), 
 ns_replace_types = [('*Cl','Cl*'), ('PofG','Galaxy'),('X','XrayS'), ('Radio','RadioS')]
 ns_remove_ids= ['NAMENGC5236Group', 'M83', 'MESSIER083', 'NGC5236GROUP']
 ra_dec_cols = ['RA(deg)','DEC(deg)','RA_d','DEC_d']
+
+def catalog_match(pubcat_file, erscat_file, match_out_file, match_tol = 1.0):
+    pubcat = Table.read(pubcat_file, format = 'fits')
+    erscat = Table.read(erscat_file, format='ascii.commented_header')
+
+    # construct coordinates needed for matching
+    pub_coo = SkyCoord(ra=pubcat['RA'], dec=pubcat['Dec'])
+    ers_coo = SkyCoord(ra=erscat['ra']*u.degree, dec=erscat['dec']*u.degree) 
+
+    # do the matching
+#    closest_2to1, sep2d_2to1, sep3d = match_coordinates_sky(coord1, coord2) # location in coord2 for closest match to each coord1. len = len(coord1)
+    closest, sep2d, sep3d = match_coordinates_sky(pub_coo, ers_coo) # location in coord2 for closest match to each coord1. len = len(coord1)
+    matched  = sep2d < match_tol*u.arcsec
+#    matched_ers, matched_pub, ers_only, pub_only = symmetric_match_sky_coords(ers_coo, pub_coo, match_tol*u.arcsec)
+
+    # generate the matched table
+    keeplist = ['id_','ra','dec']
+    tmpcat = Table(erscat[keeplist])
+    matchtab = hstack([tmpcat[closest][matched], pubcat[matched]], join_type = 'outer')
+
+    # write the matched catalog to a file
+    matchtab.write(match_out_file, format = 'ascii.commented_header')
+
+    return
 
 def reformat_cat(in_tab, old_name, new_name, old_type, new_type, replace_names=ns_replace_names, replace_types=ns_replace_types, remove_id=ns_remove_ids, keepcols=None):
     ''' reformat NED or SIMBAD catalog to make more intercompatible'''     
