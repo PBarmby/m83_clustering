@@ -7,7 +7,7 @@ from sklearn import metrics, preprocessing
 from itertools import cycle
 import os, os.path
 ratio = 0.2
-n_clust = 3
+n_clust = 7
 colours = ['b', 'y', 'r', 'g', 'm', 'c', 'k', 'b', 'y', 'r', 'g', 'm', 'c', 'k', 'b', 'y', 'r', 'g', 'm', 'c', 'k', 'b', 'y', 'r', 'g', 'm', 'c', 'k']
 markers = ['o', 'o', 'o', 'o', 'o', 'o', 'o', '*', '*', '*', '*', '*', '*', '*', '^', '^','^','^','^','^','^','^','^','^','>', '<', '+']
 
@@ -18,20 +18,20 @@ aperture = '05'
 band1 = 'mag{}_555'.format(aperture)
 band2 = 'mag{}_814'.format(aperture)
 
-band3 = 'mag{}_438'.format(aperture)
-band4 = 'mag{}_673'.format(aperture)
+band3 = 'mag{}_373'.format(aperture)
+band4 = 'mag{}_555'.format(aperture)
 
-band5 = 'mag{}_438'.format(aperture)
-band6 = 'mag{}_657'.format(aperture)
+band5 = 'mag{}_487'.format(aperture)
+band6 = 'mag{}_555'.format(aperture)
 
-band7 = 'mag{}_438'.format(aperture)
-band8 = 'mag{}_502'.format(aperture)
+band7 = 'mag{}_502'.format(aperture)
+band8 = 'mag{}_555'.format(aperture)
 
-band9 = 'mag{}_438'.format(aperture)
-band10 = 'mag{}_487'.format(aperture)
+band9 = 'mag{}_555'.format(aperture)
+band10 = 'mag{}_657'.format(aperture)
 
-band11 = 'mag{}_373'.format(aperture)
-band12 = 'mag{}_438'.format(aperture)
+band11 = 'mag{}_555'.format(aperture)
+band12 = 'mag{}_673'.format(aperture)
 
 # Colour 1
 wave1 = m83_data[band1]
@@ -136,12 +136,13 @@ fig = plt.figure()
 ax = fig.add_subplot(111)
 
 colors = cycle('bgrcmykbgrcmykbgrcmykbgrcmyk')
-for i, col in zip(range(n_clust), colors):
+markers = cycle('ooooooo*******')
+for i, col, mark in zip(range(n_clust), colors, markers):
     class_members = labels_ == i
     cluster_center = center[i]
     ax.scatter(X[class_members, 4], X[class_members, 5], color=col,
-             marker=markers[i])
-    ax.plot(cluster_center[4], cluster_center[5], marker=markers[i],
+             marker=mark, s=2)
+    ax.plot(cluster_center[4], cluster_center[5], marker=mark,
             markerfacecolor=col, markeredgecolor='k', markersize=14)
 plt.show()
 print "Score: {}".format(score)
