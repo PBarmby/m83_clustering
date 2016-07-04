@@ -1,7 +1,4 @@
-Table 2
-Wolf-Rayet Star Candidates in M83
-
-R.A.	Decl.	ID_Hadfield	Reg No.	Age_Reg(Myr)	X	Y	Comments	
+#RA	Decl	ID_Hadfield	Reg No.	Age_Reg(Myr)	X	Y	Comments	
 13:37:00.41	-29:52:54.1	72	-	-	3874	606	Faint Halpha	
 13:37:01.18	-29:52:53.9	73	-	-	3618	609	Faint Halpha	
 13:37:01.42	-29:51:25.8	74	4	-	3512	2821	Strong Halpha	
