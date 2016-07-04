@@ -1,0 +1,8 @@
+# Number of objects per flag value of: hlsp_wfc3ers_hst_wfc3_m83_cat_all_v1 (data_v1.txt)
+# flag n_objects id_ 
+0 	67831	 
+1 	2 	87975.0	90516.0
+2 	4	36651.0 36729.0 38327.0	41860.0
+3 	1	39609.0
+4 	2	41785.0	41904.0
+

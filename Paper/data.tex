@@ -80,11 +80,11 @@ Table~\ref{tab:cat_numbers} and Figure~\ref{fig:mag_unc} characterize the catalo
 Not all objects are detected in all filters;
 Table~\ref{tab:cat_numbers} gives the number of objects for which photometry is reported in a given filter,
 the number for which scaled 0.5-pixel magnitude uncertainty is $0.2$~mag or less,
-and the aperture magnitude at which the median magnitude uncertainty is $0.2$~mag. 
-Figure~\ref{fig:mag_unc} shows the distributions of magnitudes and uncertainties in the individual filters.
+and the aperture magnitude at which the median magnitude uncertainty is $0.2$~mag. % Discuss last column and why 555 - should be because it is the broad filter with the most detections used for the whitelight image?
+Figure~\ref{fig:mag_unc} shows the distributions of magnitudes and uncertainties in a broad and narrow filter. % See appendix for complete list of figures
 
 %AK: please calculate numbers here. For the last column scipy.stats.binned_statistic is a good way to do this.
-%Numbers are calculated based on the 3 aperture filters - can be changed if we decide otherwise
+%Numbers are calculated based on the 0.5 aperture filters - can be changed if we decide otherwise
 \begin{table}
 \centering
 \caption{
@@ -93,16 +93,16 @@ Figure~\ref{fig:mag_unc} shows the distributions of magnitudes and uncertainties
 \hline\hline
 Filter & $N_{\rm obj}$ & $N_{\rm good}$ & $m_{\rm good}$ & $N_{\rm X-555}$\\
 \hline
-F225W &  57585 & 1196 & m & 1149\\
-F336W &  61787 & 3572 & m & 3493\\
-F373N &  55908 & 236 & m & 229\\
-F438W &  64692 & 5528 & m & 5490\\
-F487N &  60956 & 429 & m & 427\\
-F502N &  61715 & 461 & m & 460\\
-F555W &  66539 & 13556 & m & $-$\\
-F657N &  67819 & 3285 & m & 2406\\
-F673N &  61979 & 682 & m & 679\\
-F814W &  63759 & 11976 & m & 7199\\
+F225W &  57237 & 15011 & m & 14976\\
+F336W &  62192 & 34129 & m & 33692\\
+F373N &  55966 & 8878 & m & 8853\\
+F438W &  66356 & 48858 & m & 48660\\
+F487N &  63812 & 13335 & m & 13322\\
+F502N &  64313 & 14654 & m & 14644\\
+F555W &  67424 & 65652 & m & $-$\\
+F657N &  67782 & 67634 & m & 65502\\
+F673N &  65305 & 25295 & m & 65502\\
+F814W &  67050 & 59600 & m & 57935\\
 \hline
 \end{tabular}
 \end{table}
@@ -110,7 +110,9 @@ F814W &  63759 & 11976 & m & 7199\\
 %AK: here's where the plots go.
 \begin{figure*}
 \centering
-%\includegraphics{fig1}
+\subfloat[Broad filter distribution.]{\includegraphics[width=0.5\textwidth]{mag05_555_uncertainty_distribution}\label{fig:mag_unc_broad}}
+\hfill
+\subfloat[Narrow filter distribution.]{\includegraphics[width=0.5\textwidth]{mag05_502_uncertainty_distribution}\label{fig:mag_unc_narrow}}
 \caption{Distribution of magnitudes and uncertainties for objects in the \citet{chandar10} M83 ERS catalog.}
 \label{fig:mag_unc}
 \end{figure*}

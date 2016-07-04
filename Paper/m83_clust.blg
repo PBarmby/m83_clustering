@@ -1,19 +1,7 @@
-This is BibTeX, Version 0.99d (TeX Live 2014)
-Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
-The top-level auxiliary file: m83_clust.aux
+This is BibTeX, Version 0.99dThe top-level auxiliary file: m83_clust.aux
 The style file: mn2e.bst
 Database file #1: m83_refs.bib
 Warning--I didn't find a database entry for ""
-Warning--I didn't find a database entry for "combo-17"
-Warning--I didn't find a database entry for "woffard11"
 Warning--I didn't find a database entry for "whitmore11"
-Warning--I didn't find a database entry for "fousneau12"
-Warning--you've exceeded 250, the entry-string-size, for entry hong11
-while executing--line 1184 of file mn2e.bst
-*Please notify the bibstyle designer*
-Warning--you've exceeded 250, the entry-string-size, for entry hong11
-while executing--line 1223 of file mn2e.bst
-*Please notify the bibstyle designer*
 Warning--empty journal in vatturi09
-(There were 8 warnings)
-
+(There were 3 warnings)

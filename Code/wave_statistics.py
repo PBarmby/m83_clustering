@@ -1,14 +1,20 @@
+'''Data is trimmed with unc < 0.2 and removed all -99s
+    - Exception: ID file which records all object detections
+    - Using data file: data_v3.txt in m83_clustering\Code'''
 import numpy as np 
 import os
 from astropy.table import Table
 from matplotlib import pyplot as plt
 from itertools import cycle
-'''Data is now trimmed with unc < 0.2 and removed all -99s
-    - Exception: ID file which records all object detections'''
+
 
 def band_unc_limit(path_):
-    data = Table.read('data.txt', format='ascii.commented_header', guess=False)
+    '''Creates file with each band at various uncertainty limits and counts
+    the number of objects valid at each limit. 
+        - removes all -99 objects'''
+    data = Table.read('data_v3-test.txt', format='ascii.commented_header', guess=False)
     band_names = data.colnames
+
     unc_limit_path = make_directory(path_)
     file_name = "band_unc_limit_statistics.txt"
     file_path = os.path.join(unc_limit_path, file_name)
@@ -17,6 +23,7 @@ def band_unc_limit(path_):
         unc_limit_file = open(file_path, "a")
         unc_limit_file.write(header + '\n')
         unc_limit_file.close()
+
     for i in range (11, len(data.colnames), 2):
         unc_limit_file = open(file_path, "a")
         band = band_names[i]
@@ -31,18 +38,25 @@ def band_unc_limit(path_):
             limit_string = "{} {:.4f} {}".format(band, limit, len(gooddata))
             unc_limit_file.write(limit_string + '\n')
         unc_limit_file.close()
+
     return()
 
 
 def colour_unc(path_):
-    data = Table.read('data.txt', format='ascii.commented_header', guess=False)
+    '''Makes file with 2D colours and the number of objects at a given
+    uncertainty limit.
+        - remove all -99 objects
+        - uncertainty = quadrature_uncertainty of both bands'''
+
+    data = Table.read('data_v3.txt', format='ascii.commented_header',
+                      guess=False)
     trials = Table.read('stats_experiments.txt',
                         format='ascii.commented_header', guess=False)
+
     col_limit_path = make_directory(path_)
     file_name = "{}-colour_unc_limit_statistics.txt".format(trials['band2'][0])
     file_path = os.path.join(col_limit_path, file_name)
     header = "# band1 band2 limit n_objects"
-
     if not os.path.exists(file_path):
         col_unc_file = open(file_path, "a")
         col_unc_file.write(header + '\n')
@@ -50,27 +64,33 @@ def colour_unc(path_):
 
     for i in range(0, len(trials)):
         col_unc_file = open(file_path, "a")
+
         # Load Band1
         band1 = trials['band1'][i]
         band1_mag = data[band1]
         band1_unc = data[band1 + '_unc']
         # Remove Band1 no detections
         band1_trim = np.logical_and(band1_mag != -99, band1_unc != -99)
+
         # Load Band2
         band2 = trials['band2'][i]
         band2_mag = data[band2]
         band2_unc = data[band2 + '_unc']
         # Remove Band2 no detections
         band2_trim = np.logical_and(band2_mag != -99, band2_unc != -99)
+
         # Remove no detections in one band
         colour_trim = np.logical_and(band1_trim, band2_trim)
         band1_mag_clean = band1_mag[colour_trim]
         band2_mag_clean = band2_mag[colour_trim]
         band1_unc_clean = band1_unc[colour_trim]
         band2_unc_clean = band2_unc[colour_trim]
+
         # Compute Color and uncertainty
         col_mag = band1_mag_clean - band2_mag_clean
         col_unc = np.sqrt(band1_unc_clean*band1_unc_clean+band2_unc_clean*band2_unc_clean)
+
+        # Write file
         for k in range(1, 10):
             limit = float(k)/10
             gooddata = col_mag[col_unc < limit]
@@ -78,25 +98,22 @@ def colour_unc(path_):
                                                 len(gooddata))
             col_unc_file.write(limit_string + "\n")
         col_unc_file.close()
-    return
+
+    return()
 
 
 def band_id(path_):
-    data = Table.read('data.txt', format='ascii.commented_header', guess=False)
+    '''Makes id files for all bands in both apertures, saves with id and mag
+        - Only removed data with -99'''
+    data = Table.read('data_v3.txt', format='ascii.commented_header', guess=False)
     band_names = data.colnames
     id_path = make_directory(path_)
-    #header = "# object_id magnitude"
     for i in range(11, len(band_names), 2):
         band = band_names[i]
         wave = data[band]
         object_id = data['id_']
         file_name = "{}_object_id.txt".format(band)
         file_path = os.path.join(id_path, file_name)
-        #if not os.path.exists(file_path):
-         #   id_file = open(file_path, "a")
-          #  id_file.write(header + '\n')
-           # id_file.close()
-        #id_file = open(file_path, "a")
         observations = object_id[wave != -99]
         id_tab = Table(data=[observations, wave[wave != -99]],
                        names=['object_id', 'magnitude'])
@@ -105,36 +122,52 @@ def band_id(path_):
 
 
 def col_stats(path_): 
-    '''Not filtered based on uncertainty - only removed -99'''
-    data = Table.read('data.txt', format='ascii.commented_header', guess=False)
+    '''Makes file with various stats for a given 2d colour combination
+        - removes all -99 
+        - sets BAND uncertainty limit at 0.2
+        - Colour uncertainty is not constrained'''
+
+    data = Table.read('data_v3.txt', format='ascii.commented_header', guess=False)
     trials = Table.read('stats_experiments.txt',
                         format='ascii.commented_header', guess=False)
+
     col_path = make_directory(path_)
-    file_name = "05_col_statistics.txt"
+    file_name = "{}_col_statistics.txt".format(trials['band2'][0])
     file_path = os.path.join(col_path, file_name)
     header = "# band1 band2 colour_mean colour_median colour_std colour_var colour_min colour_max num_obj unc_mean unc_median unc_std unc_var unc_min unc_max"
     if not os.path.exists(file_path):
         col_file = open(file_path, "a")
         col_file.write(header + '\n')
         col_file.close()
+
     for i in range(0, len(trials)):
         col_file = open(file_path, "a")
+
+        # Load Bands
         band1 = trials['band1'][i]
         band1_mag = data[band1]
         band1_unc = data[band1+'_unc']
         band2 = trials['band2'][i]
         band2_mag = data[band2]
         band2_unc = data[band2+'_unc']
-        remove_bad = np.logical_and(np.logical_and(band1_mag != -99, band1_unc != -99),
-                              np.logical_and(band2_mag != -99, band2_unc != -99))
+
+        # Trim data with unc_limit and -99
+        remove_bad = np.logical_and(np.logical_and(band1_mag != -99,
+                                                   band1_unc != -99),
+                                    np.logical_and(band2_mag != -99,
+                                                   band2_unc != -99))
         limit = np.logical_and(band1_unc < 0.2, band2_unc < 0.2)
         trim = np.logical_and(remove_bad, limit)
+
         band1_mag_trim = band1_mag[trim]
         band1_unc_trim = band1_unc[trim]
         band2_mag_trim = band2_mag[trim]
         band2_unc_trim = band2_unc[trim]
+
+        # Make colour
         colour_mag = band1_mag_trim - band2_mag_trim
         colour_unc = np.sqrt(band1_unc_trim*band1_unc_trim+band2_unc_trim*band2_unc_trim)
+
         # Compute Magnitude Statistics
         mag_mean = np.mean(colour_mag)
         mag_median = np.median(colour_mag)
@@ -144,7 +177,8 @@ def col_stats(path_):
         mag_max = np.max(colour_mag)
         mag_obj = len(colour_mag)
         # Create string to write
-        mag_string = "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {}".format(mag_mean, mag_median, mag_stdev, mag_var, mag_min, mag_max, mag_obj)#, mag_bad_obs)
+        mag_string = "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {}".format(mag_mean, mag_median, mag_stdev, mag_var, mag_min, mag_max, mag_obj)
+
         # Compute Uncertainty Statistics
         unc_mean = np.mean(colour_unc)
         unc_median = np.median(colour_unc)
@@ -152,16 +186,21 @@ def col_stats(path_):
         unc_var = np.var(colour_unc)
         unc_min = np.min(colour_unc)
         unc_max = np.max(colour_unc)
+        # Make string to write
         unc_string = "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f}".format(unc_mean, unc_median, unc_stdev, unc_var, unc_min, unc_max)
+        # Write file        
         col_file.write(band1 + ' ' + band2 + ' ' + mag_string + ' ' + unc_string + '\n')
-        col_file.close()
+    col_file.close()
     return
 
 
 def band_stats(path_): 
-    '''Not filtered based on uncertainty - only removed -99 - now removed <0.2 unc'''
-    data = Table.read('data.txt', format='ascii.commented_header', guess=False)
+    '''Makes file with band statistics
+        - removes all -99 
+        - uncertainty limit of 0.2'''
+    data = Table.read('data_v3.txt', format='ascii.commented_header', guess=False)
     band_names = data.colnames
+
     stats_path = make_directory(path_)
     file_name = "filter_statistics-with_limit.txt"
     file_path = os.path.join(stats_path, file_name)
@@ -170,17 +209,20 @@ def band_stats(path_):
         stats_file = open(file_path, "a")
         stats_file.write(header + '\n')
         stats_file.close()
+
     for i in range (11, len(band_names), 2):
         stats_file = open(file_path, "a")
         band = band_names[i]
         band_data = data[band_names[i]]
         band_unc_data = data[band_names[i+1]]
+
         # Remove bad data 
         remove_bad_data = np.logical_and(np.logical_and(band_data != -99,
                                                         band_unc_data != -99),
                                                         band_unc_data < 0.2)
         band_data_trim = band_data[remove_bad_data]
         band_unc_trim = band_unc_data[remove_bad_data]
+
         # Compute Magnitude Statistics
         mag_mean = np.mean(band_data_trim)
         mag_median = np.median(band_data_trim)
@@ -191,6 +233,7 @@ def band_stats(path_):
         mag_obj = len(band_data_trim)
         # Create string to write
         mag_string = "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {}".format(mag_mean, mag_median, mag_stdev, mag_var, mag_min, mag_max, mag_obj)#, mag_bad_obs)
+
         # Compute Uncertainty Statistics
         unc_mean = np.mean(band_unc_trim)
         unc_median = np.median(band_unc_trim)
@@ -198,11 +241,42 @@ def band_stats(path_):
         unc_var = np.var(band_unc_trim)
         unc_min = np.min(band_unc_trim)
         unc_max = np.max(band_unc_trim)
-        #unc_bad_obs = remove_bad_data.count('False')
         # Create string to write
         unc_string = "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f}".format(unc_mean, unc_median, unc_stdev, unc_var, unc_min, unc_max)#, unc_bad_obs)
+
         stats_file.write(band + ' ' + mag_string + ' ' + unc_string + '\n')
-        stats_file.close()
+    stats_file.close()
+    return
+
+def n_detections(path_): 
+    '''Makes file with the number of objects detected in each band without an
+        uncertainty filter'''
+    data = Table.read('data_v3.txt', format='ascii.commented_header',
+                      guess=False)
+    band_names = data.colnames
+
+    stats_path = make_directory(path_)
+    file_name = "filter_detections.txt"
+    file_path = os.path.join(stats_path, file_name)
+    header = "# band n_detections"
+    if not os.path.exists(file_path):
+        detection_file = open(file_path, "a")
+        detection_file.write(header + '\n')
+        detection_file.close()
+
+    for i in range(11, len(band_names), 2):
+        detection_file = open(file_path, "a")
+        band = band_names[i]
+        band_data = data[band_names[i]]
+        band_unc_data = data[band_names[i+1]]
+
+        # Remove bad data
+        remove_bad_data = np.logical_and(band_data != -99,
+                                         band_unc_data != -99)
+        band_data_trim = band_data[remove_bad_data]
+        detection_file.write(band + ' ' + str(len(band_data_trim)) + '\n')
+    detection_file.close()
+
     return
 
 
