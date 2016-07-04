@@ -4,28 +4,22 @@ from astropy import units as u
 import numpy as np
 import os
 
-#Reformat and combine NED and SIMBAD data tables
-# reformat involves making object types and naming schemes match
-# combine: match on RA/dec, then check for match on name/type
+# published_cats:
+#  tools for manipulating published catalogs of m83 objects, for comparison with Chandar et al catalog
+#     - reformat and combine NED and SIMBAD data tables
+#     - add in tables of data not included in NED or SIMBAD
+#     - match to Chandar catalog to produce a list of best-matches with object types
 #  
 
 #usage:
-#table_proc.go('ned-20160629.fits','simbad-20160629.fits','M83_NScomb.fits','M83_NSall.fits')
-#table_proc.add_tables('M83_NSall.fits',['williams15_rsg.fits','kim12_wr.fits'],'M83_final.fits')
-
-within_galaxy_types_ned = ['*Cl','HII','PofG','Neb','SN','SNR', 'V*','WR*']
-background_types_ned = ['G','GClstr','GGroup','QSO']
-obs_types_ned = ['IrS','RadioS','UvES','UvS', 'VisS','XrayS']
-
-within_galaxy_types_simbad = ['**','Assoc*','Candidate_SN*','Candidate_WR*','Cepheid','Cl*','HII','ISM','LMXB','MolCld','Nova','PN','PartofG','SN','SNR','SNR?','Star','ULX','V*','WR*','semi-regV*']
-background_types_simbad = ['BLLac','ClG','EmG','Galaxy','GinCl','GroupG','Possible_G','StarburstG']
-obs_types_simbad = ['EmObj','IR','Radio','Radio(sub-mm)','UV','X']
-
+#published_cats.ns_combine('ned-20160629.fits','simbad-20160629.fits','M83_NScomb.fits','M83_NSall.fits')
+#published_cats.add_tables('M83_NSall.fits',['williams15_rsg.fits','kim12_wr.fits'],'M83_final.fits')
+#published_cats.catalog_match('M83_final.fits', 'hlsp_wfc3ers_hst_wfc3_m83_cat_all_v2-corrected.txt','M83_ers_pubcat.txt'_
 
 ned_rename = [('Name_N', 'Name'), ('RA(deg)', 'RA'), ('DEC(deg)', 'Dec'),('Type_N', 'Type')]
 sim_rename = [('Name_S', 'Name'), ('RA_d', 'RA'), ('DEC_d', 'Dec'),('Type_S', 'Type')]
 
-def go(ned_name, simbad_name, ns_combine, final_tab, match_tol = 1.0): # match_tol in arcsec
+def ns_combine(ned_name, simbad_name, ns_combine, final_tab, match_tol = 1.0): # match_tol in arcsec
 
     ned_in = Table.read(ned_name)
     simbad_in = Table.read(simbad_name)
@@ -159,8 +153,18 @@ def process_unmatch(tab_in, src, rename_cols):
     tab_in.add_column(Column(name='Source', length = len(tab_in), dtype='S2'))
     tab_in['Source'] = src
     return(tab_in)
-    
-# not used    
+
+
+# BELOW HERE IS OLD STUFF, not used    
+
+within_galaxy_types_ned = ['*Cl','HII','PofG','Neb','SN','SNR', 'V*','WR*']
+background_types_ned = ['G','GClstr','GGroup','QSO']
+obs_types_ned = ['IrS','RadioS','UvES','UvS', 'VisS','XrayS']
+
+within_galaxy_types_simbad = ['**','Assoc*','Candidate_SN*','Candidate_WR*','Cepheid','Cl*','HII','ISM','LMXB','MolCld','Nova','PN','PartofG','SN','SNR','SNR?','Star','ULX','V*','WR*','semi-regV*']
+background_types_simbad = ['BLLac','ClG','EmG','Galaxy','GinCl','GroupG','Possible_G','StarburstG']
+obs_types_simbad = ['EmObj','IR','Radio','Radio(sub-mm)','UV','X']
+
 def name_match(simbad_name, ned_name):
     matched = np.zeros(len(simbad_name),dtype='bool')
     matched[np.char.replace(simbad_name," ", "")==np.char.replace(ned_name," ", "")] = True
