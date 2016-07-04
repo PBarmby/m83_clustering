@@ -30,6 +30,7 @@ from sklearn.metrics import silhouette_samples
 # meanshift imports
 from sklearn.cluster import MeanShift, estimate_bandwidth
 from sklearn import preprocessing
+from scipy.spatial import distance
 
 # affinity propagation imports
 from sklearn.cluster import AffinityPropagation
@@ -106,10 +107,16 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                 meanshift_results(results_path, results_title, experiments[i],
                                   ms_n_clusters, ms_score, bandwidth, ms_obj,
                                   ms_obj_p_cluster)
-        if "hms" in analysis: 
+
+        if "hms" in analysis:
+            if 'experiments.txt' in bw_in:
+                b_width_input = experiments['bandwidth'][i]
+            else:
+                b_width_input = 'estimate'
+
             hms_n_clusters, bandwidth, hms_score, hms_obj, hms_obj_p_cluster =\
                 hms(plot_path, experiments[i], cluster_data_, plots,
-                    id_list, id_data, x_data, y_data, ds9_cat)
+                    b_width_input, id_list, id_data, x_data, y_data, ds9_cat)
 
         if "affinity" in analysis:
             damping = float(experiments['damping'][i])
@@ -347,10 +354,6 @@ def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
         ds9_catalogue('meanshift', n_clusters_, labels, bands, x, y, s_path)
 
     # Make plots
-    if "meanshift_density" in make_plot:
-        meanshift_density(s_path, cluster_data, n_clusters_, cluster_data, ms,
-                          bands[0], bands[1], bands[2], bands[4], labels,
-                          cluster_centers)
     if "meanshift_colour" in make_plot:
         meanshift_colour(s_path, X_scaled, n_clusters_, labels,
                          cluster_centers, bands)
@@ -359,12 +362,62 @@ def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
            objects_per_cluster)
 
 
-def hms(s_path, bands, cluster_data, make_plot, output_id, id_data, x, y,
-        ds9_cat):
+def hms(s_path, bands, cluster_data, make_plot, bw_input, output_id, id_data,
+        x, y, ds9_cat):
     # TODO: Figure out the best way to save and pass the results
             # Write function
+    '''---------------------------------------------------------------------'''
+    '''Perform hierarchical meanshift by creating incremental banwidth
+    levels'''
+    cluster_centers = []
+    b_width = 0.0
+    incriment = 3.0
+    '''---------------------------------------------------------------------'''
 
-    return
+    if "estimate" in bw_input:
+        b_width = min(distance.pdist(cluster_data))
+
+    while(len(cluster_centers) != 1):
+        ms = MeanShift(bandwidth=b_width, bin_seeding=False, cluster_all=True)
+        ms.fit(cluster_data)
+        labels = ms.labels_
+        cluster_centers = ms.cluster_centers_
+        labels_unique = np.unique(labels)
+        n_clusters = len(labels_unique)
+        if 50 > n_clusters > 1: 
+            hms_score = metrics.silhouette_score(cluster_data, labels)
+
+        # Identify which cluster each object belongs to
+        objects_per_cluster = np.zeros(max_num_clusters, dtype=np.int16)
+        for i in range(0, n_clusters):
+            ith_cluster = cluster_data[labels == i]
+            objects_per_cluster[i] = len(ith_cluster)
+            #write_cluster_stats(s_path, 'meanshift', n_clusters_, i,
+             #                   objects_per_cluster[i], cluster_centers[i],
+              #                  ith_cluster, average_score,
+               #                 sample_score[labels == i])
+        # Format for writing results
+        objects_per_cluster.sort()  # sort from smallest to largest
+        objects_per_cluster = objects_per_cluster[::-1]  # reverse sort
+
+        # Make catalgoues
+        if "yes" in output_id:
+            id_catologue('hms', n_clusters, labels, bands, id_data, x, y,
+                         s_path)
+        if "yes" in ds9_cat:
+            ds9_catalogue('hms', n_clusters, labels, bands, x, y, s_path)
+
+        # Make Plots
+        if "hms_colour" in make_plot: 
+            hms_colour()
+        # TODO: Call results file here
+        if b_width < 0.25:
+            b_width = b_width*incriment
+        else: 
+            b_width = b_width*1.1
+
+    return(n_clusters, b_width, hms_score, len(cluster_data),
+           objects_per_cluster)
 
 
 def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
@@ -517,47 +570,6 @@ def ds9_catalogue(clustering, n_clust, cluster_num, waves, x, y, save_):
     return()
 
 
-def meanshift_density(path, cluster_data, n_clusters, X, ms,
-                      band1, band2, band3, band4, labels_, centers):
-    ''' Plot the results of mean shift clustering if needed'''
-    fig = plt.figure(figsize=(8, 8))
-    ax = fig.add_subplot(111)
-    # plot density
-    H, C1_bins, C2_bins = np.histogram2d(cluster_data[0], cluster_data[1], 51)
-    ax.imshow(H.T, origin='lower', interpolation='nearest', aspect='auto',
-              extent=[C1_bins[0], C1_bins[-1], C2_bins[0], C2_bins[-1]],
-              cmap=plt.cm.binary)
-
-    # plot clusters
-    for i in range(n_clusters):
-        Xi = X[ms.labels_ == i]
-        H, b1, b2 = np.histogram2d(Xi[:, 0], Xi[:, 1], (C1_bins, C2_bins))
-        bins = [0.1]
-        ax.contour(0.5 * (C1_bins[1:] + C1_bins[:-1]), 0.5 * (C2_bins[1:]
-                                                              + C2_bins[:-1]),
-                   H.T, bins, colors='r')
-
-    ax.xaxis.set_major_locator(plt.MultipleLocator(0.5))
-    ax.set_xlabel(band1+' - '+band2)
-    ax.set_ylabel(band3+' - '+band4)
-    ax.set_title('mean-shift ' + str(n_clusters) + ' : '+band1+'-'+band2+' vs. '+band3+'-'+band4,
-                 fontsize=14)
-
-    '''Display interactive figure if # removed, if not, figures saved'''
-    # plt.show
-    file_name = 'ms_density_{}cl_{}-{}vs{}-{}.png'.format(str(n_clusters),
-                                                          band1, band2,
-                                                          band3, band4)
-    colors = ('{}-{}_{}-{}').format(band1, band2, band3, band4)
-    path_ = ('{}\\meanshift-dens_{}').format(path, colors)
-    if not os.path.exists(path_):
-        os.makedirs(path_)
-    pylab.savefig(os.path.join(path_, file_name))
-    plt.close()
-
-    return()
-
-
 def meanshift_colour(path, X, n_clusters, labels_, centers, bands):
 
     colors = cycle('bgrcmykbgrcmykbgrcmykbgrcmyk')
@@ -566,7 +578,6 @@ def meanshift_colour(path, X, n_clusters, labels_, centers, bands):
         fig = plt.figure()
         ax = fig.add_subplot(111)
         for k, col, mark in zip(range(n_clusters), colors, markers):
-            # cluster_score = sample_score[labels == k]
             my_members = labels_ == k
             cluster_center = centers[k]
             ax.scatter(X[my_members, 0], X[my_members, i], color=col,
@@ -596,63 +607,40 @@ def meanshift_colour(path, X, n_clusters, labels_, centers, bands):
     return()
 
 
-def kmeans_density(path, band1, band2, band3, band4, clf, scaler, colour1,
-                   colour2, number_clusters, cluster_number):
+def hms_colour(path, c_data, n_clusters, labels, centers, bands):
 
-    '''Plot cluster data for KMEANS clustering'''
-    fig = plt.figure(figsize=(8, 8))
-    ax = fig.add_subplot(111)
+    markers = cycle('ooooooo.......*******+++++++<<<<<<>>>>>>>^^^^^^^')
+    colors = cycle('byrkmgcbyrkmgcbyrkmgcbyrkmgcbyrkmgc')
+    for i in range(1, 6): 
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        for k, col, mark in zip(range(n_clusters), colors, markers):
+            my_members = labels == k
+            cluster_center = centers[k]
+            ax.scatter(c_data[my_members, 0], c_data[my_members, 1], color=col,
+                       marker=mark, s=4)
+            ax.plot(cluster_center[0], cluster_center[1], marker=mark, color=col,
+                    markersize=10)
+        # Format plot
+        ax.xaxis.set_major_locator(plt.MultipleLocator(0.5))
+        ax.set_xlabel(bands[0] + ' - ' + bands[1])
+        ax.set_ylabel(bands[i*2]+' - '+bands[i*2+1])
+        ax.set_title('mean-shift hierarchy' + str(n_clusters) + ' : '+bands[0]+'-'+bands[1]+' vs. '+bands[i*2]+'-'+bands[i*2+1],
+                     fontsize=12)
+        ax.legend(loc='lower right')
 
-    # Compute 2D histogram of the input
-    H, C1_bins, C2_bins = np.histogram2d(colour1, colour2, 50)
-
-    # Plot Density
-
-    ax.imshow(H.T, origin='lower', interpolation='nearest', aspect='auto',
-              extent=[C1_bins[0], C1_bins[-1],
-                      C2_bins[0], C2_bins[-1]], cmap=plt.cm.binary)
-
-    # Plot Cluster centers
-    cluster_centers = scaler.inverse_transform(clf.cluster_centers_)
-    for i in range(0, number_clusters):
-        ax.scatter(cluster_centers[i, 0], cluster_centers[i, 1], s=40,
-                   c=cluster_colours[i], edgecolors='k')
-
-    # Plot cluster centers
-    C1_centers = 0.5 * (C1_bins[1:] + C1_bins[:-1])
-    C2_centers = 0.5 * (C2_bins[1:] + C2_bins[:-1])
-    clusterdatagrid = np.meshgrid(C1_centers, C2_centers)
-    clusterdatagrid = np.array(clusterdatagrid).reshape((2, 50 * 50)).T
-    H = clf.predict(scaler.transform(clusterdatagrid)).reshape((50, 50))
-
-    # Plot boundries
-    for i in range(number_clusters):
-        Hcp = H.copy()
-        flag = (Hcp == i)
-        Hcp[flag] = 1
-        Hcp[~flag] = 0
-        ax.contour(C1_centers, C2_centers, Hcp, [-0.5, 0.5], linewidths=1,
-                   c='k')
-
-    # Set axes for each plot
-    ax.xaxis.set_major_locator(plt.MultipleLocator(0.5))
-
-    ax.set_xlabel(band1+' - '+band2)
-    ax.set_ylabel(band3+' - '+band4)
-    ax.set_title('k-means: '+band1+'-'+band2+' vs. '+band3+'-'+band4,
-                 fontsize=12)
-
-    file_name = 'kmeans_dens_{}cl_{}-{}vs{}-{}.png'.format(str(number_clusters),
-                                                           band1, band2, band3,
-                                                           band4)
-    colors = ('{}-{}_{}-{}').format(band1, band2, band3, band4)
-    path_ = ('{}\\kmeans-dens_{}').format(path, colors)
-    if not os.path.exists(path_):
-        os.makedirs(path_)
-    pylab.savefig(os.path.join(path_, file_name))
-    plt.close()
-
-    return ()
+        '''Display interactive figure if # removed, if not, figures saved'''
+        # plt.show
+        file_name = 'HMeanShift_color_{}cl_{}-{}vs{}-{}.png'.format(str(n_clusters),
+                                                                bands[0], bands[1],
+                                                                bands[i*2], bands[i*2+1])
+        colours = ('{}-{}_{}-{}').format(bands[0], bands[1], bands[i*2], bands[i*2+1])
+        path_ = ('{}\\{}').format(path, colours)
+        if not os.path.exists(path_):
+            os.makedirs(path_)
+        pylab.savefig(os.path.join(path_, file_name))
+        plt.close()
+    return
 
 
 def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
@@ -886,7 +874,7 @@ def user_input():
     # Optional Arguments: Choose the clustering method and inputs for kmeans
     inputs.add_argument("-a", "--analysis",
                         help="Choose the methods you would like to use",
-                        choices=['meanshift', 'kmeans', 'affinity'],
+                        choices=['meanshift', 'hms', 'kmeans', 'affinity'],
                         nargs='*', default=[])
 
     # Optional Arguments: Parameter secification
@@ -904,7 +892,7 @@ def user_input():
                         help="Choose the plots you would like to make",
                         choices=['meanshift_density', 'meanshift_colour',
                                  'kmeans_density', 'kmeans_colour',
-                                 'affinity'], nargs='*', default=[])
+                                 'affinity', 'hms'], nargs='*', default=[])
     inputs.add_argument("-wr", "--write_results", help="Write main results",
                         choices=['yes', 'no'], default=['yes'])
     # Optional Arguments: Catalogue functions

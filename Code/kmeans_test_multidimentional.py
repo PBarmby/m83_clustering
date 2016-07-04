@@ -140,9 +140,9 @@ markers = cycle('ooooooo*******')
 for i, col, mark in zip(range(n_clust), colors, markers):
     class_members = labels_ == i
     cluster_center = center[i]
-    ax.scatter(X[class_members, 4], X[class_members, 5], color=col,
+    ax.scatter(X[class_members, 0], X[class_members, 1], color=col,
              marker=mark, s=2)
-    ax.plot(cluster_center[4], cluster_center[5], marker=mark,
+    ax.plot(cluster_center[0], cluster_center[1], marker=mark,
             markerfacecolor=col, markeredgecolor='k', markersize=14)
 plt.show()
 print "Score: {}".format(score)

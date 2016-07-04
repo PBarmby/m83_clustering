@@ -9,31 +9,31 @@ from sklearn import preprocessing
 from astropy.table import Table
 from scipy.spatial import distance
 
-data = Table.read('data.txt', format='ascii.commented_header',
+data = Table.read('data_v3.txt', format='ascii.commented_header',
                   guess=False)
 m83_data = data#[:]
 aperture = '05'
 band1 = 'mag{}_555'.format(aperture)
 band2 = 'mag{}_814'.format(aperture)
 
-band3 = 'mag{}_438'.format(aperture)
-band4 = 'mag{}_673'.format(aperture)
+band3 = 'mag{}_373'.format(aperture)
+band4 = 'mag{}_555'.format(aperture)
 
-band5 = 'mag{}_438'.format(aperture)
-band6 = 'mag{}_657'.format(aperture)
+band5 = 'mag{}_487'.format(aperture)
+band6 = 'mag{}_555'.format(aperture)
 
-band7 = 'mag{}_438'.format(aperture)
-band8 = 'mag{}_502'.format(aperture)
+band7 = 'mag{}_502'.format(aperture)
+band8 = 'mag{}_555'.format(aperture)
 
-band9 = 'mag{}_438'.format(aperture)
-band10 = 'mag{}_487'.format(aperture)
+band9 = 'mag{}_555'.format(aperture)
+band10 = 'mag{}_657'.format(aperture)
 
-band11 = 'mag{}_373'.format(aperture)
-band12 = 'mag{}_438'.format(aperture)
+band11 = 'mag{}_555'.format(aperture)
+band12 = 'mag{}_673'.format(aperture)
 
 ratio = 0.1
 n_clust = 14
-incriment = 5
+incriment = 3
 #colours = ['b', 'y', 'r', 'g', 'm', 'c', 'k', 'b', 'y', 'r', 'g', 'm', 'c', 'k']
 #markers = ['o', 'o', 'o', 'o', 'o', 'o', 'o', '*', '*', '*', '*', '*', '*', '*', '^', '>', '<', '+']
 
@@ -114,6 +114,7 @@ x = data['x'][final_data]
 y = data['y'][final_data]
 
 X = np.vstack([colour1, colour2, colour3, colour4, colour5, colour6]).T
+print "objects: {}".format(len(X))
 #X_scaled = preprocessing.scale(X)
 # The following bandwidth can be automatically detected using
 #bandwidth = estimate_bandwidth(X)
@@ -131,8 +132,10 @@ while(len(cluster_centers) != 1):
     #print("Total Objects: {}").format(len(colour1))
     print("bandwidth: {:.4f}").format(b_width)
     print("number of estimated clusters : %d" % n_clusters_)
-    #print("Silhouette Coefficient: %0.3f"
-     #       % metrics.silhouette_score(X, labels))
+    if 50 > n_clusters_ > 1: 
+        print("Silhouette Coefficient: %0.3f"
+            % metrics.silhouette_score(X, labels))
+
     #print cluster_centers
     #sample_score = metrics.silhouette_samples(X, labels)
     ###############################################################################
@@ -141,25 +144,28 @@ while(len(cluster_centers) != 1):
     #plt.clf()
     markers = cycle('ooooooo.......*******+++++++<<<<<<>>>>>>>^^^^^^^')
     colors = cycle('byrkmgcbyrkmgcbyrkmgcbyrkmgcbyrkmgc')
-    for i in range(1, 6):
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        for k, col, mark in zip(range(n_clusters_), colors, markers):
-            #cluster_score = sample_score[labels == k]
-            my_members = labels == k
-            cluster_center = cluster_centers[k]
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    for k, col, mark in zip(range(n_clusters_), colors, markers):
+        #cluster_score = sample_score[labels == k]
+        my_members = labels == k
+        cluster_center = cluster_centers[k]
             
-            x_clust = x[labels == k]
-            y_clust = y[labels ==k]
-            ax.scatter(X[my_members, 0], X[my_members, i], color=col, marker=mark)
-            #print ("objects in cluster {}: {} {}").format(k+1, len(X[my_members]), col)
-            #print("    Cluster {} Average Score: {:.4f}").format(k+1,
-            #     np.average(cluster_score))
-            ax.plot(cluster_center[0], cluster_center[i], marker='o', color=col,
-                    markersize=10)
-        ax.set_xlabel("Colour 1")
-        ax.set_ylabel("Colour " + str(i+1))
-        ax.set_title('Estimated number of clusters: %d' % n_clusters_)
-        plt.show()
-    b_width = b_width*incriment
-    #X = np.vstack(cluster_centers)
+        x_clust = x[labels == k]
+        y_clust = y[labels ==k]
+        ax.scatter(X[my_members, 0], X[my_members, 1], color=col, marker=mark,
+                   s=4)
+        #print ("objects in cluster {}: {} {}").format(k+1, len(X[my_members]), col)
+        #print("    Cluster {} Average Score: {:.4f}").format(k+1,
+        #     np.average(cluster_score))
+        ax.plot(cluster_center[0], cluster_center[1], marker=mark, color=col,
+                markersize=10)
+    ax.set_xlabel("Colour 1")
+    ax.set_ylabel("Colour " + str(i+1))
+    ax.set_title('Estimated number of clusters: %d' % n_clusters_)
+    plt.show()
+    if b_width < 0.25:
+        b_width = b_width*incriment
+    else: 
+        b_width = b_width*1.1
+    # X = np.vstack(cluster_centers)
