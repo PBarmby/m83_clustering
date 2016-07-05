@@ -41,7 +41,9 @@ from sklearn.cluster import AffinityPropagation
 colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'b', 'g', 'r', 'c', 'm', 'y', 'k',
           'b', 'g', 'r', 'c', 'm', 'y', 'k', 'b', 'g', 'r', 'c', 'm', 'y', 'k',
           'b', 'g', 'r', 'c', 'm', 'y', 'k', 'b', 'g', 'r', 'c', 'm', 'y', 'k']
-markers = cycle('ooooooo')
+markers = ['o', 'o', 'o', 'o', 'o', 'o', 'o', '*', '*', '*', '*', '*', '*', '*',
+           '.', '.', '.', '.', '.', '.', '.', '>', '>', '>', '>', '>', '>', '>',
+           '+', '+', '+', '+', '+', '+', '+', '<', '<', '<', '<', '<', '<', '<',]
 
 # need this so that output files always have the same number of columns
 max_num_clusters = 40
@@ -324,7 +326,8 @@ def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
         average_score = metrics.silhouette_score(cluster_data, labels)
         sample_score = metrics.silhouette_samples(cluster_data, labels)
     else:
-        average_score = -99
+        average_score = -99.0
+        sample_score = -99.0
 
     # Identify which cluster each object belongs to
     objects_per_cluster = np.zeros(max_num_clusters, dtype=np.int16)
@@ -381,7 +384,9 @@ def hms(s_path, bands, cluster_data, make_plot, bw_input, output_id, id_data,
         if max_num_clusters > n_clusters > 1:
             hms_score = metrics.silhouette_score(cluster_data, labels)
             sample_score = metrics.silhouette_samples(cluster_data, labels)
-
+        else:
+            hms_score = -99.0
+            sample_score = -99.0
         # Identify which cluster each object belongs to
         if n_clusters < max_num_clusters:
             objects_per_cluster = np.zeros(max_num_clusters, dtype=np.int16)
@@ -441,7 +446,8 @@ def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
         ap_score = metrics.silhouette_score(cluster_data, labels)
         sample_score = silhouette_samples(cluster_data, labels)
     else:
-        ap_score = -99
+        ap_score = -99.0
+        sample_score = -99.0
 
     # Identify which cluster each object belongs to
     objects_per_cluster = np.zeros(max_num_clusters, dtype=np.int16)
@@ -496,7 +502,8 @@ def kmeans(s_path, bands, cluster_data, greatdata, number_clusters, make_plots,
         score = metrics.silhouette_score(cluster_data, labels)
         sample_score = silhouette_samples(cluster_data, labels)
     else:
-        score = -99
+        score = -99.0
+        sample_score = -99.0
 
     # Identify which cluster each object belongs to
     objects_per_cluster = np.zeros(max_num_clusters, dtype=np.int16)
@@ -568,12 +575,12 @@ def meanshift_colour(path, X, n_clusters, labels_, centers, bands):
     for i in range(1, 6):
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        for k, mark in zip(range(n_clusters), markers):
+        for k in range(0, n_clusters):
             my_members = labels_ == k
             cluster_center = centers[k]
             ax.scatter(X[my_members, 0], X[my_members, i], color=colors[k],
-                       marker=mark, label=k, s=4)
-            ax.scatter(cluster_center[0], cluster_center[i], marker=mark,
+                       marker=markers[k], label=k, s=4)
+            ax.scatter(cluster_center[0], cluster_center[i], marker=markers[k],
                        color=colors[k], edgecolor='k', s=100)
 
         # Format plot
@@ -582,9 +589,7 @@ def meanshift_colour(path, X, n_clusters, labels_, centers, bands):
         ax.set_ylabel(bands[i*2]+' - '+bands[i*2+1])
         ax.set_title('mean-shift ' + str(n_clusters) + ' : '+bands[0]+'-'+bands[1]+' vs. '+bands[i*2]+'-'+bands[i*2+1],
                      fontsize=14)
-        if n_clusters < 20:
-            ax.legend(loc='lower right')
-
+        ax.legend(loc='lower right')
         '''Display interactive figure if # removed, if not, figures saved'''
         # plt.show
         file_name = 'meanshift_color_{}cl_{}-{}vs{}-{}.png'.format(str(n_clusters),
@@ -604,13 +609,12 @@ def hms_colour(path, c_data, n_clusters, labels, centers, bands):
     for i in range(1, 6):
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        for k, mark in zip(range(n_clusters), markers):
+        for k in range(0, n_clusters):
             my_members = labels == k
             cluster_center = centers[k]
             ax.scatter(c_data[my_members, 0], c_data[my_members, i],
-                       color=colors[k],
-                       marker=mark, s=4, labels=k)
-            ax.scatter(cluster_center[0], cluster_center[i], marker=mark,
+                       color=colors[k], marker=markers[k], s=4, label=k)
+            ax.scatter(cluster_center[0], cluster_center[i], marker=markers[k],
                        color=colors[k], edgecolor='k', s=100)
         # Format plot
         ax.xaxis.set_major_locator(plt.MultipleLocator(0.5))
@@ -618,8 +622,8 @@ def hms_colour(path, c_data, n_clusters, labels, centers, bands):
         ax.set_ylabel(bands[i*2]+' - '+bands[i*2+1])
         ax.set_title('mean-shift hierarchy' + str(n_clusters) + ' : '+bands[0]+'-'+bands[1]+' vs. '+bands[i*2]+'-'+bands[i*2+1],
                      fontsize=12)
-        ax.legend(loc='lower right')
-
+        if n_clusters < 20:
+            ax.legend(loc='lower right')
         '''Display interactive figure if # removed, if not, figures saved'''
         # plt.show
         file_name = 'HMeanShift_color_{}cl_{}-{}vs{}-{}.png'.format(str(n_clusters),
@@ -641,14 +645,14 @@ def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
     for i in range(1, 6):
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        for k, mark in zip(range(number_clusters), markers):
+        for k in range(0, number_clusters):
             class_members = cluster_number == k
             cluster_center = cluster_centers[k]
             ax.scatter(cluster_data[class_members, 0],
                        cluster_data[class_members, i], color=colors[k],
-                       marker=mark,
+                       marker=markers[k],
                        label=k, s=4)
-            ax.scatter(cluster_center[0], cluster_center[i], marker=mark,
+            ax.scatter(cluster_center[0], cluster_center[i], marker=markers[k],
                        color=colors[k], edgecolor='k', s=100)
 
         ax.set_xlabel(bands[0]+' - '+bands[1])
@@ -675,13 +679,13 @@ def affinity_plot(labels, cluster_center_indices, X, n_clusters, bands,
     for i in range(1, 6):
         fig1 = plt.figure()
         ax = fig1.add_subplot(111)
-        for k, mark in zip(range(n_clusters), markers):
+        for k in range(0, n_clusters):
             class_members = labels == k
             cluster_center = X[cluster_center_indices[k]]
             ax.scatter(X[class_members, 0], X[class_members, i],
                        color=colors[k],
-                       marker=mark, label=k, s=4)
-            ax.scatter(cluster_center[0], cluster_center[i], marker=mark,
+                       marker=markers[k], label=k, s=4)
+            ax.scatter(cluster_center[0], cluster_center[i], marker=markers[k],
                        color=colors[k], edgecolor='k', s=100)
         ax.xaxis.set_major_locator(plt.MultipleLocator(0.5))
         ax.set_title('affinity ' + str(n_clusters) +': '+bands[0]+'-'+bands[1]+' vs. '+bands[i*2]+'-'+bands[i*2+1],
@@ -798,7 +802,7 @@ def affinity_propagation_results(save_path, name, bands,
     af_results_file = open(af_results_path, "a")
 
     # Create strings for file
-    inputs = '{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}'.format('affinity', bands[0], bands[1],
+    inputs = '{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}'.format('affinity', bands[0], bands[1],
                                                  bands[1], bands[3], bands[4],
                                                  bands[5], bands[6],
                                                  bands[7], bands[8],
@@ -851,8 +855,9 @@ def write_cluster_stats(save_path, clustering, n_clust, cluster, n_obj,
                                              (min_dist),
                                              float(stdev(c_data)))
     # Write stats
-    inputs = '{} {} {} {} {:.4f} {:.4f}'.format(clustering, n_clust, cluster+1,
-                                                n_obj, t_score, avg(c_score))
+    inputs = '{} {} {} {} {:.4f} {:.4f}'.format(clustering, n_clust,
+                                                cluster+1, n_obj, t_score,
+                                                avg(c_score))
 
     centers = '{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f}'.format(center[0], center[1],
                                                                  center[2], center[3],
