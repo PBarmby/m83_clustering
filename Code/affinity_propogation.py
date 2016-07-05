@@ -8,25 +8,26 @@ from sklearn.metrics.pairwise import pairwise_distances
 
 m83_data = Table.read('data_v3.txt', format='ascii.commented_header',
                   guess=False)
-
+ratio = 0.1
 aperture = '05'
-band1 = 'mag{}_555'.format(aperture)
-band2 = 'mag{}_814'.format(aperture)
 
-band3 = 'mag{}_438'.format(aperture)
-band4 = 'mag{}_673'.format(aperture)
+band1 = 'mag{}_438'.format(aperture)
+band2 = 'mag{}_555'.format(aperture)
 
-band5 = 'mag{}_438'.format(aperture)
-band6 = 'mag{}_657'.format(aperture)
+band3 = 'mag{}_373'.format(aperture)
+band4 = 'mag{}_814'.format(aperture)
 
-band7 = 'mag{}_438'.format(aperture)
-band8 = 'mag{}_502'.format(aperture)
+band5 = 'mag{}_487'.format(aperture)
+band6 = 'mag{}_814'.format(aperture)
 
-band9 = 'mag{}_438'.format(aperture)
-band10 = 'mag{}_487'.format(aperture)
+band7 = 'mag{}_502'.format(aperture)
+band8 = 'mag{}_814'.format(aperture)
 
-band11 = 'mag{}_373'.format(aperture)
-band12 = 'mag{}_438'.format(aperture)
+band9 = 'mag{}_657'.format(aperture)
+band10 = 'mag{}_814'.format(aperture)
+
+band11 = 'mag{}_673'.format(aperture)
+band12 = 'mag{}_814'.format(aperture)
 
 # Colour 1
 wave1 = m83_data[band1]
@@ -136,11 +137,19 @@ colors = cycle('bgrcmykbgrcmykbgrcmykbgrcmyk')
 markers = cycle('ooooooo*******')
 for k, col, mark in zip(range(n_clusters_), colors, markers):
     class_members = labels == k
+    c_dist = pairwise_distances(X[class_members])
+    cluster_dist = c_dist[c_dist != 0.0]
+    # print max(cluster_dist)
+    # print min(cluster_dist)
+    # print np.mean(cluster_dist)
+    print "objects: {}".format(len(X[class_members]))
+    
     cluster_center = X[cluster_centers_indices[k]]
-    plt.scatter(X[class_members, 5], X[class_members, 6], color=col,
-                marker=mark)
-    plt.plot(cluster_center[5], cluster_center[6], 'o', markerfacecolor=col,
+    plt.scatter(X[class_members, 4], X[class_members, 5], color=col,
+                marker=mark, s=4, label=k)
+    plt.plot(cluster_center[4], cluster_center[5], 'o', markerfacecolor=col,
              markeredgecolor='k', markersize=14)
+    ax.legend(loc='upper left')
     #for x in X[class_members]:
      #   plt.plot([cluster_center[0], x[0]], [cluster_center[1], x[1]], col)
 
