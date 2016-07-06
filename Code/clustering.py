@@ -50,6 +50,7 @@ max_num_clusters = 40
 
 # defined functions
 from numpy import mean as avg
+from numpy import square, sqrt
 from numpy import std as stdev
 from sklearn.metrics.pairwise import pairwise_distances as pdist
 '''-------------------------------------------------------------------------'''
@@ -80,6 +81,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
         results_title = ' '
         damping = 0
         preferences = 0
+        n = 0
         '''-----------------------------------------------------------------'''
 
         # Get Data
@@ -103,7 +105,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
             ms_n_clusters, bandwidth, ms_score, ms_obj, ms_obj_p_cluster = \
                 meanshift(plot_path, experiments[i], cluster_data_,
                           plots, b_width_input, id_list, id_data, x_data,
-                          y_data, ds9_cat)
+                          y_data, ds9_cat, n)
             if "yes" in write_res:
                 meanshift_results(results_path, results_title, experiments[i],
                                   ms_n_clusters, ms_score, bandwidth, ms_obj,
@@ -129,7 +131,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
             af_n_clusters, af_score, af_obj, af_obj_p_cluster = \
                 affinity_propagation(plot_path, experiments[i], cluster_data_,
                                      plots, damping, preferences, id_list,
-                                     id_data, x_data, y_data, ds9_cat)
+                                     id_data, x_data, y_data, ds9_cat, n)
             if "yes" in write_res:
                 affinity_propagation_results(results_path, results_title,
                                              experiments[i], af_n_clusters,
@@ -157,12 +159,23 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                 km_score, num_obj = kmeans(plot_path, experiments[i],
                                            cluster_data_, greatdata,
                                            a, plots, id_list,
-                                           x_data, y_data, id_data, ds9_cat)
+                                           x_data, y_data, id_data, ds9_cat,
+                                           n)
                 total_obj = num_obj.sum()
                 if "yes" in write_res:
                     kmeans_results(results_path, results_title, experiments[i],
                                    kmeans_input, a, km_score, total_obj,
                                    num_obj)
+
+        if "center_test" in analysis:
+            n_clusters = experiments['n_clusters'][i]
+            for n in range(1, 10):
+                km_scor, num_obj = kmeans(plot_path, experiments[i],
+                                          cluster_data_, greatdata,
+                                          n_clusters, plots, id_list,
+                                          x_data, y_data, id_data, ds9_cat,
+                                          n)
+                
 
     # Copy experiments.txt to plots directory
     shutil.copy2('C:\Users\Owner\Documents\GitHub\m83_clustering\Code\experiments.txt',
@@ -302,7 +315,7 @@ def organize_data(exp, data_file):
 
 
 def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
-              output_id, id_data, x, y, ds9_cat):
+              output_id, id_data, x, y, ds9_cat, cent_test):
     '''---------------------------------------------------------------------'''
     '''Meanshift clustering to determine the number of clusters in the data,
     which can be passed to KMEANS function'''
@@ -337,7 +350,7 @@ def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
         write_cluster_stats(s_path, 'meanshift', n_clusters_, i,
                             objects_per_cluster[i], cluster_centers[i],
                             ith_cluster, average_score,
-                            sample_score[labels == i])
+                            sample_score[labels == i], cent_test)
 
     # Format for writing results
     objects_per_cluster.sort()  # sort from smallest to largest
@@ -422,7 +435,7 @@ def hms(s_path, bands, cluster_data, make_plot, bw_input, output_id, id_data,
 
 
 def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
-                         output_id, id_data, x, y, ds9_cat):
+                         output_id, id_data, x, y, ds9_cat, cent_test):
     '''---------------------------------------------------------------------'''
     '''Perform Affinity Propagation clustering to determine the number of
     clusters in a given set of colours'''
@@ -458,7 +471,7 @@ def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
         write_cluster_stats(s_path, 'affinity', n_clusters_, i,
                             objects_per_cluster[i], cluster_center,
                             ith_cluster, ap_score,
-                            sample_score[labels == i])
+                            sample_score[labels == i], cent_test)
 
     # Format for writing results
     objects_per_cluster.sort()  # sort from smallest to largest
@@ -480,7 +493,7 @@ def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
 
 
 def kmeans(s_path, bands, cluster_data, greatdata, number_clusters, make_plots,
-           output_cluster_id, x, y, id_data, ds9_cat):
+           output_cluster_id, x, y, id_data, ds9_cat, cent_test):
     '''---------------------------------------------------------------------'''
     '''Perform K-means clustering on colours constructed from HST photometry
     using various combinations of filters'''
@@ -512,7 +525,7 @@ def kmeans(s_path, bands, cluster_data, greatdata, number_clusters, make_plots,
         objects_per_cluster[i] = len(x_cluster)
         write_cluster_stats(s_path, 'kmeans', number_clusters, i,
                             objects_per_cluster[i], centers[i], x_cluster,
-                            score, sample_score[labels == i])
+                            score, sample_score[labels == i], cent_test)
 
     # Format for writing results
     objects_per_cluster.sort()  # sort from smallest to largest
@@ -579,9 +592,9 @@ def meanshift_colour(path, X, n_clusters, labels_, centers, bands):
             my_members = labels_ == k
             cluster_center = centers[k]
             ax.scatter(X[my_members, 0], X[my_members, i], color=colors[k],
-                       marker=markers[k], label=k, s=4)
+                       marker=markers[k], label=k, s=2, zorder=1)
             ax.scatter(cluster_center[0], cluster_center[i], marker=markers[k],
-                       color=colors[k], edgecolor='k', s=100)
+                       color=colors[k], edgecolor='k', s=100, zorder=2)
 
         # Format plot
         ax.xaxis.set_major_locator(plt.MultipleLocator(0.5))
@@ -613,9 +626,10 @@ def hms_colour(path, c_data, n_clusters, labels, centers, bands):
             my_members = labels == k
             cluster_center = centers[k]
             ax.scatter(c_data[my_members, 0], c_data[my_members, i],
-                       color=colors[k], marker=markers[k], s=4, label=k)
+                       color=colors[k], marker=markers[k], s=2, label=k,
+                       zorder=1)
             ax.scatter(cluster_center[0], cluster_center[i], marker=markers[k],
-                       color=colors[k], edgecolor='k', s=100)
+                       color=colors[k], edgecolor='k', s=100, zorder=2)
         # Format plot
         ax.xaxis.set_major_locator(plt.MultipleLocator(0.5))
         ax.set_xlabel(bands[0] + ' - ' + bands[1])
@@ -650,10 +664,9 @@ def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
             cluster_center = cluster_centers[k]
             ax.scatter(cluster_data[class_members, 0],
                        cluster_data[class_members, i], color=colors[k],
-                       marker=markers[k],
-                       label=k, s=4)
+                       marker=markers[k], label=k, s=2, zorder=1)
             ax.scatter(cluster_center[0], cluster_center[i], marker=markers[k],
-                       color=colors[k], edgecolor='k', s=100)
+                       color=colors[k], edgecolor='k', s=100, zorder=2)
 
         ax.set_xlabel(bands[0]+' - '+bands[1])
         ax.set_ylabel(bands[i*2]+' - '+bands[i*2+1])
@@ -683,10 +696,9 @@ def affinity_plot(labels, cluster_center_indices, X, n_clusters, bands,
             class_members = labels == k
             cluster_center = X[cluster_center_indices[k]]
             ax.scatter(X[class_members, 0], X[class_members, i],
-                       color=colors[k],
-                       marker=markers[k], label=k, s=4)
+                       color=colors[k], marker=markers[k], label=k, s=2, zorder=1)
             ax.scatter(cluster_center[0], cluster_center[i], marker=markers[k],
-                       color=colors[k], edgecolor='k', s=100)
+                       color=colors[k], edgecolor='k', s=100, zorder=2)
         ax.xaxis.set_major_locator(plt.MultipleLocator(0.5))
         ax.set_title('affinity ' + str(n_clusters) +': '+bands[0]+'-'+bands[1]+' vs. '+bands[i*2]+'-'+bands[i*2+1],
                      fontsize=16)
@@ -820,12 +832,15 @@ def affinity_propagation_results(save_path, name, bands,
 
 
 def write_cluster_stats(save_path, clustering, n_clust, cluster, n_obj,
-                        center, c_data, t_score, c_score):
-    header = '# clustering total_clust clust_num n_obj t_scr c_scr avg_dist '\
+                        center, c_data, t_score, c_score, cen_test):
+    header = '# clustering total_clust clust_num n_obj t_scr c_scr rms avg_dist '\
              'max_dist min_dist stdev cen_1 cen_2 cen_3 cen_4 cen_5 cen_6'\
              ' avg_col_1 avg_col_2 avg_col_3 avg_col_4 avg_col_5 '\
              'avg_col_6'
-    name = 'cluster_statistics.txt'
+    if cen_test == 0:
+        name = 'cluster_statistics.txt'
+    else:
+        name = 'cent_test_statistics.txt'
     test_path = '{}\\{}'.format(save_path, name)
     if not os.path.exists(test_path):
         create_path = os.path.join(save_path, name)
@@ -837,20 +852,23 @@ def write_cluster_stats(save_path, clustering, n_clust, cluster, n_obj,
     
     # Calculate distance metrics
     if len(c_data) > 1:
+        rms = sqrt(avg(square(c_data)))
         c_dist = pdist(c_data)
         cluster_dist = c_dist[c_dist != 0.0]
         max_dist = max(cluster_dist)
         min_dist = min(cluster_dist)
         mean_dist = avg(cluster_dist)
-        distances = '{:.4f} {:.4f} {:.4f} {:.4f}'.format(float(mean_dist),
-                                                     float(max_dist),
-                                                     float(min_dist),
-                                                     float(stdev(c_data)))
+        distances = '{:.4f} {:.4f}  {:.4f} {:.4f} {:.4f}'.format(float(rms),
+                                                         float(mean_dist),
+                                                         float(max_dist),
+                                                         float(min_dist),
+                                                         float(stdev(c_data)))
     else:
+        rms = 'N/A'
         max_dist = 'N/A'
         min_dist = 'N/A'
         mean_dist = 'N/A'
-        distances = '{} {} {} {:.4f}'.format((mean_dist),
+        distances = '{} {} {} {} {:.4f}'.format(rms, (mean_dist),
                                              (max_dist),
                                              (min_dist),
                                              float(stdev(c_data)))
@@ -859,9 +877,9 @@ def write_cluster_stats(save_path, clustering, n_clust, cluster, n_obj,
                                                 cluster+1, n_obj, t_score,
                                                 avg(c_score))
 
-    centers = '{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f}'.format(center[0], center[1],
-                                                                 center[2], center[3],
-                                                                         center[4], center[5])
+    centers = '{} {} {} {} {} {}'.format(center[0], center[1], center[2],
+                                         center[3], center[4], center[5])
+
     a = '{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f}'.format(avg(c_data[:,0]), avg(c_data[:,1]),
                                       avg(c_data[:,2]), avg(c_data[:,3]),
                                       avg(c_data[:,4]), avg(c_data[:,5]))
@@ -888,23 +906,26 @@ def hms_cluster_stats(save_path, clustering, n_clust, cluster, n_obj,
 
     # Calculate distance metrics
     if len(c_data) > 1:
+        rms = sqrt(avg(square(c_data)))
         c_dist = pdist(c_data)
         cluster_dist = c_dist[c_dist != 0.0]
         max_dist = max(cluster_dist)
         min_dist = min(cluster_dist)
         mean_dist = avg(cluster_dist)
-        distances = '{:.4f} {:.4f} {:.4f} {:.4f}'.format(float(mean_dist),
-                                                     float(max_dist),
-                                                     float(min_dist),
-                                                     float(stdev(c_data)))
+        distances = '{:.4f} {:.4f}  {:.4f} {:.4f} {:.4f}'.format(float(rms),
+                                                         float(mean_dist),
+                                                         float(max_dist),
+                                                         float(min_dist),
+                                                         float(stdev(c_data)))
     else:
         max_dist = 'N/A'
         min_dist = 'N/A'
         mean_dist = 'N/A'
-        distances = '{} {} {} {:.4f}'.format((mean_dist),
-                                             (max_dist),
-                                             (min_dist),
-                                             float(stdev(c_data)))
+        rms = 'N/A'
+        distances = '{} {} {} {} {:.4f}'.format(rms, mean_dist,
+                                                max_dist,
+                                                min_dist,
+                                                float(stdev(c_data)))
     
     # Write stats
     inputs = '{} {:.4f} {} {} {} {:.4f} {:.4f}'.format(clustering, bandwidth,
@@ -941,8 +962,8 @@ def user_input():
     # Optional Arguments: Choose the clustering method and inputs for kmeans
     inputs.add_argument("-a", "--analysis",
                         help="Choose the methods you would like to use",
-                        choices=['meanshift', 'hms', 'kmeans', 'affinity'],
-                        nargs='*', default=[])
+                        choices=['meanshift', 'hms', 'kmeans', 'affinity',
+                        'center_test'], nargs='*', default=[])
 
     # Optional Arguments: Parameter secification
     inputs.add_argument("-kmi", "--kmeans_input",
