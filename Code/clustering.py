@@ -50,10 +50,10 @@ markers = ['o', 'o', 'o', 'o', 'o', 'o', 'o', '*', '*', '*', '*', '*', '*', '*',
 max_num_clusters = 40
 
 # Set the base path and directory symbol for MAC or PC OS
-base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
-# base_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\'  # PC
-figure_save_symbol = '//'  # MAC
-# figure_save_symbol = '\\'  # PC
+# base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
+base_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\'  # PC
+# figure_save_symbol = '//'  # MAC
+figure_save_symbol = '\\'  # PC
 
 # defined functions
 from numpy import mean as avg
@@ -221,7 +221,7 @@ def load_data_file(d_file, e_file):
 def organize_data(exp, data_file):
     '''Select data for analysis'''
     data = data_file
-    ratio = 0.2
+    ratio = 0.05
 
     wave1 = data[exp['band1']]
     wave1_unc = data[exp['band1']+'_unc']
@@ -345,15 +345,15 @@ def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
         average_score = metrics.silhouette_score(cluster_data, labels)
         sample_score = metrics.silhouette_samples(cluster_data, labels)
     else:
-        average_score = -99.0
-        sample_score = -99.0
+        average_score = [-99.0]
+        sample_score = [-99.0]
 
     # Identify which cluster each object belongs to
     objects_per_cluster = np.zeros(max_num_clusters, dtype=np.int16)
     for i in range(0, n_clusters_):
         ith_cluster = X_scaled[labels == i]
         objects_per_cluster[i] = len(ith_cluster)
-        if sample_score == -99.0:
+        if len(sample_score) < 2:
             write_cluster_stats(s_path, 'meanshift', n_clusters_, i,
                                 objects_per_cluster[i], cluster_centers[i],
                                 ith_cluster, average_score,
@@ -471,8 +471,8 @@ def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
         ap_score = metrics.silhouette_score(cluster_data, labels)
         sample_score = silhouette_samples(cluster_data, labels)
     else:
-        ap_score = -99.0
-        sample_score = -99.0
+        ap_score = [-99.0]
+        sample_score = [-99.0]
 
     # Identify which cluster each object belongs to
     objects_per_cluster = np.zeros(max_num_clusters, dtype=np.int16)
@@ -480,7 +480,7 @@ def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
         ith_cluster = cluster_data[labels == i]
         objects_per_cluster[i] = len(ith_cluster)
         cluster_center = cluster_data[cluster_centers_indices[i]]
-        if sample_score == -99.0:
+        if len(sample_score) < 2:
             write_cluster_stats(s_path, 'affinity', n_clusters_, i,
                                 objects_per_cluster[i], cluster_center[i],
                                 ith_cluster, ap_score,
@@ -534,15 +534,15 @@ def kmeans(s_path, bands, cluster_data, greatdata, number_clusters, make_plots,
         score = metrics.silhouette_score(cluster_data, labels)
         sample_score = silhouette_samples(cluster_data, labels)
     else:
-        score = -99.0
-        sample_score = -99.0
+        score = [-99.0]
+        sample_score = [-99.0]
 
     # Identify which cluster each object belongs to
     objects_per_cluster = np.zeros(max_num_clusters, dtype=np.int16)
     for i in range(0, number_clusters):
         x_cluster = cluster_data[labels == i]
         objects_per_cluster[i] = len(x_cluster)
-        if sample_score == -99.0:
+        if len(sample_score) < 2:
             write_cluster_stats(s_path, 'kmeans', number_clusters, i,
                                 objects_per_cluster[i], centers[i],
                                 x_cluster, score,
