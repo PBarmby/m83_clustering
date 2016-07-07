@@ -44,8 +44,11 @@ def results(file_name, general_path, save_path, plots):
         bar_graph(clean_gen_res_data, n_clust, plot_path)
     if "clust_cent" in plots:
         cluster_centers_plot(clean_gen_res_data, plot_path)
+    if "inertia" in plots:
+        inertia_fluctuations(clean_gen_res_data, plot_path)
     if "percentile" in plots:
         object_cluster_dist(clean_gen_res_data, n_clust, plot_path)
+
     return
 
 
@@ -224,8 +227,26 @@ def rms_fluctuations(cluster_data):
     return
 
 
+def inertia_fluctuations(results_table, path):
+    '''Make a plot of the inertia value vs n_clust for kmeans clustering'''
+    num_clust = results_table['n_clust'][results_table['clustering'] == 'kmeans']
+    inertia = results_table['inertia'][results_table['clustering'] == 'kmeans']
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.plot(num_clust, inertia, 'k', ls='--', lw=0.5, zorder=1)
+    ax.scatter(num_clust, inertia, marker='o', s=20, c='k', zorder=2)
+    ax.set_xlabel('N_clusters', fontsize=11)
+    ax.set_ylabel('Inertia (Sum of Squares)', fontsize=11)
+    ax.set_title('N_clusters vs. Inertia')
+
+    file_name = 'inertia_plot.png'
+    pylab.savefig(os.path.join(path, file_name))
+    plt.show()
+    return
+
+
 def cluster_centers_plot(cluster_data, path):
-    '''Plot the centers of each cluster in two dimensions'''
+    '''Plot the centers of each cluster after a center_test'''
     n_trials = np.arange(0, len(cluster_data[cluster_data['clust_num'] == 1]))
     cluster_centers = np.array(cluster_data['clust_num', 'cen_1', 'cen_2',
                                             'cen_3', 'cen_4', 'cen_5',
