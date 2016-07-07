@@ -1,0 +1,2 @@
+# id_ ra dec Name RA Dec Type Source
+38983.0 204.2785516 -29.8656001 GROUP 204.27851 -29.86563 GGroup N

@@ -1,0 +1,2 @@
+# id_ ra dec Name RA Dec Type Source
+39998.0 204.274888 -29.8650444 NAMEGroup 204.275 -29.865 GroupG S

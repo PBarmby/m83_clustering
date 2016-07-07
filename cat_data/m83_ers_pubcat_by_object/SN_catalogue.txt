@@ -1,0 +1,2 @@
+# id_ ra dec Name RA Dec Type Source
+37582.0 204.2521991 -29.866331 SN1968L 204.25213 -29.86639 SN NS

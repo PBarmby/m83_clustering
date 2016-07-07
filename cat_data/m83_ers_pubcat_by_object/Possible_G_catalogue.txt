@@ -1,0 +1,2 @@
+# id_ ra dec Name RA Dec Type Source
+37596.0 204.2526656 -29.8663263 2XMMJ133700.6-295158 204.25267 -29.86635 Possible_G S

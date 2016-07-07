@@ -1,0 +1,2 @@
+# id_ ra dec Name RA Dec Type Source
+67245.0 204.2447799 -29.8501521 [BL2004b]O13 204.24467 -29.85019 ISM S
