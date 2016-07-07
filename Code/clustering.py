@@ -4,7 +4,8 @@ Created on Fri Apr 03 13:24:41 2015
 @author: Owner
 """
 '''------------------------- Important Info -----------------------------------
-Currently formatted for 7 colours.
+MAKE SURE YOU CHANGE THE PATH IN MAKE_SAVE_DIRECTORY
+Currently formatted for 6 colours.
 Must be changed for different n_dimensions:
     - organize_data filters must be changed
     - headers in results files must be changed
@@ -47,6 +48,12 @@ markers = ['o', 'o', 'o', 'o', 'o', 'o', 'o', '*', '*', '*', '*', '*', '*', '*',
 
 # need this so that output files always have the same number of columns
 max_num_clusters = 40
+
+# Set the base path and directory symbol for MAC or PC OS
+base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
+# base_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\'  # PC
+figure_save_symbol = '//'  # MAC
+# figure_save_symbol = '\\'  # PC
 
 # defined functions
 from numpy import mean as avg
@@ -178,8 +185,8 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                 
 
     # Copy experiments.txt to plots directory
-    shutil.copy2('C:\Users\Owner\Documents\GitHub\m83_clustering\Code\experiments.txt',
-                 plot_path+'\\inputs.txt')
+    shutil.copy2('experiments.txt',
+                 plot_path + figure_save_symbol + 'inputs.txt')
 
     return()
 
@@ -188,11 +195,10 @@ def make_save_directory(p_path, r_path):
     '''Save results of each analysis
             save_path: set path of where you would like results saved'''
     # Create new analysis_folder
-    res_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\{}'.format(r_path)
+    res_path = '{}{}'.format(base_path, r_path)
     if not os.path.exists(res_path):
         os.makedirs(res_path)
-    pl_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\{}'.format(
-              p_path)
+    pl_path = '{}{}'.format(base_path, p_path)
     if not os.path.exists(pl_path):
         os.makedirs(pl_path)
 
@@ -215,7 +221,7 @@ def load_data_file(d_file, e_file):
 def organize_data(exp, data_file):
     '''Select data for analysis'''
     data = data_file
-    ratio = 0.1
+    ratio = 0.2
 
     wave1 = data[exp['band1']]
     wave1_unc = data[exp['band1']+'_unc']
@@ -609,7 +615,7 @@ def meanshift_colour(path, X, n_clusters, labels_, centers, bands):
                                                                 bands[0], bands[1],
                                                                 bands[i*2], bands[i*2+1])
         colours = ('{}-{}_{}-{}').format(bands[0], bands[1], bands[i*2], bands[i*2+1])
-        path_ = ('{}\\{}').format(path, colours)
+        path_ = ('{}{}{}').format(path, figure_save_symbol, colours)
         if not os.path.exists(path_):
             os.makedirs(path_)
         pylab.savefig(os.path.join(path_, file_name))
@@ -644,7 +650,7 @@ def hms_colour(path, c_data, n_clusters, labels, centers, bands):
                                                                 bands[0], bands[1],
                                                                 bands[i*2], bands[i*2+1])
         colours = ('{}-{}_{}-{}').format(bands[0], bands[1], bands[i*2], bands[i*2+1])
-        path_ = ('{}\\{}').format(path, colours)
+        path_ = ('{}{}{}').format(path, figure_save_symbol, colours)
         if not os.path.exists(path_):
             os.makedirs(path_)
         pylab.savefig(os.path.join(path_, file_name))
@@ -679,7 +685,7 @@ def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
                                                              bands[i*2+1])
         colours = ('{}-{}_{}-{}').format(bands[0], bands[1], bands[i*2],
                                          bands[i*2+1])
-        path_ = ('{}\\{}').format(path, colours, number_clusters)
+        path_ = ('{}{}{}').format(path, figure_save_symbol, colours)
         if not os.path.exists(path_):
             os.makedirs(path_)
         pylab.savefig(os.path.join(path_, file_name))
@@ -711,7 +717,7 @@ def affinity_plot(labels, cluster_center_indices, X, n_clusters, bands,
                                                             bands[i*2+1])
         colours = ('{}-{}_{}-{}').format(bands[0], bands[1], bands[i*2],
                                          bands[i*2+1])
-        path_ = ('{}\\{}').format(s_path, colours)
+        path_ = ('{}{}{}').format(s_path, figure_save_symbol, colours)
         if not os.path.exists(path_):
             os.makedirs(path_)
         pylab.savefig(os.path.join(path_, file_name))
@@ -722,7 +728,7 @@ def meanshift_results(save_path, name, bands, n_clusters,
                       s_score, b_width, total_obj, obj_per_cluster):
 
     # Create MS results file if it doesn't exist. If it does add to it.
-    test_path = '{}\\{}'.format(save_path, name)
+    test_path = '{}{}{}'.format(save_path, figure_save_symbol, name)
     header = '#clustering band1 band2 band3 band4 band5 band6 band7 band8 '\
              'band9 band10 band11 band12 b_width damp '\
              'pref km_in score n_clust total_objects c_1 c_2 c_3 c_4 c_5 c_6 '\
@@ -760,7 +766,7 @@ def meanshift_results(save_path, name, bands, n_clusters,
 def kmeans_results(save_path, name, bands, input_,
                    n_clusters, s_score, total_obj, obj_per_cluster):
     # Create KM results file if it doesn't exist. If it does add to it.
-    test_path = '{}\\{}'.format(save_path, name)
+    test_path = '{}{}{}'.format(save_path, figure_save_symbol, name)
     header = '#clustering band1 band2 band3 band4 band5 band6 band7 band8 '\
              'band9 band10 band11 band12 b_width damp '\
              'pref km_in score n_clust total_objects c_1 c_2 c_3 c_4 c_5 c_6 '\
@@ -798,7 +804,7 @@ def affinity_propagation_results(save_path, name, bands,
                                  n_clusters, s_score, damp, pref, total_obj,
                                  obj_per_cluster):
     # Create KM results file if it doesn't exist. If it does add to it.
-    test_path = '{}\\{}'.format(save_path, name)
+    test_path = '{}{}{}'.format(save_path, figure_save_symbol, name)
     header = '#clustering band1 band2 band3 band4 band5 band6 band7 band8 '\
              'band9 band10 band11 band12 b_width damp '\
              'pref km_in score n_clust total_objects c_1 c_2 c_3 c_4 c_5 c_6 '\
@@ -841,7 +847,7 @@ def write_cluster_stats(save_path, clustering, n_clust, cluster, n_obj,
         name = 'cluster_statistics.txt'
     else:
         name = 'cent_test_statistics.txt'
-    test_path = '{}\\{}'.format(save_path, name)
+    test_path = '{}{}{}'.format(save_path, figure_save_symbol, name)
     if not os.path.exists(test_path):
         create_path = os.path.join(save_path, name)
         cluster_statistics = open(create_path, "a")
@@ -895,7 +901,7 @@ def hms_cluster_stats(save_path, clustering, n_clust, cluster, n_obj,
              ' avg_col_1 avg_col_2 avg_col_3 avg_col_4 avg_col_5 '\
              'avg_col_6'
     name = 'hms_statistics.txt'
-    test_path = '{}\\{}'.format(save_path, name)
+    test_path = '{}{}{}'.format(save_path, figure_save_symbol, name)
     if not os.path.exists(test_path):
         create_path = os.path.join(save_path, name)
         cluster_statistics = open(create_path, "a")
