@@ -134,7 +134,7 @@ def col_stats(path_):
     col_path = make_directory(path_)
     file_name = "{}_col_statistics.txt".format(trials['band2'][0])
     file_path = os.path.join(col_path, file_name)
-    header = "# band1 band2 colour_mean colour_median colour_std colour_var colour_min colour_max num_obj unc_mean unc_median unc_std unc_var unc_min unc_max"
+    header = "# band1 band2 colour_mean colour_median colour_std colour_var colour_min colour_max mag_iqr num_obj unc_mean unc_median unc_std unc_var unc_min unc_max unc_iqr"
     if not os.path.exists(file_path):
         col_file = open(file_path, "a")
         col_file.write(header + '\n')
@@ -169,6 +169,8 @@ def col_stats(path_):
         colour_unc = np.sqrt(band1_unc_trim*band1_unc_trim+band2_unc_trim*band2_unc_trim)
 
         # Compute Magnitude Statistics
+        mq75, mq25 = np.percentile(colour_mag, [75, 25])
+        mag_iqr = mq75 - mq25
         mag_mean = np.mean(colour_mag)
         mag_median = np.median(colour_mag)
         mag_stdev = np.std(colour_mag)
@@ -177,9 +179,11 @@ def col_stats(path_):
         mag_max = np.max(colour_mag)
         mag_obj = len(colour_mag)
         # Create string to write
-        mag_string = "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {}".format(mag_mean, mag_median, mag_stdev, mag_var, mag_min, mag_max, mag_obj)
+        mag_string = "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {}".format(mag_mean, mag_median, mag_stdev, mag_var, mag_min, mag_max, mag_iqr, mag_obj)
 
         # Compute Uncertainty Statistics
+        uq75, uq25 = np.percentile(colour_unc, [75, 25])
+        unc_iqr = uq75 - uq25
         unc_mean = np.mean(colour_unc)
         unc_median = np.median(colour_unc)
         unc_stdev = np.std(colour_unc)
@@ -187,7 +191,7 @@ def col_stats(path_):
         unc_min = np.min(colour_unc)
         unc_max = np.max(colour_unc)
         # Make string to write
-        unc_string = "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f}".format(unc_mean, unc_median, unc_stdev, unc_var, unc_min, unc_max)
+        unc_string = "{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f}".format(unc_mean, unc_median, unc_stdev, unc_var, unc_min, unc_max, unc_iqr)
         # Write file        
         col_file.write(band1 + ' ' + band2 + ' ' + mag_string + ' ' + unc_string + '\n')
     col_file.close()
