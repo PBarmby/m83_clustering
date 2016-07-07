@@ -347,10 +347,16 @@ def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
     for i in range(0, n_clusters_):
         ith_cluster = X_scaled[labels == i]
         objects_per_cluster[i] = len(ith_cluster)
-        write_cluster_stats(s_path, 'meanshift', n_clusters_, i,
-                            objects_per_cluster[i], cluster_centers[i],
-                            ith_cluster, average_score,
-                            sample_score[labels == i], cent_test)
+        if sample_score == -99.0:
+            write_cluster_stats(s_path, 'meanshift', n_clusters_, i,
+                                objects_per_cluster[i], cluster_centers[i],
+                                ith_cluster, average_score,
+                                sample_score, cent_test)
+        else:
+            write_cluster_stats(s_path, 'meanshift', n_clusters_, i,
+                                objects_per_cluster[i], cluster_centers[i],
+                                ith_cluster, average_score,
+                                sample_score[labels == i], cent_test)
 
     # Format for writing results
     objects_per_cluster.sort()  # sort from smallest to largest
@@ -468,10 +474,16 @@ def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
         ith_cluster = cluster_data[labels == i]
         objects_per_cluster[i] = len(ith_cluster)
         cluster_center = cluster_data[cluster_centers_indices[i]]
-        write_cluster_stats(s_path, 'affinity', n_clusters_, i,
-                            objects_per_cluster[i], cluster_center,
-                            ith_cluster, ap_score,
-                            sample_score[labels == i], cent_test)
+        if sample_score == -99.0:
+            write_cluster_stats(s_path, 'affinity', n_clusters_, i,
+                                objects_per_cluster[i], cluster_center[i],
+                                ith_cluster, ap_score,
+                                sample_score, cent_test)
+        else:
+            write_cluster_stats(s_path, 'affinity', n_clusters_, i,
+                                objects_per_cluster[i], cluster_center[i],
+                                ith_cluster, ap_score,
+                                sample_score[labels == i], cent_test)
 
     # Format for writing results
     objects_per_cluster.sort()  # sort from smallest to largest
@@ -524,9 +536,16 @@ def kmeans(s_path, bands, cluster_data, greatdata, number_clusters, make_plots,
     for i in range(0, number_clusters):
         x_cluster = cluster_data[labels == i]
         objects_per_cluster[i] = len(x_cluster)
-        write_cluster_stats(s_path, 'kmeans', number_clusters, i,
-                            objects_per_cluster[i], centers[i], x_cluster,
-                            score, sample_score[labels == i], cent_test)
+        if sample_score == -99.0:
+            write_cluster_stats(s_path, 'kmeans', number_clusters, i,
+                                objects_per_cluster[i], centers[i],
+                                x_cluster, score,
+                                sample_score, cent_test)
+        else:
+            write_cluster_stats(s_path, 'kmeans', number_clusters, i,
+                                objects_per_cluster[i], centers[i],
+                                x_cluster, score,
+                                sample_score[labels == i], cent_test)
 
     # Format for writing results
     objects_per_cluster.sort()  # sort from smallest to largest
