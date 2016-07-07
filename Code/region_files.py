@@ -2,6 +2,7 @@
 '''Date: July 7, 2016'''
 ''' line 53: if 'WR*' in cat.. doesn't work'''
 ''' Types of objects:  #need to check these are correct definitions
+DS9 Colors: Black, white, red, green, blue, cyan, magenta, yellow
 
 Cl*: star cluster
 XrayS: Xray source
@@ -33,7 +34,7 @@ from astropy.table import Table
 
 
 def make_region_files(file_name, file_path):
-    ''' Make a region file for each type of object '''
+    ''' Make a catalogue file for each type of object '''
     general_catalogue = load_catalogue_file(file_name, file_path)
     # Set key for individual file
     general_catalogue.sort('Type')
@@ -54,6 +55,35 @@ def make_region_files(file_name, file_path):
             Table.write(general_catalogue[general_catalogue['Type'] == types_of_objects[i]],
                         'wr_catalogue.txt', format='ascii.commented_header')
             
+    return
+
+
+def make_ds9_files(file_name, file_path):
+    ''' Make ds9 compatibale region files'''
+    catalogue = load_catalogue_file(file_name, file_path)
+    object_type = catalogue['Type'][0]
+    object_id = catalogue['id_'] 
+    data = Table.read('C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\Code\\data_v3.txt', format='ascii.commented_header',
+                      guess=False)
+    coordinates_x = data['x']
+    coordinates_y = data['y']
+    object_x_coordinate = np.arange(0, len(object_id), dtype=float)
+    object_y_coordinate = np.arange(0, len(object_id), dtype=float)
+
+    reg_file_name = '{}_region.reg'.format(object_type)
+    reg_file_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\{}'.format(file_path)
+
+    for i in range(0, len(object_id)):
+        object_x_coordinate[i] = coordinates_x[data['id_'] == object_id[i]]
+        object_y_coordinate[i] = coordinates_y[data['id_'] == object_id[i]]
+
+    region_file_ = os.path.join(reg_file_path, reg_file_name)
+    region_file = open(region_file_, "w")
+    for w in range(0, len(object_id)):
+        coordinate_string = "{:.2f},{:.2f},".format(object_x_coordinate[w],
+                                                    object_y_coordinate[w])
+        region_file.write("CIRCLE(" + coordinate_string + '15) # color = blue' + '\n')
+    region_file.close()
     return
 
 
