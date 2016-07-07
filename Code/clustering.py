@@ -156,7 +156,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                 high, low = 1, 0
 
             for a in range(km_n_clusters - low, km_n_clusters + high):
-                km_score, num_obj = kmeans(plot_path, experiments[i],
+                km_score, num_obj, inertia = kmeans(plot_path, experiments[i],
                                            cluster_data_, greatdata,
                                            a, plots, id_list,
                                            x_data, y_data, id_data, ds9_cat,
@@ -165,12 +165,12 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                 if "yes" in write_res:
                     kmeans_results(results_path, results_title, experiments[i],
                                    kmeans_input, a, km_score, total_obj,
-                                   num_obj)
+                                   num_obj, inertia)
 
         if "center_test" in analysis:
             n_clusters = experiments['n_clusters'][i]
-            for n in range(1, 10):
-                km_scor, num_obj = kmeans(plot_path, experiments[i],
+            for n in range(1, 11):
+                km_scor, num_obj, inertia = kmeans(plot_path, experiments[i],
                                           cluster_data_, greatdata,
                                           n_clusters, plots, id_list,
                                           x_data, y_data, id_data, ds9_cat,
@@ -215,7 +215,7 @@ def load_data_file(d_file, e_file):
 def organize_data(exp, data_file):
     '''Select data for analysis'''
     data = data_file
-    ratio = 0.1
+    ratio = 0.2
 
     wave1 = data[exp['band1']]
     wave1_unc = data[exp['band1']+'_unc']
@@ -509,6 +509,7 @@ def kmeans(s_path, bands, cluster_data, greatdata, number_clusters, make_plots,
     km.fit(cluster_data)
 
     # Compute clustering statistics
+    sum_of_squares = km.inertia_
     centers = km.cluster_centers_
     labels = km.labels_
     if number_clusters > 1:
@@ -542,7 +543,7 @@ def kmeans(s_path, bands, cluster_data, greatdata, number_clusters, make_plots,
         kmeans_colour(s_path, cluster_data, number_clusters, labels,
                       bands, centers)
 
-    return(score, objects_per_cluster)
+    return(score, objects_per_cluster, sum_of_squares)
 
 
 def id_catologue(clustering, number_clusters, cluster_number, waves, id_data,
@@ -725,7 +726,7 @@ def meanshift_results(save_path, name, bands, n_clusters,
     test_path = '{}\\{}'.format(save_path, name)
     header = '#clustering band1 band2 band3 band4 band5 band6 band7 band8 '\
              'band9 band10 band11 band12 b_width damp '\
-             'pref km_in score n_clust total_objects c_1 c_2 c_3 c_4 c_5 c_6 '\
+             'pref km_in inertia score n_clust total_objects c_1 c_2 c_3 c_4 c_5 c_6 '\
              'c_7 c_8 c_9 c_10 c_11 c_12 c_13 c_14 c_15 c_16 c_17 c_18 c_19 '\
              'c_20 c_21 c_22 c_23 c_24 c_25 c_26 c_27 c_28 c_29 c_30 c_31 c_32 '\
              'c_33 c_34 c_35 c_36 c_37 c_38 c_39 c_40'
@@ -747,7 +748,7 @@ def meanshift_results(save_path, name, bands, n_clusters,
                                                      bands[11], b_width,
                                                      'N/A',
                                                      'N/A', 'N/A')
-    outputs = '{:.4f} {} {} {}'.format(s_score, n_clusters, total_obj,
+    outputs = '{} {:.4f} {} {} {}'.format('N/A', s_score, n_clusters, total_obj,
                                        np.array_str(obj_per_cluster,
                                                     max_line_width=500)[1:-1])
 
@@ -758,12 +759,12 @@ def meanshift_results(save_path, name, bands, n_clusters,
 
 
 def kmeans_results(save_path, name, bands, input_,
-                   n_clusters, s_score, total_obj, obj_per_cluster):
+                   n_clusters, s_score, total_obj, obj_per_cluster, sos):
     # Create KM results file if it doesn't exist. If it does add to it.
     test_path = '{}\\{}'.format(save_path, name)
     header = '#clustering band1 band2 band3 band4 band5 band6 band7 band8 '\
              'band9 band10 band11 band12 b_width damp '\
-             'pref km_in score n_clust total_objects c_1 c_2 c_3 c_4 c_5 c_6 '\
+             'pref km_in inertia score n_clust total_objects c_1 c_2 c_3 c_4 c_5 c_6 '\
              'c_7 c_8 c_9 c_10 c_11 c_12 c_13 c_14 c_15 c_16 c_17 c_18 c_19 '\
              'c_20 c_21 c_22 c_23 c_24 c_25 c_26 c_27 c_28 c_29 c_30 c_31 c_32 '\
              'c_33 c_34 c_35 c_36 c_37 c_38 c_39 c_40'
@@ -784,7 +785,7 @@ def kmeans_results(save_path, name, bands, input_,
                                                  bands[9], bands[10],
                                                  bands[11], 'N/A', 'N/A',
                                                  'N/A', input_)
-    outputs = '{:.4f} {} {} {}'.format(s_score, n_clusters, total_obj,
+    outputs = '{} {:.4f} {} {} {}'.format(str(sos), s_score, n_clusters, total_obj,
                                        np.array_str(obj_per_cluster,
                                                     max_line_width=500)[1:-1])
 
@@ -801,7 +802,7 @@ def affinity_propagation_results(save_path, name, bands,
     test_path = '{}\\{}'.format(save_path, name)
     header = '#clustering band1 band2 band3 band4 band5 band6 band7 band8 '\
              'band9 band10 band11 band12 b_width damp '\
-             'pref km_in score n_clust total_objects c_1 c_2 c_3 c_4 c_5 c_6 '\
+             'pref km_in inertia score n_clust total_objects c_1 c_2 c_3 c_4 c_5 c_6 '\
              'c_7 c_8 c_9 c_10 c_11 c_12 c_13 c_14 c_15 c_16 c_17 c_18 c_19 '\
              'c_20 c_21 c_22 c_23 c_24 c_25 c_26 c_27 c_28 c_29 c_30 c_31 c_32'\
              ' c_33 c_34 c_35 c_36 c_37 c_38 c_39 c_40'
@@ -821,7 +822,7 @@ def affinity_propagation_results(save_path, name, bands,
                                                  bands[9], bands[10],
                                                  bands[11], 'N/A',
                                                        damp, pref,  'N/A')
-    outputs = '{:.4f} {} {} {}'.format(s_score, n_clusters, total_obj,
+    outputs = '{} {:.4f} {} {} {}'.format('N/A', s_score, n_clusters, total_obj,
                                        np.array_str(obj_per_cluster,
                                                     max_line_width=500)[1:-1])
 
