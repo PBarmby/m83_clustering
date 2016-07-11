@@ -4,15 +4,19 @@
 import numpy as np 
 import os
 from astropy.table import Table
-from matplotlib import pyplot as plt
-from itertools import cycle
+
+base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
+# base_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\'  # PC
+figure_save_symbol = '//'  # MAC
+# figure_save_symbol = '\\'  # PC
 
 
 def band_unc_limit(path_):
     '''Creates file with each band at various uncertainty limits and counts
     the number of objects valid at each limit. 
         - removes all -99 objects'''
-    data = Table.read('data_v3-test.txt', format='ascii.commented_header', guess=False)
+    data = Table.read('data_v3-test.txt', format='ascii.commented_header',
+                      guess=False)
     band_names = data.colnames
 
     unc_limit_path = make_directory(path_)
@@ -288,8 +292,7 @@ def make_directory(p_path):
     '''Save results of each analysis
             save_path: set path of where you would like results saved'''
     # Create new plots_folder
-    pl_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\{}'.format(
-              p_path)
+    pl_path = '{}{}{}'.format(base_path, figure_save_symbol, p_path)
     if not os.path.exists(pl_path):
         os.makedirs(pl_path)
 
