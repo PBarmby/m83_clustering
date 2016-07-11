@@ -221,7 +221,7 @@ def load_data_file(d_file, e_file):
 def organize_data(exp, data_file):
     '''Select data for analysis'''
     data = data_file
-    ratio = 0.05
+    ratio = 0.2
 
     wave1 = data[exp['band1']]
     wave1_unc = data[exp['band1']+'_unc']
@@ -340,20 +340,21 @@ def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
     labels_unique = np.unique(labels)
     n_clusters_ = len(labels_unique)
     total_objects = len(X_scaled)
+
     # Compute silhouette_score for entire cluster or individuals
     if len(X_scaled) > n_clusters_ > 1:
         average_score = metrics.silhouette_score(cluster_data, labels)
         sample_score = metrics.silhouette_samples(cluster_data, labels)
     else:
-        average_score = [-99.0]
-        sample_score = [-99.0]
+        average_score = np.array(-99.0, dtype=float)
+        sample_score = np.array(-99.0, dtype=float)
 
     # Identify which cluster each object belongs to
     objects_per_cluster = np.zeros(max_num_clusters, dtype=np.int16)
     for i in range(0, n_clusters_):
         ith_cluster = X_scaled[labels == i]
         objects_per_cluster[i] = len(ith_cluster)
-        if len(sample_score) < 2:
+        if -99.0 in sample_score:
             write_cluster_stats(s_path, 'meanshift', n_clusters_, i,
                                 objects_per_cluster[i], cluster_centers[i],
                                 ith_cluster, average_score,
@@ -471,8 +472,8 @@ def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
         ap_score = metrics.silhouette_score(cluster_data, labels)
         sample_score = silhouette_samples(cluster_data, labels)
     else:
-        ap_score = [-99.0]
-        sample_score = [-99.0]
+        ap_score = np.array(-99.0, dtype=float)
+        sample_score = np.array(-99.0, dtype=float)
 
     # Identify which cluster each object belongs to
     objects_per_cluster = np.zeros(max_num_clusters, dtype=np.int16)
@@ -480,7 +481,7 @@ def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
         ith_cluster = cluster_data[labels == i]
         objects_per_cluster[i] = len(ith_cluster)
         cluster_center = cluster_data[cluster_centers_indices[i]]
-        if len(sample_score) < 2:
+        if -99.0 in sample_score:
             write_cluster_stats(s_path, 'affinity', n_clusters_, i,
                                 objects_per_cluster[i], cluster_center[i],
                                 ith_cluster, ap_score,
@@ -534,15 +535,15 @@ def kmeans(s_path, bands, cluster_data, greatdata, number_clusters, make_plots,
         score = metrics.silhouette_score(cluster_data, labels)
         sample_score = silhouette_samples(cluster_data, labels)
     else:
-        score = [-99.0]
-        sample_score = [-99.0]
+        score = np.array(-99.0, dtype=float)
+        sample_score = np.array(-99.0, dtype=float)
 
     # Identify which cluster each object belongs to
     objects_per_cluster = np.zeros(max_num_clusters, dtype=np.int16)
     for i in range(0, number_clusters):
         x_cluster = cluster_data[labels == i]
         objects_per_cluster[i] = len(x_cluster)
-        if len(sample_score) < 2:
+        if -99.0 in sample_score:
             write_cluster_stats(s_path, 'kmeans', number_clusters, i,
                                 objects_per_cluster[i], centers[i],
                                 x_cluster, score,
@@ -588,7 +589,7 @@ def id_catologue(clustering, number_clusters, cluster_number, waves, id_data,
 
 def ds9_catalogue(clustering, n_clust, cluster_num, waves, x, y, save_):
     '''Create file with list of object x-y positions for each cluster'''
-    path = '{}\\{}'.format(save_, 'ds9')
+    path = '{}{}{}'.format(save_, figure_save_symbol, 'ds9')
     if not os.path.exists(path):
         os.makedirs(path)
     ds_col = ['red', 'green', 'blue', 'cyan', 'magenta', 'black', 'white',
@@ -774,7 +775,7 @@ def meanshift_results(save_path, name, bands, n_clusters,
                                                      bands[11], b_width,
                                                      'N/A',
                                                      'N/A', 'N/A')
-    outputs = '{} {:.4f} {} {} {}'.format('N/A', s_score, n_clusters, total_obj,
+    outputs = '{} {} {} {} {}'.format('N/A', s_score, n_clusters, total_obj,
                                        np.array_str(obj_per_cluster,
                                                     max_line_width=500)[1:-1])
 
@@ -811,7 +812,7 @@ def kmeans_results(save_path, name, bands, input_,
                                                  bands[9], bands[10],
                                                  bands[11], 'N/A', 'N/A',
                                                  'N/A', input_)
-    outputs = '{} {:.4f} {} {} {}'.format(str(sos), s_score, n_clusters, total_obj,
+    outputs = '{} {} {} {} {}'.format(str(sos), s_score, n_clusters, total_obj,
                                        np.array_str(obj_per_cluster,
                                                     max_line_width=500)[1:-1])
 
@@ -900,7 +901,7 @@ def write_cluster_stats(save_path, clustering, n_clust, cluster, n_obj,
                                              (min_dist),
                                              float(stdev(c_data)))
     # Write stats
-    inputs = '{} {} {} {} {:.4f} {:.4f}'.format(clustering, n_clust,
+    inputs = '{} {} {} {} {} {}'.format(clustering, n_clust,
                                                 cluster+1, n_obj, t_score,
                                                 avg(c_score))
 
