@@ -1,5 +1,18 @@
 % Analysis section
-Three techniques were used to cluster the M83 study.
+In this section we will outline the process used for each of the clustering methods.
+An aim of this work was to help astronomers determine which filters were best at identifying different types of objects in a survey. 
+Since the average survey is limited to four filters, different combinations of four filters were used to construct colours for clustering. 
+Colours were constructed using the difference between two wavelengths. For a given combination of four filters, all possible colour combinations were used. % Change as needed
+The feature space was constructed in two and three dimensions, to add a layer of analysis that isn't typically found in colour-colour space.
+
+Clustering was performed using all three methods for each colour combination. 
+The methods were used independantly and in unison in order to determine the optimal object classification.
+Mean-Shift and Affinity Propagation were used prior to k-means in order to determine a reasonable number of clusters in the data set.
+Once these methods were run, the number of clusters used for k-means input was determined from a combination of Mean-Shift and AP output, and general inspection.
+
+\section{Mean-Shift Clustering}
+\section{Affinity Propagation}
+\section{K-Means Clustering}
 \begin{enumerate}
 \item Clustering process
 \item Mean-Shift Analysis 
