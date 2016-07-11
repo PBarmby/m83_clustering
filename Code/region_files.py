@@ -65,12 +65,12 @@ def make_ds9_files(file_name, file_path):
     object_id = catalogue['id_'] 
     data = Table.read('C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\Code\\data_v3.txt', format='ascii.commented_header',
                       guess=False)
-    coordinates_x = data['x']
-    coordinates_y = data['y']
+    coordinates_x = data['ra']
+    coordinates_y = data['dec']
     object_x_coordinate = np.arange(0, len(object_id), dtype=float)
     object_y_coordinate = np.arange(0, len(object_id), dtype=float)
 
-    reg_file_name = '{}_region.reg'.format(object_type)
+    reg_file_name = '{}_ra_dec.reg'.format('starclust')
     reg_file_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\{}'.format(file_path)
 
     for i in range(0, len(object_id)):
@@ -80,7 +80,7 @@ def make_ds9_files(file_name, file_path):
     region_file_ = os.path.join(reg_file_path, reg_file_name)
     region_file = open(region_file_, "w")
     for w in range(0, len(object_id)):
-        coordinate_string = "{:.2f},{:.2f},".format(object_x_coordinate[w],
+        coordinate_string = "{:.10f},{:.10f},".format(object_x_coordinate[w],
                                                     object_y_coordinate[w])
         region_file.write("CIRCLE(" + coordinate_string + '15) # color = blue' + '\n')
     region_file.close()
