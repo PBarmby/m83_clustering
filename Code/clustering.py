@@ -50,10 +50,10 @@ markers = ['o', 'o', 'o', 'o', 'o', 'o', 'o', '*', '*', '*', '*', '*', '*', '*',
 max_num_clusters = 40
 
 # Set the base path and directory symbol for MAC or PC OS
-base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
-# base_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\'  # PC
-figure_save_symbol = '//'  # MAC
-# figure_save_symbol = '\\'  # PC
+# base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
+base_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\'  # PC
+# figure_save_symbol = '//'  # MAC
+figure_save_symbol = '\\'  # PC
 
 # defined functions
 from numpy import mean as avg

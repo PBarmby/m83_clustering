@@ -224,7 +224,7 @@ def colour_v_colour(colour1, colour2, trial, path):
     df = pd.DataFrame(np.vstack([colour1, colour2]).T,
                       columns=[trial['band1'] + '-' + trial['band2'],
                                trial['band3'] + '-' + trial['band4']])
-    scatter_matrix(df, figsize=(8, 8), alpha=0.5,  diagonal='kde')
+    scatter_matrix(df, figsize=(8, 8), alpha=0.2,  diagonal='kde')
     path_ = ('{}\\color_color').format(path)
     if not os.path.exists(path_):
         os.makedirs(path_)
