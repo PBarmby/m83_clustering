@@ -50,10 +50,10 @@ markers = ['o', 'o', 'o', 'o', 'o', 'o', 'o', '*', '*', '*', '*', '*', '*', '*',
 max_num_clusters = 40
 
 # Set the base path and directory symbol for MAC or PC OS
-# base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
-base_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\'  # PC
-# figure_save_symbol = '//'  # MAC
-figure_save_symbol = '\\'  # PC
+base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
+# base_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\'  # PC
+figure_save_symbol = '//'  # MAC
+# figure_save_symbol = '\\'  # PC
 
 # defined functions
 from numpy import mean as avg
@@ -591,21 +591,22 @@ def ds9_catalogue(clustering, n_clust, cluster_num, waves, x, y, save_):
     path = '{}\\{}'.format(save_, 'ds9')
     if not os.path.exists(path):
         os.makedirs(path)
-
+    ds_col = ['red', 'green', 'blue', 'cyan', 'magenta', 'black', 'white',
+              'yellow']
     for i in range(0, n_clust):
         file_name = 'ds9_{}_{}cl_cluster-{}_{}-{}vs{}-{}.txt'.format(clustering,
                                                           str(n_clust), str(i+1),
                                                           waves[0], waves[1],
                                                           waves[2], waves[3])
-        test_path = '{}\\{}'.format(path, file_name)
-        if not os.path.exists(test_path):
-            create_path = os.path.join(path, file_name)
-            ds9_file = open(create_path, "a")
-            ds9_file.write('image' + '\n')
-            ds9_file.close()
+        x_coord = np.array(x[cluster_num == i])
+        y_coord = np.array(y[cluster_num == i])
         ds9_path = os.path.join(path, file_name)
-        data = Table([x[cluster_num == i], y[cluster_num == i]])
-        Table.write(data, ds9_path, format='ascii.no_header')
+        ds9_file = open(ds9_path, "w")
+        for w in range(0, len(x_coord)): 
+            coordinate_string = "{:.2f},{:.2f},".format(x_coord[w], y_coord[w])
+            ds9_file.write("CIRCLE(" + coordinate_string + '15) # color = ' + ds_col[i] + '\n')
+        ds9_file.close()
+        
     return()
 
 
