@@ -220,7 +220,7 @@ def load_data_file(d_file, e_file):
 
 def organize_data(exp, data_file):
     '''Select data for analysis'''
-    data = data_file
+    data = data_file[::5]
     ratio = 0.2
 
     wave1 = data[exp['band1']]
@@ -233,25 +233,25 @@ def organize_data(exp, data_file):
     wave4 = data[exp['band4']]
     wave4_unc = data[exp['band4']+'_unc']
     # Colour 3
-    wave5 = data[exp['band5']]
-    wave5_unc = data[exp['band5']+'_unc']
-    wave6 = data[exp['band6']]
-    wave6_unc = data[exp['band6']+'_unc']
+    # wave5 = data[exp['band5']]
+    # wave5_unc = data[exp['band5']+'_unc']
+    # wave6 = data[exp['band6']]
+    # wave6_unc = data[exp['band6']+'_unc']
     # Colour 4
-    wave7 = data[exp['band7']]
-    wave7_unc = data[exp['band7']+'_unc']
-    wave8 = data[exp['band8']]
-    wave8_unc = data[exp['band8']+'_unc']
+    # wave7 = data[exp['band7']]
+    # wave7_unc = data[exp['band7']+'_unc']
+    # wave8 = data[exp['band8']]
+    # wave8_unc = data[exp['band8']+'_unc']
     # Colour 5
-    wave9 = data[exp['band9']]
-    wave9_unc = data[exp['band9']+'_unc']
-    wave10 = data[exp['band10']]
-    wave10_unc = data[exp['band10']+'_unc']
+    # wave9 = data[exp['band9']]
+    # wave9_unc = data[exp['band9']+'_unc']
+    # wave10 = data[exp['band10']]
+    # wave10_unc = data[exp['band10']+'_unc']
     # Colour 6
-    wave11 = data[exp['band11']]
-    wave11_unc = data[exp['band11']+'_unc']
-    wave12 = data[exp['band12']]
-    wave12_unc = data[exp['band12']+'_unc']
+    # wave11 = data[exp['band11']]
+    # wave11_unc = data[exp['band11']+'_unc']
+    # wave12 = data[exp['band12']]
+    # wave12_unc = data[exp['band12']+'_unc']
 
     # Change parameters to match data_file
     # Remove data pieces with no value
@@ -265,54 +265,54 @@ def organize_data(exp, data_file):
     wave4_trim = np.logical_and(np.logical_and(wave4 != -99, wave4_unc != -99),
                                 wave4_unc < ratio)
 
-    wave5_trim = np.logical_and(np.logical_and(wave5 != -99, wave5_unc != -99),
-                                wave5_unc < ratio)
-    wave6_trim = np.logical_and(np.logical_and(wave6 != -99, wave6_unc != -99),
-                                wave6_unc < ratio)
+    # wave5_trim = np.logical_and(np.logical_and(wave5 != -99, wave5_unc != -99),
+    #                             wave5_unc < ratio)
+    # wave6_trim = np.logical_and(np.logical_and(wave6 != -99, wave6_unc != -99),
+    #                             wave6_unc < ratio)
 
-    wave7_trim = np.logical_and(np.logical_and(wave7 != -99, wave7_unc != -99),
-                                wave7_unc < ratio)
-    wave8_trim = np.logical_and(np.logical_and(wave8 != -99, wave8_unc != -99),
-                                wave8_unc < ratio)
+    # wave7_trim = np.logical_and(np.logical_and(wave7 != -99, wave7_unc != -99),
+    #                             wave7_unc < ratio)
+    # wave8_trim = np.logical_and(np.logical_and(wave8 != -99, wave8_unc != -99),
+    #                             wave8_unc < ratio)
 
-    wave9_trim = np.logical_and(np.logical_and(wave9 != -99, wave9_unc != -99),
-                                wave9_unc < ratio)
-    wave10_trim = np.logical_and(np.logical_and(wave10 != -99,
-                                                wave10_unc != -99),
-                                 wave10_unc < ratio)
+    # wave9_trim = np.logical_and(np.logical_and(wave9 != -99, wave9_unc != -99),
+    #                             wave9_unc < ratio)
+    # wave10_trim = np.logical_and(np.logical_and(wave10 != -99,
+    #                                             wave10_unc != -99),
+    #                              wave10_unc < ratio)
 
-    wave11_trim = np.logical_and(np.logical_and(wave11 != -99,
-                                                wave11_unc != -99),
-                                 wave11_unc < ratio)
-    wave12_trim = np.logical_and(np.logical_and(wave12 != -99,
-                                                wave12_unc != -99),
-                                 wave12_unc < ratio)
+    # wave11_trim = np.logical_and(np.logical_and(wave11 != -99,
+    #                                             wave11_unc != -99),
+    #                              wave11_unc < ratio)
+    # wave12_trim = np.logical_and(np.logical_and(wave12 != -99,
+    #                                             wave12_unc != -99),
+    #                              wave12_unc < ratio)
 
     colour1_trim = np.logical_and(wave1_trim, wave2_trim)
     colour2_trim = np.logical_and(wave3_trim, wave4_trim)
-    colour3_trim = np.logical_and(wave5_trim, wave6_trim)
-    colour4_trim = np.logical_and(wave7_trim, wave8_trim)
-    colour5_trim = np.logical_and(wave9_trim, wave10_trim)
-    colour6_trim = np.logical_and(wave11_trim, wave12_trim)
+    # colour3_trim = np.logical_and(wave5_trim, wave6_trim)
+    # colour4_trim = np.logical_and(wave7_trim, wave8_trim)
+    # colour5_trim = np.logical_and(wave9_trim, wave10_trim)
+    # colour6_trim = np.logical_and(wave11_trim, wave12_trim)
 
     gooddata1 = np.logical_and(colour1_trim, colour2_trim)
-    gooddata2 = np.logical_and(colour3_trim, colour4_trim)
-    gooddata3 = np.logical_and(colour5_trim, colour6_trim)
+    # gooddata2 = np.logical_and(colour3_trim, colour4_trim)
+    # gooddata3 = np.logical_and(colour5_trim, colour6_trim)
 
     # Only data that match criteria for both colours
-    final_data = np.logical_and(np.logical_and(gooddata1, gooddata2),
-                                gooddata3)
+    final_data = gooddata1  # np.logical_and(np.logical_and(gooddata1, gooddata2),
+                 #                gooddata3)
 
     # Make colours
     colour1 = wave1[final_data] - wave2[final_data]
     colour2 = wave3[final_data] - wave4[final_data]
-    colour3 = wave5[final_data] - wave6[final_data]
-    colour4 = wave7[final_data] - wave8[final_data]
-    colour5 = wave9[final_data] - wave10[final_data]
-    colour6 = wave11[final_data] - wave12[final_data]
+    # colour3 = wave5[final_data] - wave6[final_data]
+    # colour4 = wave7[final_data] - wave8[final_data]
+    # colour5 = wave9[final_data] - wave10[final_data]
+    # colour6 = wave11[final_data] - wave12[final_data]
 
-    cluster_data = np.vstack([colour1, colour2, colour3, colour4, colour5,
-                             colour6]).T
+    cluster_data = np.vstack([colour1, colour2]).T # colour3, colour4, colour5,
+                             # colour6]).T
     x = data['x'][final_data]
     y = data['y'][final_data]
     id_ = data['id_'][final_data].astype(np.int32)
@@ -684,7 +684,7 @@ def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
                   cluster_centers):
     '''Plot colour-colour diagrams for each colour space'''
 
-    for i in range(1, 6):
+    for i in range(1, 2):
         fig = plt.figure()
         ax = fig.add_subplot(111)
         for k in range(0, number_clusters):
@@ -789,8 +789,8 @@ def kmeans_results(save_path, name, bands, input_,
                    n_clusters, s_score, total_obj, obj_per_cluster, sos):
     # Create KM results file if it doesn't exist. If it does add to it.
     test_path = '{}{}{}'.format(save_path, figure_save_symbol, name)
-    header = '#clustering band1 band2 band3 band4 band5 band6 band7 band8 '\
-             'band9 band10 band11 band12 b_width damp '\
+    header = '#clustering band1 band2 band3 band4 '\
+             'b_width damp '\
              'pref km_in inertia score n_clust total_objects c_1 c_2 c_3 c_4 c_5 c_6 '\
              'c_7 c_8 c_9 c_10 c_11 c_12 c_13 c_14 c_15 c_16 c_17 c_18 c_19 '\
              'c_20 c_21 c_22 c_23 c_24 c_25 c_26 c_27 c_28 c_29 c_30 c_31 c_32 '\
@@ -804,13 +804,14 @@ def kmeans_results(save_path, name, bands, input_,
     km_results_file = open(km_results_path, "a")
 
     # Create strings for file
-    inputs = '{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}'.format('kmeans', bands[0],
+    inputs = '{} {} {} {} {} {} {} {} {} '.format('kmeans', bands[0],
                                                  bands[1], bands[2],
-                                                 bands[3], bands[4],
-                                                 bands[5], bands[6],
-                                                 bands[7], bands[8],
-                                                 bands[9], bands[10],
-                                                 bands[11], 'N/A', 'N/A',
+                                                 bands[3], # bands[4],
+                                                 # bands[5], bands[6],
+                                                 # bands[7], bands[8],
+                                                 # bands[9], bands[10],
+                                                 # bands[11],
+                                                 'N/A', 'N/A',
                                                  'N/A', input_)
     outputs = '{} {} {} {} {}'.format(str(sos), s_score, n_clusters, total_obj,
                                        np.array_str(obj_per_cluster,
@@ -862,9 +863,9 @@ def affinity_propagation_results(save_path, name, bands,
 def write_cluster_stats(save_path, clustering, n_clust, cluster, n_obj,
                         center, c_data, t_score, c_score, cen_test):
     header = '# clustering total_clust clust_num n_obj t_scr c_scr rms avg_dist '\
-             'max_dist min_dist stdev cen_1 cen_2 cen_3 cen_4 cen_5 cen_6'\
-             ' avg_col_1 avg_col_2 avg_col_3 avg_col_4 avg_col_5 '\
-             'avg_col_6'
+             'max_dist min_dist stdev cen_1 cen_2' \
+             ' avg_col_1 avg_col_2'  # avg_col_3 avg_col_4 avg_col_5 '\
+              # cen_3 cen_4 cen_5 cen_6'\ # 'avg_col_6'
     if cen_test == 0:
         name = 'cluster_statistics.txt'
     else:
@@ -905,12 +906,12 @@ def write_cluster_stats(save_path, clustering, n_clust, cluster, n_obj,
                                                 cluster+1, n_obj, t_score,
                                                 avg(c_score))
 
-    centers = '{} {} {} {} {} {}'.format(center[0], center[1], center[2],
-                                         center[3], center[4], center[5])
+    centers = '{} {} '.format(center[0], center[1]) # , center[2],
+                                         # center[3], center[4], center[5])
 
-    a = '{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f}'.format(avg(c_data[:,0]), avg(c_data[:,1]),
-                                      avg(c_data[:,2]), avg(c_data[:,3]),
-                                      avg(c_data[:,4]), avg(c_data[:,5]))
+    a = '{:.4f} {:.4f}'.format(avg(c_data[:,0]), avg(c_data[:,1])) # ,
+                                      # avg(c_data[:,2]), avg(c_data[:,3]),
+                                      # avg(c_data[:,4]), avg(c_data[:,5]))
     cluster_statistics.write(inputs + ' ' + distances + ' ' + centers + ' ' + a + '\n')
     cluster_statistics.close()
     return
