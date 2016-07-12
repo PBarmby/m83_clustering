@@ -483,12 +483,12 @@ def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
         cluster_center = cluster_data[cluster_centers_indices[i]]
         if -99.0 in sample_score:
             write_cluster_stats(s_path, 'affinity', n_clusters_, i,
-                                objects_per_cluster[i], cluster_center[i],
+                                objects_per_cluster[i], cluster_center,
                                 ith_cluster, ap_score,
                                 sample_score, cent_test)
         else:
             write_cluster_stats(s_path, 'affinity', n_clusters_, i,
-                                objects_per_cluster[i], cluster_center[i],
+                                objects_per_cluster[i], cluster_center,
                                 ith_cluster, ap_score,
                                 sample_score[labels == i], cent_test)
 
@@ -720,7 +720,7 @@ def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
 
 def affinity_plot(labels, cluster_center_indices, X, n_clusters, bands,
                   s_path):
-    for i in range(1, 6):
+    for i in range(1, 3):
         fig1 = plt.figure()
         ax = fig1.add_subplot(111)
         for k in range(0, n_clusters):
@@ -832,12 +832,12 @@ def affinity_propagation_results(save_path, name, bands,
                                  obj_per_cluster):
     # Create KM results file if it doesn't exist. If it does add to it.
     test_path = '{}{}{}'.format(save_path, figure_save_symbol, name)
-    header = '#clustering band1 band2 band3 band4 band5 band6 band7 band8 '\
-             'band9 band10 band11 band12 b_width damp '\
+    header = '#clustering band1 band2 band3 band4 band5 band6 '\
+             'b_width damp '\
              'pref km_in inertia score n_clust total_objects c_1 c_2 c_3 c_4 c_5 c_6 '\
              'c_7 c_8 c_9 c_10 c_11 c_12 c_13 c_14 c_15 c_16 c_17 c_18 c_19 '\
-             'c_20 c_21 c_22 c_23 c_24 c_25 c_26 c_27 c_28 c_29 c_30 c_31 c_32'\
-             ' c_33 c_34 c_35 c_36 c_37 c_38 c_39 c_40'
+             'c_20 c_21 c_22 c_23 c_24 c_25 c_26 c_27 c_28 c_29 c_30 c_31 c_32 '\
+             'c_33 c_34 c_35 c_36 c_37 c_38 c_39 c_40'
     if not os.path.exists(test_path):
         create_path = os.path.join(save_path, name)
         af_results_file = open(create_path, "a")
@@ -847,13 +847,14 @@ def affinity_propagation_results(save_path, name, bands,
     af_results_file = open(af_results_path, "a")
 
     # Create strings for file
-    inputs = '{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}'.format('affinity', bands[0], bands[1],
+    inputs = '{} {} {} {} {} {} {} {} {} {} {}'.format('affinity', bands[0], bands[1],
                                                  bands[1], bands[3], bands[4],
-                                                 bands[5], bands[6],
-                                                 bands[7], bands[8],
-                                                 bands[9], bands[10],
-                                                 bands[11], 'N/A',
-                                                       damp, pref,  'N/A')
+                                                 bands[5],
+                                                 # bands[6],
+                                                 # bands[7], bands[8],
+                                                 # bands[9], bands[10],
+                                                 # bands[11],
+                                                 'N/A', damp, pref,  'N/A')
     outputs = '{} {:.4f} {} {} {}'.format('N/A', s_score, n_clusters, total_obj,
                                        np.array_str(obj_per_cluster,
                                                     max_line_width=500)[1:-1])
