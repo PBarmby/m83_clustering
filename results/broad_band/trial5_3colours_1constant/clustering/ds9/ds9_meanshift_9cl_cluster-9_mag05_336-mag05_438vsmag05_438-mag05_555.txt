@@ -1,0 +1,6 @@
+CIRCLE(3776.50,794.02,15) # color = green
+CIRCLE(1189.87,2026.88,15) # color = green
+CIRCLE(3776.40,2048.50,15) # color = green
+CIRCLE(3848.62,2238.06,15) # color = green
+CIRCLE(3836.32,2336.79,15) # color = green
+CIRCLE(2314.00,2998.75,15) # color = green

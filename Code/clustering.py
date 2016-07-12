@@ -605,7 +605,10 @@ def ds9_catalogue(clustering, n_clust, cluster_num, waves, x, y, save_):
         ds9_file = open(ds9_path, "w")
         for w in range(0, len(x_coord)): 
             coordinate_string = "{:.2f},{:.2f},".format(x_coord[w], y_coord[w])
-            ds9_file.write("CIRCLE(" + coordinate_string + '15) # color = ' + ds_col[i] + '\n')
+            if i > 7:
+                ds9_file.write("CIRCLE(" + coordinate_string + '15) # color = ' + ds_col[i-7] + '\n')
+            else:
+                ds9_file.write("CIRCLE(" + coordinate_string + '15) # color = ' + ds_col[i] + '\n')
         ds9_file.close()
         
     return()
@@ -613,7 +616,7 @@ def ds9_catalogue(clustering, n_clust, cluster_num, waves, x, y, save_):
 
 def meanshift_colour(path, X, n_clusters, labels_, centers, bands):
 
-    for i in range(1, 6):
+    for i in range(1, 3):
         fig = plt.figure()
         ax = fig.add_subplot(111)
         for k in range(0, n_clusters):
@@ -751,8 +754,8 @@ def meanshift_results(save_path, name, bands, n_clusters,
 
     # Create MS results file if it doesn't exist. If it does add to it.
     test_path = '{}{}{}'.format(save_path, figure_save_symbol, name)
-    header = '#clustering band1 band2 band3 band4 band5 band6 band7 band8 '\
-             'band9 band10 band11 band12 b_width damp '\
+    header = '#clustering band1 band2 band3 band4 band5 band6 '\
+             'b_width damp '\
              'pref km_in inertia score n_clust total_objects c_1 c_2 c_3 c_4 c_5 c_6 '\
              'c_7 c_8 c_9 c_10 c_11 c_12 c_13 c_14 c_15 c_16 c_17 c_18 c_19 '\
              'c_20 c_21 c_22 c_23 c_24 c_25 c_26 c_27 c_28 c_29 c_30 c_31 c_32 '\
@@ -766,13 +769,14 @@ def meanshift_results(save_path, name, bands, n_clusters,
     ms_results_file = open(ms_results_path, "a")
 
     # Create strings for file
-    inputs = '{} {} {} {} {} {} {} {} {} {} {} {} {} {:.4f} {} {} {}'.format('meanshift', bands[0], 
+    inputs = '{} {} {} {} {} {} {} {:.4f} {} {} {}'.format('meanshift', bands[0], 
                                                      bands[1], bands[2],
                                                      bands[3], bands[4],
-                                                     bands[5], bands[6],
-                                                     bands[7], bands[8],
-                                                     bands[9], bands[10],
-                                                     bands[11], b_width,
+                                                     bands[5],  # bands[6],
+                                                       # bands[7], bands[8],
+                                                     # bands[9], bands[10],
+                                                     # bands[11]
+                                                     b_width,
                                                      'N/A',
                                                      'N/A', 'N/A')
     outputs = '{} {} {} {} {}'.format('N/A', s_score, n_clusters, total_obj,

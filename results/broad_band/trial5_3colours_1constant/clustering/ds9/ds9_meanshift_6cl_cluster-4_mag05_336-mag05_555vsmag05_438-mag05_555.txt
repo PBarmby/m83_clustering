@@ -1,0 +1,14 @@
+CIRCLE(1034.94,609.95,15) # color = cyan
+CIRCLE(2905.10,666.76,15) # color = cyan
+CIRCLE(3523.43,1012.21,15) # color = cyan
+CIRCLE(2680.83,1056.46,15) # color = cyan
+CIRCLE(3407.09,1318.10,15) # color = cyan
+CIRCLE(3391.44,1621.75,15) # color = cyan
+CIRCLE(3726.79,1992.49,15) # color = cyan
+CIRCLE(3558.42,2068.46,15) # color = cyan
+CIRCLE(3621.02,2077.83,15) # color = cyan
+CIRCLE(3572.28,2172.78,15) # color = cyan
+CIRCLE(3986.32,2497.85,15) # color = cyan
+CIRCLE(3956.48,2673.83,15) # color = cyan
+CIRCLE(2314.00,2998.75,15) # color = cyan
+CIRCLE(2769.27,3457.10,15) # color = cyan

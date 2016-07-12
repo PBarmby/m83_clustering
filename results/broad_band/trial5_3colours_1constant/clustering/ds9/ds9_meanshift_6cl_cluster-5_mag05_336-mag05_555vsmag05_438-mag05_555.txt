@@ -1,0 +1,4 @@
+CIRCLE(841.19,2771.05,15) # color = magenta
+CIRCLE(2454.30,3495.25,15) # color = magenta
+CIRCLE(3101.15,3721.37,15) # color = magenta
+CIRCLE(1786.46,3800.11,15) # color = magenta

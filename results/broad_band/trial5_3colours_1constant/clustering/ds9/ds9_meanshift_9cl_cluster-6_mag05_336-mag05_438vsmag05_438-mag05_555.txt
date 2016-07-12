@@ -1,0 +1,2 @@
+CIRCLE(904.40,755.03,15) # color = black
+CIRCLE(1054.84,897.83,15) # color = black
