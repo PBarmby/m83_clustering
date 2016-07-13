@@ -602,7 +602,7 @@ def ds9_catalogue(clustering, n_clust, cluster_num, waves, x, y, save_):
     ds_col = ['red', 'green', 'blue', 'cyan', 'magenta', 'black', 'white',
               'yellow']
     for i in range(0, n_clust):
-        file_name = 'ds9_{}_{}cl_cluster-{}_{}-{}vs{}-{}.txt'.format(clustering,
+        file_name = 'ds9_{}_{}cl_cluster-{}_{}-{}vs{}-{}.reg'.format(clustering,
                                                           str(n_clust), str(i+1),
                                                           waves[0], waves[1],
                                                           waves[2], waves[3])
