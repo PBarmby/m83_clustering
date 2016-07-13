@@ -1,4 +1,0 @@
-CIRCLE(1574.71,748.95,15) # color = blue
-CIRCLE(847.61,2714.75,15) # color = blue
-CIRCLE(1140.80,3266.51,15) # color = blue
-CIRCLE(1775.96,4234.33,15) # color = blue

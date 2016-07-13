@@ -1,2 +1,0 @@
-CIRCLE(2905.10,666.76,15) # color = green
-CIRCLE(3836.32,2336.79,15) # color = green

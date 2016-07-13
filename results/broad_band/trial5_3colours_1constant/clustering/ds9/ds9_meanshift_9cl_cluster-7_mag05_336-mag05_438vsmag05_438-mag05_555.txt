@@ -1,2 +1,0 @@
-CIRCLE(2454.30,3495.25,15) # color = white
-CIRCLE(1786.46,3800.11,15) # color = white
