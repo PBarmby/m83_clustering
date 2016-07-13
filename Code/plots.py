@@ -228,7 +228,7 @@ def colour_v_colour(colour1, colour2, trial, path):
     df = pd.DataFrame(np.vstack([colour1, colour2]).T,
                       columns=[trial['band1'] + '-' + trial['band2'],
                                trial['band3'] + '-' + trial['band4']])
-    scatter_matrix(df, alpha=0.1,  diagonal='kde')
+    scatter_matrix(df, alpha=0.2,  diagonal='kde')
 
     pylab.savefig(os.path.join(path_, matrix_file))
     plt.close()
