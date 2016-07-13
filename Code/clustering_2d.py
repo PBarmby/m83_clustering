@@ -220,7 +220,7 @@ def load_data_file(d_file, e_file):
 
 def organize_data(exp, data_file):
     '''Select data for analysis'''
-    data = data_file[::5]
+    data = data_file
     ratio = 0.2
 
     wave1 = data[exp['band1']]
@@ -368,18 +368,16 @@ def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
     # Format for writing results
     objects_per_cluster.sort()  # sort from smallest to largest
     objects_per_cluster = objects_per_cluster[::-1]  # reverse sort
-
+    # Make plots
+    if "meanshift_colour" in make_plot:
+        meanshift_colour(s_path, X_scaled, n_clusters_, labels,
+                         cluster_centers, bands)
     # Make catalgoues
     if "yes" in output_id:
         id_catologue('meanshift', n_clusters_, labels, bands, id_data, x, y,
                      s_path)
     if "yes" in ds9_cat:
         ds9_catalogue('meanshift', n_clusters_, labels, bands, x, y, s_path)
-
-    # Make plots
-    if "meanshift_colour" in make_plot:
-        meanshift_colour(s_path, X_scaled, n_clusters_, labels,
-                         cluster_centers, bands)
 
     return(n_clusters_, bw_input, average_score, total_objects,
            objects_per_cluster)
@@ -496,17 +494,17 @@ def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
     objects_per_cluster.sort()  # sort from smallest to largest
     objects_per_cluster = objects_per_cluster[::-1]  # reverse sort
 
+    # Make plot
+    if 'affinity' in make_plots:
+        affinity_plot(labels, cluster_centers_indices, cluster_data,
+                      n_clusters_, bands, s_path)
+
     # Write ID file
     if "yes" in output_id:
         id_catologue('affinity', n_clusters_, labels, bands, id_data, x, y,
                      s_path)
     if "yes" in ds9_cat:
         ds9_catalogue('affinity', n_clusters_, labels, bands, x, y, s_path)
-
-    # Make plot
-    if 'affinity' in make_plots:
-        affinity_plot(labels, cluster_centers_indices, cluster_data,
-                      n_clusters_, bands, s_path)
 
     return(n_clusters_, ap_score, total_objects, objects_per_cluster)
 
@@ -557,6 +555,10 @@ def kmeans(s_path, bands, cluster_data, greatdata, number_clusters, make_plots,
     # Format for writing results
     objects_per_cluster.sort()  # sort from smallest to largest
     objects_per_cluster = objects_per_cluster[::-1]  # reverse sort
+    # Generate plots
+    if "kmeans_colour" in make_plots:
+        kmeans_colour(s_path, cluster_data, number_clusters, labels,
+                      bands, centers)
 
     # Output object and cluster IDs to ID.txt file
     if "yes" in output_cluster_id:
@@ -564,11 +566,7 @@ def kmeans(s_path, bands, cluster_data, greatdata, number_clusters, make_plots,
                      s_path)
     if "yes" in ds9_cat:
         ds9_catalogue('kmeans', number_clusters, labels, bands, x, y, s_path)
-    # Generate plots
-    if "kmeans_colour" in make_plots:
-        kmeans_colour(s_path, cluster_data, number_clusters, labels,
-                      bands, centers)
-
+    
     return(score, objects_per_cluster, sum_of_squares)
 
 
@@ -579,7 +577,13 @@ def id_catologue(clustering, number_clusters, cluster_number, waves, id_data,
                                                      str(number_clusters),
                                                      waves[0], waves[1],
                                                      waves[2], waves[3])                                
-    id_path = os.path.join(save_, file_name)
+    colours = ('{}-{}_{}-{}').format(waves[0], waves[1], waves[2], waves[3])
+    path_ = ('{}{}{}{}{}').format(save_, figure_save_symbol, colours,
+                                  figure_save_symbol, 'id_')
+    if not os.path.exists(path_):
+        os.makedirs(path_)
+
+    id_path = os.path.join(path_, file_name)
     id_tab = Table(data=[id_data, x, y, cluster_number],
                    names=['object_id', 'x_pix', 'y_pix', 'cluster_number'])
     id_tab.write(id_path, format='ascii.commented_header')
@@ -589,9 +593,12 @@ def id_catologue(clustering, number_clusters, cluster_number, waves, id_data,
 
 def ds9_catalogue(clustering, n_clust, cluster_num, waves, x, y, save_):
     '''Create file with list of object x-y positions for each cluster'''
-    path = '{}{}{}'.format(save_, figure_save_symbol, 'ds9')
-    if not os.path.exists(path):
-        os.makedirs(path)
+    colours = ('{}-{}_{}-{}').format(waves[0], waves[1], waves[2], waves[3])
+    path_ = ('{}{}{}{}{}').format(save_, figure_save_symbol, colours,
+                                  figure_save_symbol, 'ds9')
+    if not os.path.exists(path_):
+        os.makedirs(path_)    
+
     ds_col = ['red', 'green', 'blue', 'cyan', 'magenta', 'black', 'white',
               'yellow']
     for i in range(0, n_clust):
@@ -601,7 +608,7 @@ def ds9_catalogue(clustering, n_clust, cluster_num, waves, x, y, save_):
                                                           waves[2], waves[3])
         x_coord = np.array(x[cluster_num == i])
         y_coord = np.array(y[cluster_num == i])
-        ds9_path = os.path.join(path, file_name)
+        ds9_path = os.path.join(path_, file_name)
         ds9_file = open(ds9_path, "w")
         for w in range(0, len(x_coord)): 
             coordinate_string = "{:.2f},{:.2f},".format(x_coord[w], y_coord[w])
