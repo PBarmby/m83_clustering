@@ -216,6 +216,10 @@ def colour_histogram(colour1, colour2, trial, path):
 
 def colour_v_colour(colour1, colour2, trial, path):
 
+    path_ = ('{}\\color_color').format(path)
+    if not os.path.exists(path_):
+        os.makedirs(path_)
+
     matrix_file = 'matrix_{}-{}vs{}-{}.png'.format(trial['band1'],
                                                    trial['band2'],
                                                    trial['band3'],
@@ -224,12 +228,22 @@ def colour_v_colour(colour1, colour2, trial, path):
     df = pd.DataFrame(np.vstack([colour1, colour2]).T,
                       columns=[trial['band1'] + '-' + trial['band2'],
                                trial['band3'] + '-' + trial['band4']])
-    scatter_matrix(df, figsize=(8, 8), alpha=0.2,  diagonal='kde')
-    path_ = ('{}\\color_color').format(path)
-    if not os.path.exists(path_):
-        os.makedirs(path_)
+    scatter_matrix(df, alpha=0.1,  diagonal='kde')
+
     pylab.savefig(os.path.join(path_, matrix_file))
     plt.close()
+
+    plot_file = 'plot_{}-{}vs{}-{}.png'.format(trial['band1'], trial['band2'],
+                                               trial['band3'], trial['band4'])
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.scatter(colour1, colour2, marker='.', c='k', s=1)
+    ax.set_title('Colour-Colour Plot')
+    ax.set_xlabel(trial['band1'] + ' - ' + trial['band2'])
+    ax.set_ylabel(trial['band3'] + ' - ' + trial['band4'])
+    pylab.savefig(os.path.join(path_, plot_file))
+    plt.close()
+
     return
 
 

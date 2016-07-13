@@ -5,10 +5,10 @@ import numpy as np
 import os
 from astropy.table import Table
 
-base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
-# base_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\'  # PC
-figure_save_symbol = '//'  # MAC
-# figure_save_symbol = '\\'  # PC
+# base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
+base_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\'  # PC
+# figure_save_symbol = '//'  # MAC
+figure_save_symbol = '\\'  # PC
 
 
 def band_unc_limit(path_):
@@ -136,7 +136,7 @@ def col_stats(path_):
                         format='ascii.commented_header', guess=False)
 
     col_path = make_directory(path_)
-    file_name = "{}_col_statistics.txt".format(trials['band2'][0])
+    file_name = "{}_col_statistics.txt".format('final')
     file_path = os.path.join(col_path, file_name)
     header = "# band1 band2 colour_mean colour_median colour_std colour_var colour_min colour_max mag_iqr num_obj unc_mean unc_median unc_std unc_var unc_min unc_max unc_iqr"
     if not os.path.exists(file_path):
