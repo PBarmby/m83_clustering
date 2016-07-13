@@ -105,7 +105,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
 
         if "meanshift" in analysis:
             if 'experiments.txt' in bw_in:
-                b_width_input = experiments['bandwidth'][i]
+                b_width_input = experiments['b_width'][i]
             else:
                 b_width_input = estimate_bandwidth(cluster_data_)
 

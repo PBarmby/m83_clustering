@@ -1,0 +1,13 @@
+CIRCLE(4126.03,435.11,15) # color = green
+CIRCLE(2912.59,751.16,15) # color = green
+CIRCLE(1576.25,839.98,15) # color = green
+CIRCLE(263.47,1420.27,15) # color = green
+CIRCLE(609.16,2551.35,15) # color = green
+CIRCLE(1156.09,2571.28,15) # color = green
+CIRCLE(857.29,2638.03,15) # color = green
+CIRCLE(936.70,2813.52,15) # color = green
+CIRCLE(2903.20,3400.17,15) # color = green
+CIRCLE(2805.26,3414.84,15) # color = green
+CIRCLE(2498.84,3596.59,15) # color = green
+CIRCLE(3616.43,3665.96,15) # color = green
+CIRCLE(2205.34,4409.81,15) # color = green
