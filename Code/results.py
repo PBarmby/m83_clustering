@@ -29,7 +29,7 @@ def results(file_name, general_path, save_path, plots):
 
     general_results_data = load_data(gen_path, general_results_file)
 
-    if general_results_file == '05aperture_results.txt':
+    if general_results_file == '05aperture_results_2d.txt':
         clean_gen_res_data, n_clust = organize_data(general_results_data)
     else:
         clean_gen_res_data = general_results_data
@@ -233,7 +233,7 @@ def inertia_fluctuations(results_table, path):
     inertia = results_table['inertia'][results_table['clustering'] == 'kmeans']
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    ax.plot(num_clust, inertia, 'k', ls='--', lw=0.5, zorder=1)
+    #ax.plot(num_clust, inertia, 'k', lw=0.5, zorder=1)
     ax.scatter(num_clust, inertia, marker='o', s=20, c='k', zorder=2)
     ax.set_xlabel('N_clusters', fontsize=11)
     ax.set_ylabel('Inertia (Sum of Squares)', fontsize=11)
