@@ -271,7 +271,7 @@ def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
     '''---------------------------------------------------------------------'''
     # TODO: SHOULD THE DATA BE SCALED????
     # X = cluster_data
-    X_scaled = cluster_data  # preprocessing.scale(cluster_data)
+    X_scaled = preprocessing.scale(cluster_data)  # cluster_data
 
     # Compute clustering
     ms = MeanShift(bandwidth=bw_input, bin_seeding=False, cluster_all=True)
@@ -472,7 +472,7 @@ def kmeans(s_path, bands, cluster_data, greatdata, number_clusters, make_plots,
 
     # Compute K-Means clustering
     km = KMeans(number_clusters, init='random')
-    km.fit(cluster_data)
+    km.fit(preprocessing.scale(cluster_data))
 
     # Compute clustering statistics
     sum_of_squares = km.inertia_
