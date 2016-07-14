@@ -232,26 +232,6 @@ def organize_data(exp, data_file):
     wave3_unc = data[exp['band3']+'_unc']
     wave4 = data[exp['band4']]
     wave4_unc = data[exp['band4']+'_unc']
-    # Colour 3
-    # wave5 = data[exp['band5']]
-    # wave5_unc = data[exp['band5']+'_unc']
-    # wave6 = data[exp['band6']]
-    # wave6_unc = data[exp['band6']+'_unc']
-    # Colour 4
-    # wave7 = data[exp['band7']]
-    # wave7_unc = data[exp['band7']+'_unc']
-    # wave8 = data[exp['band8']]
-    # wave8_unc = data[exp['band8']+'_unc']
-    # Colour 5
-    # wave9 = data[exp['band9']]
-    # wave9_unc = data[exp['band9']+'_unc']
-    # wave10 = data[exp['band10']]
-    # wave10_unc = data[exp['band10']+'_unc']
-    # Colour 6
-    # wave11 = data[exp['band11']]
-    # wave11_unc = data[exp['band11']+'_unc']
-    # wave12 = data[exp['band12']]
-    # wave12_unc = data[exp['band12']+'_unc']
 
     # Change parameters to match data_file
     # Remove data pieces with no value
@@ -265,54 +245,17 @@ def organize_data(exp, data_file):
     wave4_trim = np.logical_and(np.logical_and(wave4 != -99, wave4_unc != -99),
                                 wave4_unc < ratio)
 
-    # wave5_trim = np.logical_and(np.logical_and(wave5 != -99, wave5_unc != -99),
-    #                             wave5_unc < ratio)
-    # wave6_trim = np.logical_and(np.logical_and(wave6 != -99, wave6_unc != -99),
-    #                             wave6_unc < ratio)
-
-    # wave7_trim = np.logical_and(np.logical_and(wave7 != -99, wave7_unc != -99),
-    #                             wave7_unc < ratio)
-    # wave8_trim = np.logical_and(np.logical_and(wave8 != -99, wave8_unc != -99),
-    #                             wave8_unc < ratio)
-
-    # wave9_trim = np.logical_and(np.logical_and(wave9 != -99, wave9_unc != -99),
-    #                             wave9_unc < ratio)
-    # wave10_trim = np.logical_and(np.logical_and(wave10 != -99,
-    #                                             wave10_unc != -99),
-    #                              wave10_unc < ratio)
-
-    # wave11_trim = np.logical_and(np.logical_and(wave11 != -99,
-    #                                             wave11_unc != -99),
-    #                              wave11_unc < ratio)
-    # wave12_trim = np.logical_and(np.logical_and(wave12 != -99,
-    #                                             wave12_unc != -99),
-    #                              wave12_unc < ratio)
-
     colour1_trim = np.logical_and(wave1_trim, wave2_trim)
     colour2_trim = np.logical_and(wave3_trim, wave4_trim)
-    # colour3_trim = np.logical_and(wave5_trim, wave6_trim)
-    # colour4_trim = np.logical_and(wave7_trim, wave8_trim)
-    # colour5_trim = np.logical_and(wave9_trim, wave10_trim)
-    # colour6_trim = np.logical_and(wave11_trim, wave12_trim)
 
     final_data = np.logical_and(colour1_trim, colour2_trim)
-    # gooddata2 = np.logical_and(colour3_trim, colour4_trim)
-    # gooddata3 = np.logical_and(colour5_trim, colour6_trim)
-
-    # Only data that match criteria for both colours
-    # final_data = np.logical_and(gooddata1, colour3_trim)  # np.logical_and(np.logical_and(gooddata1, gooddata2),
-                 #                gooddata3)
 
     # Make colours
     colour1 = wave1[final_data] - wave2[final_data]
     colour2 = wave3[final_data] - wave4[final_data]
-    # colour3 = wave5[final_data] - wave6[final_data]
-    # colour4 = wave7[final_data] - wave8[final_data]
-    # colour5 = wave9[final_data] - wave10[final_data]
-    # colour6 = wave11[final_data] - wave12[final_data]
 
-    cluster_data = np.vstack([colour1, colour2]).T # colour3, colour4, colour5,
-                             # colour6]).T
+    cluster_data = np.vstack([colour1, colour2]).T 
+
     x = data['x'][final_data]
     y = data['y'][final_data]
     id_ = data['id_'][final_data].astype(np.int32)
@@ -348,7 +291,10 @@ def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
     else:
         average_score = np.array(-99.0, dtype=float)
         sample_score = np.array(-99.0, dtype=float)
-
+    
+    # Set up save_path
+    colours = ('{}-{}_{}-{}').format(bands[0], bands[1], bands[2], bands[3])
+    
     # Identify which cluster each object belongs to
     objects_per_cluster = np.zeros(max_num_clusters, dtype=np.int16)
     for i in range(0, n_clusters_):
@@ -358,12 +304,12 @@ def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
             write_cluster_stats(s_path, 'meanshift', n_clusters_, i,
                                 objects_per_cluster[i], cluster_centers[i],
                                 ith_cluster, average_score,
-                                sample_score, cent_test)
+                                sample_score, cent_test, colours)
         else:
             write_cluster_stats(s_path, 'meanshift', n_clusters_, i,
                                 objects_per_cluster[i], cluster_centers[i],
                                 ith_cluster, average_score,
-                                sample_score[labels == i], cent_test)
+                                sample_score[labels == i], cent_test, colours)
 
     # Format for writing results
     objects_per_cluster.sort()  # sort from smallest to largest
@@ -473,6 +419,9 @@ def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
         ap_score = np.array(-99.0, dtype=float)
         sample_score = np.array(-99.0, dtype=float)
 
+    # Set up save_path
+    colours = ('{}-{}_{}-{}').format(bands[0], bands[1], bands[2], bands[3])
+
     # Identify which cluster each object belongs to
     objects_per_cluster = np.zeros(max_num_clusters, dtype=np.int16)
     for i in range(0, n_clusters_):
@@ -483,12 +432,12 @@ def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
             write_cluster_stats(s_path, 'affinity', n_clusters_, i,
                                 objects_per_cluster[i], cluster_center,
                                 ith_cluster, ap_score,
-                                sample_score, cent_test)
+                                sample_score, cent_test, colours)
         else:
             write_cluster_stats(s_path, 'affinity', n_clusters_, i,
                                 objects_per_cluster[i], cluster_center,
                                 ith_cluster, ap_score,
-                                sample_score[labels == i], cent_test)
+                                sample_score[labels == i], cent_test, colours)
 
     # Format for writing results
     objects_per_cluster.sort()  # sort from smallest to largest
@@ -536,6 +485,9 @@ def kmeans(s_path, bands, cluster_data, greatdata, number_clusters, make_plots,
         score = np.array(-99.0, dtype=float)
         sample_score = np.array(-99.0, dtype=float)
 
+    # Set up save_path
+    colours = ('{}-{}_{}-{}').format(bands[0], bands[1], bands[2], bands[3])
+
     # Identify which cluster each object belongs to
     objects_per_cluster = np.zeros(max_num_clusters, dtype=np.int16)
     for i in range(0, number_clusters):
@@ -545,12 +497,12 @@ def kmeans(s_path, bands, cluster_data, greatdata, number_clusters, make_plots,
             write_cluster_stats(s_path, 'kmeans', number_clusters, i,
                                 objects_per_cluster[i], centers[i],
                                 x_cluster, score,
-                                sample_score, cent_test)
+                                sample_score, cent_test, colours)
         else:
             write_cluster_stats(s_path, 'kmeans', number_clusters, i,
                                 objects_per_cluster[i], centers[i],
                                 x_cluster, score,
-                                sample_score[labels == i], cent_test)
+                                sample_score[labels == i], cent_test, colours)
 
     # Format for writing results
     objects_per_cluster.sort()  # sort from smallest to largest
@@ -595,15 +547,15 @@ def ds9_catalogue(clustering, n_clust, cluster_num, waves, x, y, save_):
     '''Create file with list of object x-y positions for each cluster'''
     colours = ('{}-{}_{}-{}').format(waves[0], waves[1], waves[2], waves[3])
     path_ = ('{}{}{}{}{}').format(save_, figure_save_symbol, colours,
-                                  figure_save_symbol, 'ds9')
+                                  figure_save_symbol, 'ds9_' + clustering)
     if not os.path.exists(path_):
-        os.makedirs(path_)    
+        os.makedirs(path_)
 
     ds_col = ['red', 'green', 'blue', 'cyan', 'magenta', 'black', 'white',
               'yellow']
     for i in range(0, n_clust):
-        file_name = 'ds9_{}_{}cl_cluster-{}_{}-{}vs{}-{}.reg'.format(clustering,
-                                                          str(n_clust), str(i+1),
+        file_name = 'ds9_{}cl_cluster-{}_{}-{}vs{}-{}.reg'.format(str(n_clust),
+                                                          str(i+1),
                                                           waves[0], waves[1],
                                                           waves[2], waves[3])
         x_coord = np.array(x[cluster_num == i])
@@ -712,7 +664,7 @@ def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
                      fontsize=16)
         ax.legend(loc='lower right')
 
-        file_name = 'kmeans_xy_{}cl_{}-{}vs{}-{}.png'.format(str(number_clusters),
+        file_name = 'kmeans_col_{}cl_{}-{}vs{}-{}.png'.format(str(number_clusters),
                                                              bands[0], bands[1], bands[i*2],
                                                              bands[i*2+1])
         colours = ('{}-{}_{}-{}').format(bands[0], bands[1], bands[i*2],
@@ -873,16 +825,17 @@ def affinity_propagation_results(save_path, name, bands,
 
 
 def write_cluster_stats(save_path, clustering, n_clust, cluster, n_obj,
-                        center, c_data, t_score, c_score, cen_test):
+                        center, c_data, t_score, c_score, cen_test, cols):
     header = '# clustering total_clust clust_num n_obj t_scr c_scr rms avg_dist '\
              'max_dist min_dist stdev cen_1 cen_2' \
-             ' avg_col_1 avg_col_2'  # avg_col_3 avg_col_4 avg_col_5 '\
-              # cen_3 cen_4 cen_5 cen_6'\ # 'avg_col_6'
+             ' avg_col_1 avg_col_2'
     if cen_test == 0:
         name = 'cluster_statistics.txt'
     else:
         name = 'cent_test_statistics.txt'
-    test_path = '{}{}{}'.format(save_path, figure_save_symbol, name)
+
+    test_path = '{}{}{}{}{}'.format(save_path, figure_save_symbol, cols,
+                                    figure_save_symbol, name)
     if not os.path.exists(test_path):
         create_path = os.path.join(save_path, name)
         cluster_statistics = open(create_path, "a")

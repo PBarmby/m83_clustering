@@ -1,0 +1,1 @@
+CIRCLE(1193.91,3990.07,15) # color = yellow
