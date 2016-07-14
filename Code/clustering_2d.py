@@ -834,14 +834,14 @@ def write_cluster_stats(save_path, clustering, n_clust, cluster, n_obj,
     else:
         name = 'cent_test_statistics.txt'
 
-    test_path = '{}{}{}{}{}'.format(save_path, figure_save_symbol, cols,
-                                    figure_save_symbol, name)
+    test_path = '{}{}{}{}'.format(save_path, figure_save_symbol, cols,
+                                  figure_save_symbol)
     if not os.path.exists(test_path):
-        create_path = os.path.join(save_path, name)
+        create_path = os.path.join(test_path, name)
         cluster_statistics = open(create_path, "a")
         cluster_statistics.write(header + '\n')
         cluster_statistics.close()
-    cluster_statistics_path = os.path.join(save_path, name)
+    cluster_statistics_path = os.path.join(test_path, name)
     cluster_statistics = open(cluster_statistics_path, "a")
     
     # Calculate distance metrics
