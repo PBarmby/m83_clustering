@@ -1,3 +1,0 @@
-CIRCLE(3863.72,2178.55,15) # color = black
-CIRCLE(3871.09,2249.93,15) # color = black
-CIRCLE(3897.75,2251.97,15) # color = black
