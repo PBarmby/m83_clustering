@@ -248,13 +248,11 @@ def inertia_fluctuations(results_table, path):
 def cluster_centers_plot(cluster_data, path):
     '''Plot the centers of each cluster after a center_test'''
     n_trials = np.arange(0, len(cluster_data[cluster_data['clust_num'] == 1]))
-    cluster_centers = np.array(cluster_data['clust_num', 'cen_1', 'cen_2',
-                                            'cen_3', 'cen_4', 'cen_5',
-                                            'cen_6'])
+    cluster_centers = np.array(cluster_data['clust_num', 'cen_1', 'cen_2'])
     n_clusters = max(cluster_data['clust_num'])
     fig = plt.figure()
-    for c in range(1, 7):
-        ax = fig.add_subplot(3, 2, c)
+    for c in range(1, 2):
+        ax = fig.add_subplot(1, 2, c)
         for i in range(0, len(n_trials)):
             for k in range(0, len(cluster_centers)):
                 if cluster_centers['clust_num'][k] == 1:
@@ -262,7 +260,7 @@ def cluster_centers_plot(cluster_data, path):
                         ax.scatter(i, cluster_centers['cen_' + str(c)][n],
                                    s=10)
         ax.set_ylabel('Colour ' + str(c) + ' Cluster Centers', fontsize=10)
-        if c > 4:
+        if c > 1:
             ax.set_xlabel('Trial', fontsize=10)
     plt.suptitle('50 Trials vs. Cluster Centers in each Colour')
     filename = 'cluster_centers.png'
