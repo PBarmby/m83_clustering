@@ -52,7 +52,7 @@ max_num_clusters = 40
 # Set the base path and directory symbol for MAC or PC OS
 base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
 # base_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\'  # PC
-figure_save_symbol = '//'  # MAC
+figure_save_symbol = '/'  # MAC
 # figure_save_symbol = '\\'  # PC
 
 # defined functions
@@ -834,14 +834,18 @@ def write_cluster_stats(save_path, clustering, n_clust, cluster, n_obj,
     else:
         name = 'cent_test_statistics.txt'
 
-    test_path = '{}{}{}{}'.format(save_path, figure_save_symbol, cols,
-                                  figure_save_symbol)
+    colour_path = '{}{}{}'.format(save_path, figure_save_symbol, cols)
+    if not os.path.exists(colour_path):
+        os.makedirs(colour_path)
+    test_path = '{}{}{}{}{}'.format(save_path, figure_save_symbol, cols,
+                                    figure_save_symbol, name)
+
     if not os.path.exists(test_path):
-        create_path = os.path.join(test_path, name)
+        create_path = os.path.join(colour_path, name)
         cluster_statistics = open(create_path, "a")
         cluster_statistics.write(header + '\n')
         cluster_statistics.close()
-    cluster_statistics_path = os.path.join(test_path, name)
+    cluster_statistics_path = os.path.join(colour_path, name)
     cluster_statistics = open(cluster_statistics_path, "a")
     
     # Calculate distance metrics
