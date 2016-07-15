@@ -33,3 +33,37 @@ Silhouette Score = \frac{b - a}{\textit{max}\big(a, b\big)}
 where $a$ is the mean intra-cluster distance, and $b$ is the distance between a point and the nearest cluster that point is not a member of.
 In addition to the average score of the clustering, the average score for each cluster within the clustering was computed.
 The cluster score determines what is driving the average score, and uncovers which clusters are most compact.
+
+\subsubsection{Cluster Statistics}
+Various statistics were calculated for each cluster within a clustering to help describe the similarity between the objects in a given cluster.
+The standard deviation and average colour was calculated for each colour and each cluster within a clustering. 
+These metrics describe the distribution of the objects in the colour-colour space within a cluster. 
+Clusters that had large standard deviations were viewed as too dissimilar to be a meaningful cluster, and the clustering parameters were changed or the clustering was removed. 
+Clusters whose averages and medians were not close were also discredited. 
+
+The fractional sizes of each cluster were also calculated.
+This metric describes the distribution of objects between clusters, and provided a complete way to evaluate a given clustering. 
+If a clustering segmented the objects into a large cluster followed by several smaller ones, the clustering was investigated further, as this segmentation could mean one of two things. 
+This type of clustering could be a result of the identification of interesting objects, in which case the clustering algorithm was able to identify the objects and place them in the same cluster.
+However, this type of clustering could also be a result of the underlying distribution of the data, as the clustering techniques are largely drawn to areas of high density.
+If this is the case, the clustering only created the smaller clusters as a result of the parameters imposed on the clustering.
+
+\subsubsection{Parameter Relationships}
+Aside from metrics, the relationships between various metrics were investigated to determine the optimal clustering.
+Figure~\ref{fig:sscore} shows the relationship between the silhouette score and the number of clusters imposed on the data for each type of clustering. 
+The optimal number of clusters is found where the relation flattens.
+For K-Means, this point is between 5-10 clusters.
+The Mean-Shift scores do not follow a similar distribution as K-Means, as the accuracy of Mean-Shift is more directly related to the bandwidth parameter, seen in Figure~\ref{fig:bwscore}.
+\begin{figure*}
+\centering
+\includegraphics[width=0.5\textwidth]{figs/silhouette_score_relation}
+\caption{Distribution of the silhouette score as a result of the number of clusters imposed. The \textit{blue} points are the scores of Mean-Shift clustering, \textit{red} points are scores of K-Means, and \textit{yellow} points are scores of AP.}
+\label{fig:sscore}
+\end{figure*}
+
+\begin{figure*}
+\centering
+\includegraphics[width=0.5\textwidth]{figs/meanshift_parameters}
+\caption{Distribution of the silhouette score as a function of bandwidth, and the distribution of the number of clusters as a function of bandwidth.}
+\label{fig:bwscore}
+\end{figure*}
