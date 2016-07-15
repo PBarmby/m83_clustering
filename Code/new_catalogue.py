@@ -9,6 +9,25 @@ import os
 import os.path
 
 
+def label_cat():
+    label_titles = ['PN', 'wr']
+    for i in range(0, len(label_titles)):
+        data = Table.read('data_v3.txt', format='ascii.commented_header',
+                          guess=False)
+        object_cat = Table.read('C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\cat_data\\m83_ers_pubcat_by_object\\' + label_titles[i] + '_catalogue.txt',
+                                format='ascii.commented_header', guess=False)
+        remove = []
+        object_id = object_cat['id_']
+        for r in range(0, len(data)):
+            if data['id_'][r] not in object_id:
+                remove.append(r)
+        data.remove_rows(remove)
+        label_table = Table(data=data)
+        label_table.write(label_titles[i] + '_labels.txt',
+                          format='ascii.commented_header')
+    return
+
+
 def mk_cat():
     broad_correction = 10
     narrow_correction = 15

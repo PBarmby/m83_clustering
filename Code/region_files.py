@@ -61,10 +61,9 @@ def make_region_files(file_name, file_path):
 def make_ds9_files(file_name, file_path):
     ''' Make ds9 compatibale region files'''
     catalogue = load_catalogue_file(file_name, file_path)
-    object_type = catalogue['Type'][0]
     object_id = catalogue['id_'] 
-    data = Table.read('C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\Code\\data_v3.txt', format='ascii.commented_header',
-                      guess=False)
+    data = Table.read('C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\Code\\data_v3.txt',
+                      format='ascii.commented_header', guess=False)
     coordinates_x = data['ra']
     coordinates_y = data['dec']
     object_x_coordinate = np.arange(0, len(object_id), dtype=float)
@@ -131,6 +130,26 @@ def dbase_ra_dec(file_name, file_path):
     ra_dec_tab = Table(data=[coordinates_x, coordinates_y])
     ra_dec_tab.write(region_file_, format='ascii.no_header')
     return()
+
+
+def label_cat(file_name, file_path):
+    ''' Make label catalogue'''
+    catalogue = load_catalogue_file(file_name, file_path)
+    object_id = catalogue['id_']
+    object_type = catalogue['Type'][0]
+    data = Table.read('C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\Code\\data_v3.txt',
+                      format='ascii.commented_header', guess=False)
+
+    reg_file_name = '{}_label_catalogue.txt'.format('starcluster')
+    reg_file_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\{}'.format(file_path)
+    region_file_ = os.path.join(reg_file_path, reg_file_name)
+    region_file = open(region_file_, "w")
+
+    for w in range(0, len(object_id)):
+        region_file.write(str(data[data['id_'] == object_id[w]]))
+
+    region_file.close()
+    return
 
 
 def load_catalogue_file(name, path):
