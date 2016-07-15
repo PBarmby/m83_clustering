@@ -94,8 +94,8 @@ def ra_dec(file_name, file_path):
     object_id = catalogue['id_'] 
     data = Table.read('C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\Code\\data_v3.txt', format='ascii.commented_header',
                       guess=False)
-    coordinates_x = data['ra']
-    coordinates_y = data['dec']
+    coordinates_x = catalogue['RA']
+    coordinates_y = catalogue['Dec']
     object_x_coordinate = np.arange(0, len(object_id), dtype=float)
     object_y_coordinate = np.arange(0, len(object_id), dtype=float)
 
