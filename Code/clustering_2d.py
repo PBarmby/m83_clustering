@@ -271,7 +271,7 @@ def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
     '''---------------------------------------------------------------------'''
     # TODO: SHOULD THE DATA BE SCALED????
     # X = cluster_data
-    X_scaled = preprocessing.scale(cluster_data)  # cluster_data
+    X_scaled = cluster_data  # preprocessing.scale(cluster_data)  
 
     # Compute clustering
     ms = MeanShift(bandwidth=bw_input, bin_seeding=False, cluster_all=True)
@@ -286,8 +286,8 @@ def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
 
     # Compute silhouette_score for entire cluster or individuals
     if len(X_scaled) > n_clusters_ > 1:
-        average_score = metrics.silhouette_score(cluster_data, labels)
-        sample_score = metrics.silhouette_samples(cluster_data, labels)
+        average_score = metrics.silhouette_score(X_scaled, labels)
+        sample_score = metrics.silhouette_samples(X_scaled, labels)
     else:
         average_score = np.array(-99.0, dtype=float)
         sample_score = np.array(-99.0, dtype=float)
@@ -458,7 +458,7 @@ def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
     return(n_clusters_, ap_score, total_objects, objects_per_cluster)
 
 
-def kmeans(s_path, bands, cluster_data, greatdata, number_clusters, make_plots,
+def kmeans(s_path, bands, cluster_data_, greatdata, number_clusters, make_plots,
            output_cluster_id, x, y, id_data, ds9_cat, cent_test):
     '''---------------------------------------------------------------------'''
     '''Perform K-means clustering on colours constructed from HST photometry
@@ -468,11 +468,10 @@ def kmeans(s_path, bands, cluster_data, greatdata, number_clusters, make_plots,
     # TODO: SHOULD THE DATA BE SCALED???
     # X_scaled = preprocessing.scale(cluster_data)
     # Data pre-processing
-    scaler = preprocessing.StandardScaler()
-
+    cluster_data = cluster_data_ # preprocessing.scale(cluster_data_)  
     # Compute K-Means clustering
     km = KMeans(number_clusters, init='random')
-    km.fit(preprocessing.scale(cluster_data))
+    km.fit(cluster_data)
 
     # Compute clustering statistics
     sum_of_squares = km.inertia_
@@ -587,7 +586,7 @@ def meanshift_colour(path, X, n_clusters, labels_, centers, bands):
                        color=colors[k], edgecolor='k', s=100, zorder=2)
 
         # Format plot
-        ax.xaxis.set_major_locator(plt.MultipleLocator(0.5))
+        ax.xaxis.set_major_locator(plt.MultipleLocator(1.0))
         ax.set_xlabel(bands[0] + ' - ' + bands[1])
         ax.set_ylabel(bands[i*2]+' - '+bands[i*2+1])
         ax.set_title('mean-shift ' + str(n_clusters) + ' : '+bands[0]+'-'+bands[1]+' vs. '+bands[i*2]+'-'+bands[i*2+1],
