@@ -5,17 +5,31 @@ Since the average survey is limited to four filters, different combinations of f
 Colours were constructed using the difference between two wavelengths. For a given combination of four filters, all possible colour combinations were used. % Change as needed
 The feature space was constructed in two and three dimensions, to add a layer of analysis that isn't typically found in colour-colour space.
 
+\subsection{Clustering Process}
 Clustering was performed using all three methods for each colour combination. 
-The methods were used independantly and in unison in order to determine the optimal object classification.
-Mean-Shift and Affinity Propagation were used prior to k-means in order to determine a reasonable number of clusters in the data set.
-Once these methods were run, the number of clusters used for k-means input was determined from a combination of Mean-Shift and AP output, and general inspection.
-
-\section{Mean-Shift Clustering}
-\section{Affinity Propagation}
-\section{K-Means Clustering}
+The methods were used independantly and in unison in order to determine the optimal clustering.
+The following process allowed the investigation of the effect of all paramters on each clustering technique, leading to an optimal clustering. 
 \begin{enumerate}
-\item Clustering process
-\item Mean-Shift Analysis 
-\item Affinity Propagation Analysis 
-\item K-Means Analysis
+\item \textbf{Mean-Shift:} Mean-Shift clustering was performed first by estimating the bandwidth paramter with the $estimate_bandwidth$ function in $scikit_learn$.
+Following the initial clustering, a "bandwidth hierarchy" was created by performing the clustering again with bandwidth values between $\pm$ intervals of $0.1$ from the estimated bandwidth.
+
+\item \textbf{AP:} Affinity Propagation clustering was then performed by setting the preferences to 10\% of the number of objects in the data set, and setting the damping factor to $0.95$.
+Following that clustering, an "Affinity hierarchy" was created by varrying the damping factor, and preference value to determine the effect of each parameter. 
+
+\item \textbf{K-Means:} K-Means clustering was performed last.
+The first two clusterings were performed using the number of clusters determined from the initial clusterings by Mean-Shift and AP.
+Next, K-Means was performed with $K = \pm 4$ from the original clustering. 
 \end{enumerate}
+\subsection{Selecting the Clustering}
+In order to determine the optimal clustering, a series of metrics were used.
+For each clustering, the silhouette score, cluster centers, root mean square, average and standard devation of each colour, and the distances between points in each cluster were calculated. 
+\subsubsection{Silhouette Score}
+The silhouette score is a metric used to describe the compactness of a cluster in a given clustering and is calculated as an average of all samples in a clustering.  
+The silhouette score is given by:
+\begin{equation}
+\label{eq:ss}
+Silhouette Score = \frac{b - a}{\textit{max}\big(a, b\big)}
+\end{equation}
+where $a$ is the mean intra-cluster distance, and $b$ is the distance between a point and the nearest cluster that point is not a member of.
+In addition to the average score of the clustering, the average score for each cluster within the clustering was computed.
+The cluster score determines what is driving the average score, and uncovers which clusters are most compact.
