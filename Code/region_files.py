@@ -89,18 +89,18 @@ def make_ds9_files(file_name, file_path):
 
 def ra_dec(file_name, file_path):
     '''Make ds9 compatable xy file with ra and dec coordinates'''
-    catalogue = catalogue = load_catalogue_file(file_name, file_path)
+    catalogue = load_catalogue_file(file_name, file_path)
     object_type = catalogue['Type'][0]
     object_id = catalogue['id_'] 
     data = Table.read('C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\Code\\data_v3.txt', format='ascii.commented_header',
                       guess=False)
-    coordinates_x = catalogue['RA']
-    coordinates_y = catalogue['Dec']
+    coordinates_x = data['ra']
+    coordinates_y = data['dec']
     object_x_coordinate = np.arange(0, len(object_id), dtype=float)
     object_y_coordinate = np.arange(0, len(object_id), dtype=float)
 
     reg_file_name = '{}_ra_dec.txt'.format('starcluster')
-    reg_file_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\{}'.format(file_path)
+    reg_file_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\{}\\ra_dec'.format(file_path)
 
     for i in range(0, len(object_id)):
         object_x_coordinate[i] = coordinates_x[data['id_'] == object_id[i]]
@@ -113,6 +113,23 @@ def ra_dec(file_name, file_path):
                                                     object_y_coordinate[w])
         region_file.write(coordinate_string + '\n')
     region_file.close()
+    return()
+
+
+def dbase_ra_dec(file_name, file_path):
+    '''Make ds9 compatable xy file with ra and dec coordinates'''
+    catalogue = load_catalogue_file(file_name, file_path)
+    object_type = catalogue['Type'][0]
+    object_id = catalogue['id_'] 
+    data = Table.read('C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\Code\\data_v3.txt', format='ascii.commented_header',
+                      guess=False)
+    coordinates_x = catalogue['RA']
+    coordinates_y = catalogue['Dec']
+    reg_file_name = '{}_ra_dec.txt'.format('starcluster')
+    reg_file_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\{}\\ra_dec'.format(file_path)
+    region_file_ = os.path.join(reg_file_path, reg_file_name)
+    ra_dec_tab = Table(data=[coordinates_x, coordinates_y])
+    ra_dec_tab.write(region_file_, format='ascii.no_header')
     return()
 
 
