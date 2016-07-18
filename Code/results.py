@@ -99,7 +99,7 @@ def silhouette_vs_nclust(results_table, path):
     # Remove no scores
     remove = []
     for i in range(0, len(results_table)):
-        if results_table['score'][i] == 'N/A':
+        if results_table['score'][i] == -99.0:
             remove.append(i)
     results_table.remove_rows(remove)
 
