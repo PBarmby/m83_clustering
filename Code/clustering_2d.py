@@ -109,14 +109,14 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
             else:
                 b_width_input = estimate_bandwidth(cluster_data_)
 
-            ms_n_clusters, bandwidth, ms_score, ms_obj, ms_obj_p_cluster = \
+            ms_n_clusters, bandwidth, ms_score, ms_obj, ms_obj_p_cluster, col = \
                 meanshift(plot_path, experiments[i], cluster_data_,
                           plots, b_width_input, id_list, id_data, x_data,
                           y_data, ds9_cat, n)
             if "yes" in write_res:
                 meanshift_results(results_path, results_title, experiments[i],
                                   ms_n_clusters, ms_score, bandwidth, ms_obj,
-                                  ms_obj_p_cluster)
+                                  ms_obj_p_cluster, col)
 
         if "hms" in analysis:
             if 'experiments.txt' in bw_in:
@@ -135,7 +135,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
             else: 
                 damping = 0.95
                 preferences = -len(cluster_data_)*0.1
-            af_n_clusters, af_score, af_obj, af_obj_p_cluster = \
+            af_n_clusters, af_score, af_obj, af_obj_p_cluster, col = \
                 affinity_propagation(plot_path, experiments[i], cluster_data_,
                                      plots, damping, preferences, id_list,
                                      id_data, x_data, y_data, ds9_cat, n)
@@ -143,7 +143,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                 affinity_propagation_results(results_path, results_title,
                                              experiments[i], af_n_clusters,
                                              af_score, damping, preferences,
-                                             af_obj, af_obj_p_cluster)
+                                             af_obj, af_obj_p_cluster, col)
 
         if "kmeans" in analysis:
             if "experiments.txt" in kmeans_input:
@@ -163,7 +163,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                 high, low = 1, 0
 
             for a in range(km_n_clusters - low, km_n_clusters + high):
-                km_score, num_obj, inertia = kmeans(plot_path, experiments[i],
+                km_score, num_obj, inertia, col = kmeans(plot_path, experiments[i],
                                            cluster_data_, greatdata,
                                            a, plots, id_list,
                                            x_data, y_data, id_data, ds9_cat,
@@ -172,7 +172,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                 if "yes" in write_res:
                     kmeans_results(results_path, results_title, experiments[i],
                                    kmeans_input, a, km_score, total_obj,
-                                   num_obj, inertia)
+                                   num_obj, inertia, col)
 
         if "center_test" in analysis:
             n_clusters = experiments['n_clusters'][i]
@@ -326,7 +326,7 @@ def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
         ds9_catalogue('meanshift', n_clusters_, labels, bands, x, y, s_path)
 
     return(n_clusters_, bw_input, average_score, total_objects,
-           objects_per_cluster)
+           objects_per_cluster, colours)
 
 
 def hms(s_path, bands, cluster_data, make_plot, bw_input, output_id, id_data,
@@ -455,7 +455,7 @@ def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
     if "yes" in ds9_cat:
         ds9_catalogue('affinity', n_clusters_, labels, bands, x, y, s_path)
 
-    return(n_clusters_, ap_score, total_objects, objects_per_cluster)
+    return(n_clusters_, ap_score, total_objects, objects_per_cluster, colours)
 
 
 def kmeans(s_path, bands, cluster_data_, greatdata, number_clusters, make_plots,
@@ -518,7 +518,7 @@ def kmeans(s_path, bands, cluster_data_, greatdata, number_clusters, make_plots,
     if "yes" in ds9_cat:
         ds9_catalogue('kmeans', number_clusters, labels, bands, x, y, s_path)
     
-    return(score, objects_per_cluster, sum_of_squares)
+    return(score, objects_per_cluster, sum_of_squares, colours)
 
 
 def id_catologue(clustering, number_clusters, cluster_number, waves, id_data,
@@ -708,10 +708,11 @@ def affinity_plot(labels, cluster_center_indices, X, n_clusters, bands,
 
 
 def meanshift_results(save_path, name, bands, n_clusters,
-                      s_score, b_width, total_obj, obj_per_cluster):
+                      s_score, b_width, total_obj, obj_per_cluster, colours):
 
     # Create MS results file if it doesn't exist. If it does add to it.
-    test_path = '{}{}{}'.format(save_path, figure_save_symbol, name)
+    test_path = '{}{}{}{}{}'.format(save_path, figure_save_symbol, colours,
+                                    figure_save_symbol, name)
     header = '#clustering band1 band2 band3 band4 '\
              'b_width damp '\
              'pref km_in inertia score n_clust total_objects c_1 c_2 c_3 c_4 c_5 c_6 '\
@@ -747,10 +748,11 @@ def meanshift_results(save_path, name, bands, n_clusters,
     return()
 
 
-def kmeans_results(save_path, name, bands, input_,
-                   n_clusters, s_score, total_obj, obj_per_cluster, sos):
+def kmeans_results(save_path, name, bands, input_, n_clusters,
+                   s_score, total_obj, obj_per_cluster, sos, colours):
     # Create KM results file if it doesn't exist. If it does add to it.
-    test_path = '{}{}{}'.format(save_path, figure_save_symbol, name)
+    test_path = '{}{}{}{}{}'.format(save_path, figure_save_symbol, colours,
+                                    figure_save_symbol, name)
     header = '#clustering band1 band2 band3 band4 '\
              'b_width damp '\
              'pref km_in inertia score n_clust total_objects c_1 c_2 c_3 c_4 c_5 c_6 '\
@@ -787,9 +789,10 @@ def kmeans_results(save_path, name, bands, input_,
 
 def affinity_propagation_results(save_path, name, bands,
                                  n_clusters, s_score, damp, pref, total_obj,
-                                 obj_per_cluster):
+                                 obj_per_cluster, colours):
     # Create KM results file if it doesn't exist. If it does add to it.
-    test_path = '{}{}{}'.format(save_path, figure_save_symbol, name)
+    test_path = '{}{}{}{}{}'.format(save_path, figure_save_symbol, colours,
+                                    figure_save_symbol, name)
     header = '#clustering band1 band2 band3 band4 '\
              'b_width damp '\
              'pref km_in inertia score n_clust total_objects c_1 c_2 c_3 c_4 c_5 c_6 '\
