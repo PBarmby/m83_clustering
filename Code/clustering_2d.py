@@ -711,6 +711,9 @@ def meanshift_results(save_path, name, bands, n_clusters,
                       s_score, b_width, total_obj, obj_per_cluster, colours):
 
     # Create MS results file if it doesn't exist. If it does add to it.
+    colour_path = '{}{}{}'.format(save_path, figure_save_symbol, colours)
+    if not os.path.exists(colour_path):
+        os.makedirs(colour_path)
     test_path = '{}{}{}{}{}'.format(save_path, figure_save_symbol, colours,
                                     figure_save_symbol, name)
     header = '#clustering band1 band2 band3 band4 '\
@@ -720,11 +723,11 @@ def meanshift_results(save_path, name, bands, n_clusters,
              'c_20 c_21 c_22 c_23 c_24 c_25 c_26 c_27 c_28 c_29 c_30 c_31 c_32 '\
              'c_33 c_34 c_35 c_36 c_37 c_38 c_39 c_40'
     if not os.path.exists(test_path):
-        create_path = os.path.join(save_path, name)
+        create_path = os.path.join(colour_path, name)
         ms_results_file = open(create_path, "a")
         ms_results_file.write(header + '\n')
         ms_results_file.close()
-    ms_results_path = os.path.join(save_path, name)
+    ms_results_path = os.path.join(colour_path, name)
     ms_results_file = open(ms_results_path, "a")
 
     # Create strings for file
@@ -751,6 +754,9 @@ def meanshift_results(save_path, name, bands, n_clusters,
 def kmeans_results(save_path, name, bands, input_, n_clusters,
                    s_score, total_obj, obj_per_cluster, sos, colours):
     # Create KM results file if it doesn't exist. If it does add to it.
+    colour_path = '{}{}{}'.format(save_path, figure_save_symbol, colours)
+    if not os.path.exists(colour_path):
+        os.makedirs(colour_path)
     test_path = '{}{}{}{}{}'.format(save_path, figure_save_symbol, colours,
                                     figure_save_symbol, name)
     header = '#clustering band1 band2 band3 band4 '\
@@ -760,11 +766,11 @@ def kmeans_results(save_path, name, bands, input_, n_clusters,
              'c_20 c_21 c_22 c_23 c_24 c_25 c_26 c_27 c_28 c_29 c_30 c_31 c_32 '\
              'c_33 c_34 c_35 c_36 c_37 c_38 c_39 c_40'
     if not os.path.exists(test_path):
-        create_path = os.path.join(save_path, name)
+        create_path = os.path.join(colour_path, name)
         km_results_file = open(create_path, "a")
         km_results_file.write(header + '\n')
         km_results_file.close()
-    km_results_path = os.path.join(save_path, name)
+    km_results_path = os.path.join(colour_path, name)
     km_results_file = open(km_results_path, "a")
 
     # Create strings for file
@@ -791,6 +797,9 @@ def affinity_propagation_results(save_path, name, bands,
                                  n_clusters, s_score, damp, pref, total_obj,
                                  obj_per_cluster, colours):
     # Create KM results file if it doesn't exist. If it does add to it.
+    colour_path = '{}{}{}'.format(save_path, figure_save_symbol, colours)
+    if not os.path.exists(colour_path):
+        os.makedirs(colour_path)
     test_path = '{}{}{}{}{}'.format(save_path, figure_save_symbol, colours,
                                     figure_save_symbol, name)
     header = '#clustering band1 band2 band3 band4 '\
@@ -800,11 +809,11 @@ def affinity_propagation_results(save_path, name, bands,
              'c_20 c_21 c_22 c_23 c_24 c_25 c_26 c_27 c_28 c_29 c_30 c_31 c_32 '\
              'c_33 c_34 c_35 c_36 c_37 c_38 c_39 c_40'
     if not os.path.exists(test_path):
-        create_path = os.path.join(save_path, name)
+        create_path = os.path.join(colour_path, name)
         af_results_file = open(create_path, "a")
         af_results_file.write(header + '\n')
         af_results_file.close()
-    af_results_path = os.path.join(save_path, name)
+    af_results_path = os.path.join(colour_path, name)
     af_results_file = open(af_results_path, "a")
 
     # Create strings for file
