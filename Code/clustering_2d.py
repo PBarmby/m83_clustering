@@ -176,8 +176,8 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
 
         if "center_test" in analysis:
             n_clusters = experiments['n_clusters'][i]
-            for n in range(1, 11):
-                km_scor, num_obj, inertia = kmeans(plot_path, experiments[i],
+            for n in range(1, 20):
+                km_scor, num_obj, inertia, col = kmeans(plot_path, experiments[i],
                                           cluster_data_, greatdata,
                                           n_clusters, plots, id_list,
                                           x_data, y_data, id_data, ds9_cat,
@@ -509,7 +509,7 @@ def kmeans(s_path, bands, cluster_data_, greatdata, number_clusters, make_plots,
     # Generate plots
     if "kmeans_colour" in make_plots:
         kmeans_colour(s_path, cluster_data, number_clusters, labels,
-                      bands, centers)
+                      bands, centers, cent_test)
 
     # Output object and cluster IDs to ID.txt file
     if "yes" in output_cluster_id:
@@ -642,7 +642,7 @@ def hms_colour(path, c_data, n_clusters, labels, centers, bands):
 
 
 def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
-                  cluster_centers):
+                  cluster_centers, cent_test):
     '''Plot colour-colour diagrams for each colour space'''
 
     for i in range(1, 2):
@@ -663,12 +663,21 @@ def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
                      fontsize=16)
         ax.legend(loc='lower right')
 
-        file_name = 'kmeans_col_{}cl_{}-{}vs{}-{}.png'.format(str(number_clusters),
-                                                             bands[0], bands[1], bands[i*2],
-                                                             bands[i*2+1])
         colours = ('{}-{}_{}-{}').format(bands[0], bands[1], bands[i*2],
                                          bands[i*2+1])
-        path_ = ('{}{}{}').format(path, figure_save_symbol, colours)
+        if cent_test == 0:
+            file_name = 'kmeans_col_{}cl_{}-{}vs{}-{}.png'.format(str(number_clusters),
+                                                                  bands[0], bands[1], bands[i*2],
+                                                                  bands[i*2+1])
+
+            path_ = ('{}{}{}').format(path, figure_save_symbol, colours)
+        else:
+            file_name = 'kmeans_{}_col_{}cl_{}-{}vs{}-{}.png'.format(str(cent_test),
+                                                                  str(number_clusters),
+                                                                  bands[0], bands[1], bands[i*2],
+                                                                  bands[i*2+1])
+            path_ = ('{}{}{}{}{}').format(path, figure_save_symbol, colours,
+                                      figure_save_symbol, 'cent_test_'+str(number_clusters))
         if not os.path.exists(path_):
             os.makedirs(path_)
         pylab.savefig(os.path.join(path_, file_name))
