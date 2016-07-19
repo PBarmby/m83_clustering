@@ -6,10 +6,10 @@ import pylab
 import os
 import os.path
 
-colours = ['b', 'g', 'r', 'y', 'c', 'm']
+colours = ['b', 'g', 'y', 'r', 'c', 'm']
 
 def plot():
-    labels= ['starcluster', 'HII', 'PN', 'RSG', 'SNR', 'wr']
+    labels= ['starcluster', 'HII', 'PN', 'RSG', 'SNR', 'WR']
     plots = Table.read('plots.txt', format='ascii.commented_header',
                        guess=False)
     label_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\cat_data\\clustering_labels\\'
@@ -23,7 +23,7 @@ def plot():
         col = '{}-{}_vs_{}-{}'.format(trial['band1'], trial['band2'],
                                       trial['band3'], trial['band4'])
         print col
-        save_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\results\\labels\\{}'.format(col)
+        save_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\results\\labels'
         if not os.path.exists(save_path):
             os.makedirs(save_path)
 
@@ -35,14 +35,17 @@ def plot():
             if i == 0:
                 ax.scatter(c1_s, c2_s, c='k', s=2, zorder=i)
 
-            ax.scatter(c1, c2, marker='o', c=colours[i], s=13, zorder=i+1)
-            ax.set_title(labels[i] + ' Colour-Colour Plot')
-            ax.set_xlabel(trial['band1'] + ' - ' + trial['band2'])
-            ax.set_ylabel(trial['band3'] + ' - ' + trial['band4'])
+            ax.scatter(c1, c2, marker='o', c=colours[i], s=13, zorder=i+1,
+                       edgecolor='None', label=labels[i])
             print labels[i] + ' objects:' + str(len(c1))
-            plot_file = '{}-plot.png'.format(labels[i])
-            pylab.savefig(os.path.join(save_path, plot_file))
             sum_ = sum_ + len(c1)
+        ax.legend(loc='upper left', fontsize=8)
+        ax.set_title(col)
+        ax.set_xlabel(trial['band1'] + ' - ' + trial['band2'])
+        ax.set_ylabel(trial['band3'] + ' - ' + trial['band4'])
+            
+        plot_file = '{}-plot.png'.format(col)
+        pylab.savefig(os.path.join(save_path, plot_file))
         plt.close()
         print 'Total_obj: ' + str(sum_) + '\n'
 
