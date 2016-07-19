@@ -5,7 +5,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pylab
 import os, os.path
-import argparse
 from astropy.table import Table, Column
 
 '''-------------------------------------------------------------------------'''
@@ -288,7 +287,7 @@ def bar_graph(results_table, num_clust, path):
                 # Compute percentage of objects in each cluster and graph
                 Y = results_table[colname][num_clust==i]/results_table['total_objects'][num_clust==i].astype('float')
                 ax.bar(X, Y, color=colors[n], bottom=yprev)
-                ax.set_title('Proportional Cluster Size')
+                ax.set_title('Proportional Size - ' + str(i) + ' Clusters')
                 ax.set_xlabel('Number of Trials')
                 ax.set_ylabel('Fractional Cluster Size')
                 ax.xaxis.set_major_locator(plt.MultipleLocator(1))
@@ -301,7 +300,7 @@ def object_cluster_dist(results_table, num_clust, path):
     '''Determine which clusters hold ~99% of the objects and save percentage
     in cluster_percentage.txt'''
     filename = 'cluster_percentage.txt'
-    header = '# clustering total_clust c_1 c_2 c_3 c_4 c_5 c_6 '\
+    header = '# clustering total_obj c_1 c_2 c_3 c_4 c_5 c_6 '\
              'c_7 c_8 c_9 c_10 c_11 c_12 c_13 c_14 c_15 c_16 c_17 c_18 c_19 '\
              'c_20 c_21 c_22 c_23 c_24 c_25 c_26 c_27 c_28 c_29 c_30 c_31 c_32'\
              ' c_33 c_34 c_35 c_36 c_37 c_38 c_39 c_40'
@@ -309,7 +308,7 @@ def object_cluster_dist(results_table, num_clust, path):
     test_path = '{}\\{}'.format(path, filename)
     if not os.path.exists(test_path):
         create_path = os.path.join(path, filename)
-        cluster_percentage = open(create_path, "a")
+        cluster_percentage = open(create_path, "w")
         cluster_percentage.write(header + '\n')
         cluster_percentage.close()
     cluster_percentage_path = os.path.join(path, filename)

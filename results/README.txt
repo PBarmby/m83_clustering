@@ -10,9 +10,6 @@ wave_statistics.py: stats_experiments.txt - change bands for colour combination
 For each .txt file, band1 & band2 are colour 1, band3 & band4 are colour2.
 
 DIRECTORIES
-results/.txt files and figures:
-- various results plots that will be moved to each colour directory (fractional size, score relationships, parameter relationships)
-- final_col_statistics.txt: colour statistics for all colours determined during the week of July 15th (subject to change as a "final" usually does)
 
 results/band_positions:
 - plots of the xy coordinates of various cuts in the data set
@@ -68,6 +65,18 @@ location for all the results of the [broad-narrow, broad-broad] clustering
 		- Code/clustering_2d.py. Run from command line: python clustering_2d.py data_v3.txt -rp (path) -pp (path) -a (clusterings) -p (plots) -kmi (Kmeans input) -bwi (MS input) -afp (affinity input) -wr (output results files: Y/N)
 	- 05aperture_results_2d.txt: file containing summary of each clustering 
 		- Code/clustering_2d.py. Run from command line: python clustering_2d.py data_v3.txt -rp (path) -pp (path) -a (clusterings) -p (plots) -kmi (Kmeans input) -bwi (MS input) -afp (affinity input) -wr (output results files: YES)
+
+- /[broad_narrow]/clustering/broad-narrow_broad-broad/results: plots of differnet relationships between clustering parameters and cluster metrics 
+	- n_clusters_vs_Fractional_Size.png: bar graph of the fractional size of each cluster in a clustering for each trial with that n_clusters
+		- Code/results.py {bar_graph(results_table, n_clust, path)}: Run from python console.
+	- inertia_plot.png: plot of the sum of squares for all k-means trials for a combination
+		- Code/results.py {inertia_fluctuations(results_table, path)}: Run from python console.
+	- meanshift_parameters.png: plot of the bandwidth parameter against the silhouette score and n_clusters for all trials
+		Code/results.py {bandwidth_vs_score(results_table, path)}: Run from python console.
+	- silhouette_score.png: plot of the silhouette score against the number of clusters and fractional size of the largest and smallest cluster
+		- Code/results.py {silhouette_vs_nclust(results_table, path)}: Run from python console.
+	- cluster_percentage.txt: file containing the cumulative fractional size of each cluster in a clustering
+		- Code/results.py {object_cluster_distribution(results_table, n_clust, path)}: Run from python console.
 
 - /[broad_narrow]/colour_colour: plots of the colour-colour distributions for the combinations
 	- Code/plots.py {colour_v_colour}. Run from command line: python plots.py data_v3.txt -pp (path) -p cvc
