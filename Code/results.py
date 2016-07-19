@@ -249,11 +249,11 @@ def cluster_centers_plot(cluster_data, path):
     # Find the number of trials
     n_trials = np.arange(0, len(cluster_data[cluster_data['clust_num'] == 1]))
     # Make table of cluster centers and cluster number
-    # cen_1: colour 1 center coordinate    
+    # cen_1: colour 1 center coordinate  
     cluster_centers = np.array(cluster_data['clust_num', 'cen_1', 'cen_2'])
     # Find the number of clusters imposed
     n_clusters = max(cluster_data['clust_num'])
-    fig = plt.figure()
+    fig = plt.figure(figsize=(12, 8))
     for c in range(1, 3):  # Loop over the number of colours used
         ax = fig.add_subplot(1, 2, c)  # Create subplot for each colour
         for i in range(0, len(n_trials)):  # Loop over each trial in each colour
@@ -264,8 +264,8 @@ def cluster_centers_plot(cluster_data, path):
                                    s=10, c=colors[n-k])  # Plot the center of each cluster
         ax.set_ylabel('Colour ' + str(c) + ' Cluster Centers', fontsize=10)
         ax.set_xlabel('Trial', fontsize=10)
-    plt.suptitle('50 Trials vs. Cluster Centers in each Colour')
-    filename = 'cluster_centers.png'
+    plt.suptitle(str(len(n_trials)) + ' Trials vs. Cluster Centers in each Colour')
+    filename = '{}_cl_cluster_centers.png'.format(str(n_clusters))
     pylab.savefig(os.path.join(path, filename))
     plt.show()
 
