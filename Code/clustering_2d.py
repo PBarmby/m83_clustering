@@ -852,7 +852,7 @@ def write_cluster_stats(save_path, clustering, n_clust, cluster, n_obj,
     if cen_test == 0:
         name = 'cluster_statistics.txt'
     else:
-        name = 'cent_test_statistics.txt'
+        name = '{}cl_cent_test_statistics.txt'.format(n_clust)
 
     colour_path = '{}{}{}'.format(save_path, figure_save_symbol, cols)
     if not os.path.exists(colour_path):
