@@ -123,7 +123,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
 
         if "hms" in analysis:
             if 'experiments.txt' in bw_in:
-                b_width_input = experiments['bandwidth'][i]
+                b_width_input = experiments['b_width'][i]
             else:
                 b_width_input = 'estimate'
 
@@ -196,7 +196,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
 
         if "center_test" in analysis:
             n_clusters = experiments['n_clusters'][i]
-            for n in range(1, 20):
+            for n in range(1, 21):
                 km_scor, num_obj, inertia, col = kmeans(plot_path, experiments[i],
                                           cluster_data_, greatdata,
                                           n_clusters, plots, id_list,
