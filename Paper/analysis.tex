@@ -49,21 +49,24 @@ However, this type of clustering could also be a result of the underlying distri
 If this is the case, the clustering only created the smaller clusters as a result of the parameters imposed on the clustering.
 
 \subsubsection{Parameter Relationships}
-Aside from metrics, the relationships between various metrics were investigated to determine the optimal clustering.
+In addition to metrics, the relationships between various metrics were investigated to determine the optimal clustering.
 Figure~\ref{fig:sscore} shows the relationship between the silhouette score and the number of clusters imposed on the data for each type of clustering. 
 The optimal number of clusters is found where the relation flattens.
 For K-Means, this point is between 5-10 clusters.
-The Mean-Shift scores do not follow a similar distribution as K-Means, as the accuracy of Mean-Shift is more directly related to the bandwidth parameter, seen in Figure~\ref{fig:bwscore}.
-\begin{figure*}
+
+\begin{figure}[H]
 \centering
-\includegraphics[width=0.5\textwidth]{figs/silhouette_score_relation}
+\includegraphics[width=\linewidth]{figs/silhouette_score_relation}
 \caption{Distribution of the silhouette score as a result of the number of clusters imposed. The \textit{blue} points are the scores of Mean-Shift clustering, \textit{red} points are scores of K-Means, and \textit{yellow} points are scores of AP.}
 \label{fig:sscore}
-\end{figure*}
+\end{figure}
 
-\begin{figure*}
+The Mean-Shift scores do not follow a similar distribution as K-Means, as the accuracy of Mean-Shift is more directly related to the bandwidth parameter, seen in Figure~\ref{fig:bwscore}.
+The optimal Mean-Shift clustering was chosen by finding the bandwidth where the relation between the bandwidth and number of clusters reached an elbow, which was usually between 3 - 5 clusters.
+
+\begin{figure}[H]
 \centering
-\includegraphics[width=0.5\textwidth]{figs/meanshift_parameters}
+\includegraphics[width=\linewidth]{figs/meanshift_parameters}
 \caption{Distribution of the silhouette score as a function of bandwidth, and the distribution of the number of clusters as a function of bandwidth.}
 \label{fig:bwscore}
-\end{figure*}
+\end{figure}
