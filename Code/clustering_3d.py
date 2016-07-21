@@ -652,12 +652,13 @@ def meanshift_colour(path, X, n_clusters, labels_, centers, bands, base):
         fig = plt.figure()
         ax = fig.add_subplot(111)
         for k in range(0, n_clusters):
+            clust_col = plt.cm.jet(float(k) / np.max(labels_ + 1))
             my_members = labels_ == k
             cluster_center = centers[k]
-            ax.scatter(X[my_members, 0], X[my_members, i], color=colors[k],
+            ax.scatter(X[my_members, 0], X[my_members, i], color=clust_col,
                        marker=markers[k], label=k, s=2, zorder=1)
             ax.scatter(cluster_center[0], cluster_center[i], marker=markers[k],
-                       color=colors[k], edgecolor='k', s=100, zorder=2)
+                       color=clust_col, edgecolor='k', s=100, zorder=2)
 
         # Format plot
         ax.xaxis.set_major_locator(plt.MultipleLocator(1.0))
@@ -681,11 +682,12 @@ def meanshift_colour(path, X, n_clusters, labels_, centers, bands, base):
     fig1 = plt.figure()
     ax1 = fig1.add_subplot(111, projection='3d')
     for x in range(0, n_clusters):
+        clust_col = plt.cm.jet(float(x) / np.max(labels_ + 1))
         cluster_center = centers[x]
         ax1.scatter(X[labels_ == x, 0], X[labels_ == x, 1], X[labels_ == x, 2],
-                    marker=markers[x], color=colors[x], s=2, label=x)
+                    marker=markers[x], color=clust_col, s=2, label=x)
         ax1.scatter(cluster_center[0], cluster_center[1], cluster_center[2],
-                    c=colors[x], edgecolor='k', marker=markers[x], s=100)
+                    c=clust_col, edgecolor='k', marker=markers[x], s=100)
     ax1.set_xlabel(bands[0] + ' - ' + bands[1])
     ax1.set_ylabel(bands[2]+' - '+bands[3])
     ax1.set_zlabel(bands[4]+' - '+bands[5])
@@ -701,8 +703,15 @@ def meanshift_colour(path, X, n_clusters, labels_, centers, bands, base):
     fig2 = plt.figure()
     ax2 = fig2.add_subplot(111)
     for b in range(0, n_clusters):
+        clust_col = plt.cm.jet(float(b) / np.max(labels_ + 1))
+        center = centers[b]
+        base_cen1 = center[(base1-1)/2]
+        base_cen2 = center[(base2-1)/2]
+        base_cen = base_cen2 - base_cen1
         ax2.scatter(X[labels_ == b, 0], base[labels_ == b], marker=markers[b],
-                    color=colors[b], s=2, label=b)
+                    color=clust_col, s=2, label=b)
+        ax2.scatter(cluster_center[0], base_cen, marker=markers[b],
+                    color=clust_col, s=100)
     ax2.xaxis.set_major_locator(plt.MultipleLocator(1.0))
     ax2.set_xlabel(bands[0] + ' - ' + bands[1])
     ax2.set_ylabel(bands[base1]+' - ' + bands[base2])
@@ -763,13 +772,14 @@ def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
         fig = plt.figure()
         ax = fig.add_subplot(111)
         for k in range(0, number_clusters):
+            clust_col = plt.cm.jet(float(k) / np.max(cluster_number + 1))
             class_members = cluster_number == k
             cluster_center = cluster_centers[k]
             ax.scatter(cluster_data[class_members, 0],
-                       cluster_data[class_members, i], color=colors[k],
+                       cluster_data[class_members, i], color=clust_col,
                        marker=markers[k], label=k, s=2, zorder=1)
             ax.scatter(cluster_center[0], cluster_center[i], marker=markers[k],
-                       c=colors[k], edgecolor='k', s=100, zorder=2)
+                       c=clust_col, edgecolor='k', s=100, zorder=2)
 
         ax.set_xlabel(bands[0]+' - '+bands[1])
         ax.set_ylabel(bands[i*2]+' - '+bands[i*2+1])
@@ -789,11 +799,12 @@ def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
     fig1 = plt.figure()
     ax1 = fig1.add_subplot(111, projection='3d')
     for x in range(0, number_clusters):
+        clust_col = plt.cm.jet(float(x) / np.max(cluster_number + 1))
         cluster_center = cluster_centers[x]
         ax1.scatter(cluster_data[cluster_number == x, 0], cluster_data[cluster_number == x, 1], cluster_data[cluster_number == x, 2],
-                    marker=markers[x], color=colors[x], s=2)
+                    marker=markers[x], color=clust_col, s=2)
         ax1.scatter(cluster_center[0], cluster_center[1], cluster_center[2],
-                    c=colors[x], marker=markers[x], s=100)
+                    c=clust_col, marker=markers[x], s=100)
     ax1.set_xlabel(bands[0] + ' - ' + bands[1])
     ax1.set_ylabel(bands[2]+' - '+bands[3])
     ax1.set_zlabel(bands[4]+' - '+bands[5])
@@ -802,17 +813,22 @@ def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
                                                                 bands[2], bands[3],
                                                                 bands[4], bands[5])
 
-    path_ = ('{}{}{}').format(path, figure_save_symbol, colours)
-    if not os.path.exists(path_):
-        os.makedirs(path_)
     pylab.savefig(os.path.join(path_, file_name))
     plt.close()
 
     fig2 = plt.figure()
     ax2 = fig2.add_subplot(111)
     for b in range(0, number_clusters):
+        clust_col = plt.cm.jet(float(b) / np.max(cluster_number + 1))
+        center = cluster_centers[b]
+        base_cen1 = center[(base1-1)/2]
+        base_cen2 = center[(base2-1)/2]
+        base_cen = base_cen2 - base_cen1
         ax2.scatter(cluster_data[cluster_number == b, 0], base[cluster_number == b],
-                    marker=markers[b], color=colors[b], s=2, label=b)
+                    marker=markers[b], color=clust_col, s=2, label=b, zorder=1)
+        ax2.scatter(center[0], base_cen, marker=markers[b],
+                    color=clust_col, edgecolor='r', s=100, zorder=2)
+        
     ax2.xaxis.set_major_locator(plt.MultipleLocator(1.0))
     ax2.set_xlabel(bands[0] + ' - ' + bands[1])
     ax2.set_ylabel(bands[base1]+' - ' + bands[base2])
