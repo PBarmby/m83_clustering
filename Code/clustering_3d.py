@@ -119,7 +119,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
             ms_n_clusters, bandwidth, ms_score, ms_obj, ms_obj_p_cluster, col = \
                 meanshift(plot_path, experiments[i], cluster_data_,
                           plots, b_width_input, id_list, id_data, x_data,
-                          y_data, ds9_cat, n, base_colour)
+                          y_data, ds9_cat, n, base_colour, write_res)
             if "yes" in write_res:
                 meanshift_results(results_path, results_title, experiments[i],
                                   ms_n_clusters, ms_score, bandwidth, ms_obj,
@@ -175,7 +175,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                                            cluster_data_, greatdata,
                                            a, plots, id_list,
                                            x_data, y_data, id_data, ds9_cat,
-                                           n, base_colour)
+                                           n, base_colour, write_res)
                 total_obj = num_obj.sum()
                 if "yes" in write_res:
                     kmeans_results(results_path, results_title, experiments[i],
@@ -189,7 +189,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                                           cluster_data_, greatdata,
                                           n_clusters, plots, id_list,
                                           x_data, y_data, id_data, ds9_cat,
-                                          n, base_colour)
+                                          n, base_colour, write_res)
                 
 
     # Copy experiments.txt to plots directory
@@ -331,7 +331,7 @@ def organize_data(exp, data_file):
 
 
 def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
-              output_id, id_data, x, y, ds9_cat, cent_test, base):
+              output_id, id_data, x, y, ds9_cat, cent_test, base, res):
     '''---------------------------------------------------------------------'''
     '''Meanshift clustering to determine the number of clusters in the data,
     which can be passed to KMEANS function'''
@@ -367,16 +367,17 @@ def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
     for i in range(0, n_clusters_):
         ith_cluster = X_scaled[labels == i]
         objects_per_cluster[i] = len(ith_cluster)
-        if -99.0 in sample_score:
-            write_cluster_stats(s_path, 'meanshift', n_clusters_, i,
-                                objects_per_cluster[i], cluster_centers[i],
-                                ith_cluster, average_score,
-                                sample_score, cent_test, colours)
-        else:
-            write_cluster_stats(s_path, 'meanshift', n_clusters_, i,
-                                objects_per_cluster[i], cluster_centers[i],
-                                ith_cluster, average_score,
-                                sample_score[labels == i], cent_test, colours)
+        if "yes" in res:
+            if -99.0 in sample_score:
+                write_cluster_stats(s_path, 'meanshift', n_clusters_, i,
+                                    objects_per_cluster[i], cluster_centers[i],
+                                    ith_cluster, average_score,
+                                    sample_score, cent_test, colours)
+            else:
+                write_cluster_stats(s_path, 'meanshift', n_clusters_, i,
+                                    objects_per_cluster[i], cluster_centers[i],
+                                    ith_cluster, average_score,
+                                    sample_score[labels == i], cent_test, colours)
 
     # Format for writing results
     objects_per_cluster.sort()  # sort from smallest to largest
@@ -529,7 +530,7 @@ def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
 
 
 def kmeans(s_path, bands, cluster_data, greatdata, number_clusters, make_plots,
-           output_cluster_id, x, y, id_data, ds9_cat, cent_test, base):
+           output_cluster_id, x, y, id_data, ds9_cat, cent_test, base, res):
     '''---------------------------------------------------------------------'''
     '''Perform K-means clustering on colours constructed from HST photometry
     using various combinations of filters'''
@@ -564,16 +565,17 @@ def kmeans(s_path, bands, cluster_data, greatdata, number_clusters, make_plots,
     for i in range(0, number_clusters):
         x_cluster = cluster_data[labels == i]
         objects_per_cluster[i] = len(x_cluster)
-        if -99.0 in sample_score:
-            write_cluster_stats(s_path, 'kmeans', number_clusters, i,
-                                objects_per_cluster[i], centers[i],
-                                x_cluster, score,
-                                sample_score, cent_test, colours)
-        else:
-            write_cluster_stats(s_path, 'kmeans', number_clusters, i,
-                                objects_per_cluster[i], centers[i],
-                                x_cluster, score,
-                                sample_score[labels == i], cent_test, colours)
+        if "yes" in res:
+            if -99.0 in sample_score:
+                write_cluster_stats(s_path, 'kmeans', number_clusters, i,
+                                    objects_per_cluster[i], centers[i],
+                                    x_cluster, score,
+                                    sample_score, cent_test, colours)
+            else:
+                write_cluster_stats(s_path, 'kmeans', number_clusters, i,
+                                    objects_per_cluster[i], centers[i],
+                                    x_cluster, score,
+                                    sample_score[labels == i], cent_test, colours)
 
     # Format for writing results
     objects_per_cluster.sort()  # sort from smallest to largest
@@ -710,7 +712,7 @@ def meanshift_colour(path, X, n_clusters, labels_, centers, bands, base):
         base_cen = base_cen2 - base_cen1
         ax2.scatter(X[labels_ == b, 0], base[labels_ == b], marker=markers[b],
                     color=clust_col, s=2, label=b)
-        ax2.scatter(cluster_center[0], base_cen, marker=markers[b],
+        ax2.scatter(center[0], base_cen, marker=markers[b],
                     color=clust_col, s=100)
     ax2.xaxis.set_major_locator(plt.MultipleLocator(1.0))
     ax2.set_xlabel(bands[0] + ' - ' + bands[1])
