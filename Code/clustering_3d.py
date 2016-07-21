@@ -56,6 +56,12 @@ base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
 figure_save_symbol = '//'  # MAC
 # figure_save_symbol = '\\'  # PC
 
+# Set the "base" bands in 3d_experiments.txt. Base bands: the broad-broad
+# colour being seperated into 2 narrow-broad colours
+'''Change waves in organize_data function'''
+base1 = 3
+base2 = 5
+
 # defined functions
 from numpy import mean as avg
 from numpy import square, sqrt
@@ -93,7 +99,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
         '''-----------------------------------------------------------------'''
 
         # Get Data
-        cluster_data_, greatdata, x_data, y_data, id_data = \
+        cluster_data_, base_colour, greatdata, x_data, y_data, id_data = \
             organize_data(experiments[i], data)
 
         # Set title of results.txt
@@ -113,7 +119,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
             ms_n_clusters, bandwidth, ms_score, ms_obj, ms_obj_p_cluster, col = \
                 meanshift(plot_path, experiments[i], cluster_data_,
                           plots, b_width_input, id_list, id_data, x_data,
-                          y_data, ds9_cat, n)
+                          y_data, ds9_cat, n, base_colour)
             if "yes" in write_res:
                 meanshift_results(results_path, results_title, experiments[i],
                                   ms_n_clusters, ms_score, bandwidth, ms_obj,
@@ -139,7 +145,8 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
             af_n_clusters, af_score, af_obj, af_obj_p_cluster, col = \
                 affinity_propagation(plot_path, experiments[i], cluster_data_,
                                      plots, damping, preferences, id_list,
-                                     id_data, x_data, y_data, ds9_cat, n)
+                                     id_data, x_data, y_data, ds9_cat, n,
+                                     base_colour)
             if "yes" in write_res:
                 affinity_propagation_results(results_path, results_title,
                                              experiments[i], af_n_clusters,
@@ -168,7 +175,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                                            cluster_data_, greatdata,
                                            a, plots, id_list,
                                            x_data, y_data, id_data, ds9_cat,
-                                           n)
+                                           n, base_colour)
                 total_obj = num_obj.sum()
                 if "yes" in write_res:
                     kmeans_results(results_path, results_title, experiments[i],
@@ -182,12 +189,12 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                                           cluster_data_, greatdata,
                                           n_clusters, plots, id_list,
                                           x_data, y_data, id_data, ds9_cat,
-                                          n)
+                                          n, base_colour)
                 
 
     # Copy experiments.txt to plots directory
     shutil.copy2('3d_experiments.txt',
-                 plot_path + figure_save_symbol + 'inputs.txt')
+                 plot_path + figure_save_symbol + '3d_inputs.txt')
 
     return()
 
@@ -292,22 +299,24 @@ def organize_data(exp, data_file):
     colour1_trim = np.logical_and(wave1_trim, wave2_trim)
     colour2_trim = np.logical_and(wave3_trim, wave4_trim)
     colour3_trim = np.logical_and(wave5_trim, wave6_trim)
+    base_colour_trim = np.logical_and(wave4_trim, wave6_trim)
     # colour4_trim = np.logical_and(wave7_trim, wave8_trim)
     # colour5_trim = np.logical_and(wave9_trim, wave10_trim)
     # colour6_trim = np.logical_and(wave11_trim, wave12_trim)
 
     gooddata1 = np.logical_and(colour1_trim, colour2_trim)
-    # gooddata2 = np.logical_and(colour3_trim, colour4_trim)
+    gooddata2 = np.logical_and(colour3_trim, base_colour_trim)
     # gooddata3 = np.logical_and(colour5_trim, colour6_trim)
 
     # Only data that match criteria for both colours
-    final_data = np.logical_and(gooddata1, colour3_trim)  # np.logical_and(np.logical_and(gooddata1, gooddata2),
+    final_data = np.logical_and(gooddata1, gooddata2)  # np.logical_and(np.logical_and(gooddata1, gooddata2),
                  #                gooddata3)
 
     # Make colours
     colour1 = wave1[final_data] - wave2[final_data]
     colour2 = wave3[final_data] - wave4[final_data]
     colour3 = wave5[final_data] - wave6[final_data]
+    base_colour = wave4[final_data] - wave6[final_data]
     # colour4 = wave7[final_data] - wave8[final_data]
     # colour5 = wave9[final_data] - wave10[final_data]
     # colour6 = wave11[final_data] - wave12[final_data]
@@ -318,11 +327,11 @@ def organize_data(exp, data_file):
     y = data['y'][final_data]
     id_ = data['id_'][final_data].astype(np.int32)
 
-    return (cluster_data, final_data, x, y, id_)
+    return (cluster_data, base_colour, final_data, x, y, id_)
 
 
 def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
-              output_id, id_data, x, y, ds9_cat, cent_test):
+              output_id, id_data, x, y, ds9_cat, cent_test, base):
     '''---------------------------------------------------------------------'''
     '''Meanshift clustering to determine the number of clusters in the data,
     which can be passed to KMEANS function'''
@@ -352,7 +361,7 @@ def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
     
     # Set up save path
     colours = ('{}-{}_{}-{}_{}-{}').format(bands[0], bands[1], bands[2],
-                                               bands[3], bands[4], bands[5])
+                                           bands[3], bands[4], bands[5])
     # Identify which cluster each object belongs to
     objects_per_cluster = np.zeros(max_num_clusters, dtype=np.int16)
     for i in range(0, n_clusters_):
@@ -376,7 +385,7 @@ def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
     # Make plots
     if "meanshift_colour" in make_plot:
         meanshift_colour(s_path, X_scaled, n_clusters_, labels,
-                         cluster_centers, bands)
+                         cluster_centers, bands, base)
 
     # Make catalgoues
     if "yes" in output_id:
@@ -452,7 +461,7 @@ def hms(s_path, bands, cluster_data, make_plot, bw_input, output_id, id_data,
 
 
 def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
-                         output_id, id_data, x, y, ds9_cat, cent_test):
+                         output_id, id_data, x, y, ds9_cat, cent_test, base):
     '''---------------------------------------------------------------------'''
     '''Perform Affinity Propagation clustering to determine the number of
     clusters in a given set of colours'''
@@ -507,7 +516,7 @@ def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
     # Make plot
     if 'affinity' in make_plots:
         affinity_plot(labels, cluster_centers_indices, cluster_data,
-                      n_clusters_, bands, s_path)
+                      n_clusters_, bands, s_path, base)
 
     # Write ID file
     if "yes" in output_id:
@@ -520,7 +529,7 @@ def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
 
 
 def kmeans(s_path, bands, cluster_data, greatdata, number_clusters, make_plots,
-           output_cluster_id, x, y, id_data, ds9_cat, cent_test):
+           output_cluster_id, x, y, id_data, ds9_cat, cent_test, base):
     '''---------------------------------------------------------------------'''
     '''Perform K-means clustering on colours constructed from HST photometry
     using various combinations of filters'''
@@ -573,7 +582,7 @@ def kmeans(s_path, bands, cluster_data, greatdata, number_clusters, make_plots,
     # Generate plots
     if "kmeans_colour" in make_plots:
         kmeans_colour(s_path, cluster_data, number_clusters, labels,
-                      bands, centers)
+                      bands, centers, base)
 
     # Output object and cluster IDs to ID.txt file
     if "yes" in output_cluster_id:
@@ -636,7 +645,7 @@ def ds9_catalogue(clustering, n_clust, cluster_num, waves, x, y, save_):
     return()
 
 
-def meanshift_colour(path, X, n_clusters, labels_, centers, bands):
+def meanshift_colour(path, X, n_clusters, labels_, centers, bands, base):
     colours = ('{}-{}_{}-{}_{}-{}').format(bands[0], bands[1], bands[2],
                                                bands[3], bands[4], bands[5])
     for i in range(1, 3):
@@ -651,12 +660,12 @@ def meanshift_colour(path, X, n_clusters, labels_, centers, bands):
                        color=colors[k], edgecolor='k', s=100, zorder=2)
 
         # Format plot
-        ax.xaxis.set_major_locator(plt.MultipleLocator(0.5))
+        ax.xaxis.set_major_locator(plt.MultipleLocator(1.0))
         ax.set_xlabel(bands[0] + ' - ' + bands[1])
         ax.set_ylabel(bands[i*2]+' - '+bands[i*2+1])
         ax.set_title('mean-shift ' + str(n_clusters) + ' : '+bands[0]+'-'+bands[1]+' vs. '+bands[i*2]+'-'+bands[i*2+1],
                      fontsize=14)
-        ax.legend(loc='lower right')
+        ax.legend(loc='lower right', fontsize=8)
         '''Display interactive figure if # removed, if not, figures saved'''
         # plt.show
         file_name = 'meanshift_3d_color_{}cl_{}-{}vs{}-{}.png'.format(str(n_clusters),
@@ -674,20 +683,36 @@ def meanshift_colour(path, X, n_clusters, labels_, centers, bands):
     for x in range(0, n_clusters):
         cluster_center = centers[x]
         ax1.scatter(X[labels_ == x, 0], X[labels_ == x, 1], X[labels_ == x, 2],
-                    marker=markers[x], color=colors[x], s=2)
+                    marker=markers[x], color=colors[x], s=2, label=x)
         ax1.scatter(cluster_center[0], cluster_center[1], cluster_center[2],
                     c=colors[x], edgecolor='k', marker=markers[x], s=100)
     ax1.set_xlabel(bands[0] + ' - ' + bands[1])
     ax1.set_ylabel(bands[2]+' - '+bands[3])
     ax1.set_zlabel(bands[4]+' - '+bands[5])
+    ax.legend(loc='lower right', fontsize=8)
     file_name = 'meanshift_3d_color_{}cl_{}-{}vs{}-{}vs{}-{}.png'.format(str(n_clusters),
                                                                 bands[0], bands[1],
                                                                 bands[2], bands[3],
                                                                 bands[4], bands[5])
 
-    path_ = ('{}{}{}').format(path, figure_save_symbol, colours)
-    if not os.path.exists(path_):
-        os.makedirs(path_)
+    pylab.savefig(os.path.join(path_, file_name))
+    plt.close()
+
+    fig2 = plt.figure()
+    ax2 = fig2.add_subplot(111)
+    for b in range(0, n_clusters):
+        ax2.scatter(X[labels_ == b, 0], base[labels_ == b], marker=markers[b],
+                    color=colors[b], s=2, label=b)
+    ax2.xaxis.set_major_locator(plt.MultipleLocator(1.0))
+    ax2.set_xlabel(bands[0] + ' - ' + bands[1])
+    ax2.set_ylabel(bands[base1]+' - ' + bands[base2])
+    ax2.set_title('mean-shift ' + str(n_clusters) + ' : '+bands[0]+'-'+bands[1]+' vs. '+bands[base1]+'-'+bands[base2],
+                     fontsize=14)
+    ax2.legend(loc='lower right', fontsize=8)
+    file_name = 'meanshift_base_color_{}cl_{}-{}vs{}-{}.png'.format(str(n_clusters),
+                                                                bands[0], bands[1],
+                                                                bands[base1], bands[base2])
+
     pylab.savefig(os.path.join(path_, file_name))
     plt.close()
     
@@ -730,7 +755,7 @@ def hms_colour(path, c_data, n_clusters, labels, centers, bands):
 
 
 def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
-                  cluster_centers):
+                  cluster_centers, base):
     '''Plot colour-colour diagrams for each colour space'''
     colours = ('{}-{}_{}-{}_{}-{}').format(bands[0], bands[1], bands[2],
                                                bands[3], bands[4], bands[5])
@@ -783,11 +808,29 @@ def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
     pylab.savefig(os.path.join(path_, file_name))
     plt.close()
 
+    fig2 = plt.figure()
+    ax2 = fig2.add_subplot(111)
+    for b in range(0, number_clusters):
+        ax2.scatter(cluster_data[cluster_number == b, 0], base[cluster_number == b],
+                    marker=markers[b], color=colors[b], s=2, label=b)
+    ax2.xaxis.set_major_locator(plt.MultipleLocator(1.0))
+    ax2.set_xlabel(bands[0] + ' - ' + bands[1])
+    ax2.set_ylabel(bands[base1]+' - ' + bands[base2])
+    ax2.set_title('kmeans ' + str(number_clusters) + ' : '+bands[0]+'-'+bands[1]+' vs. '+bands[base1]+'-'+bands[base2],
+                     fontsize=14)
+    ax2.legend(loc='lower right', fontsize=8)
+    file_name = 'kmeans_base_color_{}cl_{}-{}vs{}-{}.png'.format(str(number_clusters),
+                                                                bands[0], bands[1],
+                                                                bands[base1], bands[base2])
+
+    pylab.savefig(os.path.join(path_, file_name))
+    plt.close()
+
     return ()
 
 
 def affinity_plot(labels, cluster_center_indices, X, n_clusters, bands,
-                  s_path):
+                  s_path, base):
     colours = ('{}-{}_{}-{}_{}-{}').format(bands[0], bands[1], bands[2],
                                                bands[3], bands[4], bands[5])
     for i in range(1, 3):
@@ -828,16 +871,35 @@ def affinity_plot(labels, cluster_center_indices, X, n_clusters, bands,
     ax1.set_xlabel(bands[0] + ' - ' + bands[1])
     ax1.set_ylabel(bands[2]+' - '+bands[3])
     ax1.set_zlabel(bands[4]+' - '+bands[5])
-    file_name = 'meanshift_3d_color_{}cl_{}-{}vs{}-{}vs{}-{}.png'.format(str(n_clusters),
+    file_name = 'affinity_3d_color_{}cl_{}-{}vs{}-{}vs{}-{}.png'.format(str(n_clusters),
                                                                 bands[0], bands[1],
                                                                 bands[2], bands[3],
                                                                 bands[4], bands[5])
 
-    path_ = ('{}{}{}').format(path, figure_save_symbol, colours)
+    path_ = ('{}{}{}').format(s_path, figure_save_symbol, colours)
     if not os.path.exists(path_):
         os.makedirs(path_)
     pylab.savefig(os.path.join(path_, file_name))
     plt.close()
+
+    fig2 = plt.figure()
+    ax2 = fig2.add_subplot(111)
+    for b in range(0, n_clusters):
+        ax2.scatter(X[labels == b, 0], base[labels == b], marker=markers[b],
+                    color=colors[b], s=2, label=b)
+    ax2.xaxis.set_major_locator(plt.MultipleLocator(1.0))
+    ax2.set_xlabel(bands[0] + ' - ' + bands[1])
+    ax2.set_ylabel(bands[base1]+' - ' + bands[base2])
+    ax2.set_title('affinity ' + str(n_clusters) + ' : '+bands[0]+'-'+bands[1]+' vs. '+bands[base1]+'-'+bands[base2],
+                     fontsize=14)
+    ax2.legend(loc='lower right', fontsize=8)
+    file_name = 'affinity_base_color_{}cl_{}-{}vs{}-{}.png'.format(str(n_clusters),
+                                                                bands[0], bands[1],
+                                                                bands[base1], bands[base2])
+
+    pylab.savefig(os.path.join(path_, file_name))
+    plt.close()
+
     return()
 
 
