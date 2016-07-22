@@ -5,7 +5,7 @@ Created on Fri Apr 03 13:24:41 2015
 """
 '''------------------------- Important Info -----------------------------------
 MAKE SURE YOU CHANGE THE PATH IN MAKE_SAVE_DIRECTORY
-Currently formatted for 6 colours.
+Currently formatted for 2 colours.
 Must be changed for different n_dimensions:
     - organize_data filters must be changed
     - headers in results files must be changed
@@ -53,10 +53,10 @@ markers = ['o', 'o', 'o', 'o', 'o', 'o', 'o', '*', '*', '*', '*', '*', '*', '*',
 max_num_clusters = 40
 
 # Set the base path and directory symbol for MAC or PC OS
-base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
-# base_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\'  # PC
-figure_save_symbol = '/'  # MAC
-# figure_save_symbol = '\\'  # PC
+# base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
+base_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\'  # PC
+# figure_save_symbol = '/'  # MAC
+figure_save_symbol = '\\'  # PC
 
 # defined functions
 from numpy import mean as avg
@@ -241,7 +241,7 @@ def load_data_file(d_file, e_file):
 def organize_data(exp, data_file):
     '''Select data for analysis'''
     data = data_file
-    ratio = 0.2
+    ratio = 0.05
 
     wave1 = data[exp['band1']]
     wave1_unc = data[exp['band1']+'_unc']
