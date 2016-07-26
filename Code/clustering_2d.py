@@ -21,6 +21,7 @@ from matplotlib import pyplot as plt
 from astropy.table import Table
 import shutil
 from itertools import cycle
+import time as time
 
 # Kmeans imports
 from sklearn.cluster import KMeans
@@ -70,6 +71,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                id_list, data_file, write_res, ds9_cat, af_in, hc_input,
                input_file='experiments.txt'):
     '''DESCRIBE PROCESS HERE'''
+    st = time.time()
     # Create saving directories
     plot_path, results_path = make_save_directory(save_plots, save_results)
 
@@ -137,7 +139,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                 preferences = float(experiments['preferences'][i])
             else: 
                 damping = 0.95
-                preferences = -len(cluster_data_)*0.1
+                preferences = -len(cluster_data_)*0.15
             af_n_clusters, af_score, af_obj, af_obj_p_cluster, col = \
                 affinity_propagation(plot_path, experiments[i], cluster_data_,
                                      plots, damping, preferences, id_list,
@@ -147,6 +149,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                                              experiments[i], af_n_clusters,
                                              af_score, damping, preferences,
                                              af_obj, af_obj_p_cluster, col)
+        print "Finished Clustering"
         if "hc" in analysis:
             if "experiments.txt" in hc_input:
                 hc_n_clusters = int(experiments['n_clusters'][i])
@@ -207,6 +210,8 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
     # Copy experiments.txt to plots directory
     shutil.copy2('experiments.txt',
                  plot_path + figure_save_symbol + 'inputs.txt')
+    ed = time.time()
+    print "Time: {}".format(ed - st)
 
     return()
 
@@ -423,7 +428,7 @@ def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
     # X_scaled = preprocessing.scale(cluster_data)
 
     # Compute similarities
-    similarities = pdist(cluster_data)
+    similarities = cluster_data
     # Compute Affinity Propagation
     af = AffinityPropagation(preference=pref, damping=damp).fit(similarities)
 
@@ -910,7 +915,7 @@ def affinity_propagation_results(save_path, name, bands,
                                                  # bands[9], bands[10],
                                                  # bands[11],
                                                  'N/A', damp, pref,  'N/A')
-    outputs = '{} {:.4f} {} {} {}'.format('N/A', s_score, n_clusters, total_obj,
+    outputs = '{} {} {} {} {}'.format('N/A', s_score, n_clusters, total_obj,
                                        np.array_str(obj_per_cluster,
                                                     max_line_width=500)[1:-1])
 

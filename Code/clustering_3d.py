@@ -53,16 +53,15 @@ max_num_clusters = 40
 # Set the base path and directory symbol for MAC or PC OS
 base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
 # base_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\'  # PC
-figure_save_symbol = '//'  # MAC
+figure_save_symbol = '/'  # MAC
 # figure_save_symbol = '\\'  # PC
 
 # Set the "base" bands in 3d_experiments.txt. Base bands: the broad-broad
 # colour being seperated into 2 narrow-broad colours
 '''Change waves in organize_data function'''
 base1 = 3
-base1_cen = 1
 base2 = 5
-base2_cen = 2
+
 # defined functions
 from numpy import mean as avg
 from numpy import square, sqrt
@@ -603,9 +602,8 @@ def id_catologue(clustering, number_clusters, cluster_number, waves, id_data,
     file_name = 'id_{}_{}cl_{}-{}vs{}-{}.txt'.format(clustering,
                                                      str(number_clusters),
                                                      waves[0], waves[1],
-                                                     waves[base1], waves[base2])                                
-    colours = ('{}-{}_{}-{}_{}-{}').format(waves[0], waves[1], waves[2],
-                                           waves[3], waves[4], waves[5])
+                                                     waves[2], waves[3])                                
+    colours = ('{}-{}_{}-{}').format(waves[0], waves[1], waves[2], waves[3])
     path_ = ('{}{}{}{}{}').format(save_, figure_save_symbol, colours,
                                   figure_save_symbol, 'id_')
     if not os.path.exists(path_):
@@ -621,8 +619,7 @@ def id_catologue(clustering, number_clusters, cluster_number, waves, id_data,
 
 def ds9_catalogue(clustering, n_clust, cluster_num, waves, x, y, save_):
     '''Create file with list of object x-y positions for each cluster'''
-    colours = ('{}-{}_{}-{}_{}-{}').format(waves[0], waves[1], waves[2],
-                                           waves[3], waves[4], waves[5])
+    colours = ('{}-{}_{}-{}').format(waves[0], waves[1], waves[2], waves[3])
     path_ = ('{}{}{}{}{}').format(save_, figure_save_symbol, colours,
                                   figure_save_symbol, 'ds9_' + clustering)
     if not os.path.exists(path_):
@@ -634,7 +631,7 @@ def ds9_catalogue(clustering, n_clust, cluster_num, waves, x, y, save_):
         file_name = 'ds9_{}cl_cluster-{}_{}-{}vs{}-{}.reg'.format(str(n_clust),
                                                           str(i+1),
                                                           waves[0], waves[1],
-                                                          waves[base1], waves[base2])
+                                                          waves[2], waves[3])
         x_coord = np.array(x[cluster_num == i])
         y_coord = np.array(y[cluster_num == i])
         ds9_path = os.path.join(path_, file_name)
@@ -710,8 +707,8 @@ def meanshift_colour(path, X, n_clusters, labels_, centers, bands, base):
     for b in range(0, n_clusters):
         clust_col = plt.cm.jet(float(b) / np.max(labels_ + 1))
         center = centers[b]
-        base_cen1 = center[base1_cen]
-        base_cen2 = center[base2_cen]
+        base_cen1 = center[(base1-1)/2]
+        base_cen2 = center[(base2-1)/2]
         base_cen = base_cen2 - base_cen1
         ax2.scatter(X[labels_ == b, 0], base[labels_ == b], marker=markers[b],
                     color=clust_col, s=2, label=b)
@@ -826,8 +823,8 @@ def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
     for b in range(0, number_clusters):
         clust_col = plt.cm.jet(float(b) / np.max(cluster_number + 1))
         center = cluster_centers[b]
-        base_cen1 = center[base1_cen]
-        base_cen2 = center[base2_cen]
+        base_cen1 = center[(base1-1)/2]
+        base_cen2 = center[(base2-1)/2]
         base_cen = base_cen2 - base_cen1
         ax2.scatter(cluster_data[cluster_number == b, 0], base[cluster_number == b],
                     marker=markers[b], color=clust_col, s=2, label=b, zorder=1)
