@@ -67,8 +67,36 @@ The U - OII combination was clustered with the B-V, B-I, and V-I colours. % More
 \paragraph{Mean-Shift}
 This colour seemed to be much more sensitive to bandwidth selection than other combinations.
 With the B-V colour, $h=0.2$ produced $32$ clusters, while $h=0.4$ produced $3$. With the V-I colour, $h=0.35$ produced $17$ clusters, while $h=0.6$ produced $3$.
-Due to this sensitivity, the bandwidth hierarchy was created on much narrower increases in $h$, which produced more meaningful clusters. 
+Due to this sensitivity, the bandwidth hierarchy was created on much narrower increases in $h$, which produced more meaningful clusters.
+Using the silhouette score, the most accurate clustering produced between 3 and 6 clusters depending on the broad-broad colour used.
+Two-dimentional clustering was generally more accurate for the meanshift algorithm using the silhouette score, however using three dimensions allowed the algorithm to pick out more features in the distribution. 
+The three-dimensional distribution was created by using the OII band as a base, and creating colours from the other three bands in the combination. For example, the U - OII, B - V combination became: U - OII, OII - B, OII - V.
+This revealed more information about the distribution of objects in that colour space, and more features for the algorithms to identify.
+Despite this, meanshift still created a single, large cluster with several smaller ones. However, the borders of the clusters seemed to follow the features of the distribution more clearly using three dimensions.
 
+\begin{figure*}
+\centering
+\subfloat[3D Mean-Shift Clustering: U - OII, OII - V, OII - I.]{\includegraphics[width=0.5\textwidth]{figs/meanshift_3d_color_6cl_mag05_336-mag05_373vsmag05_373-mag05_555vsmag05_373-mag05_814}\label{fig:OII_3MSa}}
+\hfill
+\subfloat[Narrow filter distribution.]{\includegraphics[width=0.5\textwidth]{figs/meanshift_base_color_6cl_mag05_336-mag05_373vsmag05_555-mag05_814}\label{fig:OII_3MSa}}
+\caption{2D projection into U - OII, V - I space of 3D Mean-Shift clustering.}
+\label{fig:OII_3DMS}
+\end{figure*}
+
+\paragraph{K-Means}
+The K-Means algorithm was more accurate using three dimensional clustering. 
+The segmentation was more effective as the algorithm was able to clearly identify different structures in the distribution. 
+In two dimensions, the algorithm seemed to arbitrarely slice the distribution, instead of finding structure.
+The silhouette score was always higher in three dimensions, and the score clearly peaked at a specific value of K.
+
+\begin{figure*}
+\centering
+\subfloat[3D K-Means Clustering: U - OII, OII - V, OII - I.]{\includegraphics[width=0.5\textwidth]{figs/meanshift_3d_color_6cl_mag05_336-mag05_373vsmag05_373-mag05_555vsmag05_373-mag05_814}\label{fig:OII_3MSa}}
+\hfill
+\subfloat[Narrow filter distribution.]{\includegraphics[width=0.5\textwidth]{figs/meanshift_base_color_6cl_mag05_336-mag05_373vsmag05_555-mag05_814}\label{fig:OII_3MSa}}
+\caption{2D projection into U - OII, V - I space of 3D Mean-Shift clustering.}
+\label{fig:OII_3DMS}
+\end{figure*}
 
 
 
