@@ -102,7 +102,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
         '''-----------------------------------------------------------------'''
 
         # Get Data
-        cluster_data_, base_colour, greatdata, x_data, y_data, id_data = \
+        cluster_data_, base_colour, greatdata, x_data, y_data, id_data, wave1, wave2, wave3, wave4 = \
             organize_data(experiments[i], data)
 
         # Set title of results.txt
@@ -126,7 +126,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
             if "yes" in write_res:
                 meanshift_results(results_path, results_title, experiments[i],
                                   ms_n_clusters, ms_score, bandwidth, ms_obj,
-                                  ms_obj_p_cluster, col)
+                                  ms_obj_p_cluster, col, wave1, wave2, wave3, wave4)
 
         if "hms" in analysis:
             if 'experiments.txt' in bw_in:
@@ -178,7 +178,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                                            cluster_data_, greatdata,
                                            a, plots, id_list,
                                            x_data, y_data, id_data, ds9_cat,
-                                           n, base_colour, write_res)
+                                           n, base_colour, write_res, wave1, wave2, wave3, wave4)
                 total_obj = num_obj.sum()
                 if "yes" in write_res:
                     kmeans_results(results_path, results_title, experiments[i],
@@ -320,6 +320,10 @@ def organize_data(exp, data_file):
     colour2 = wave3[final_data] - wave4[final_data]
     colour3 = wave5[final_data] - wave6[final_data]
     base_colour = wave3[final_data] - wave5[final_data]
+    wave1_fin = wave1[final_data]
+    wave2_fin = wave2[final_data]
+    wave3_fin = wave3[final_data]
+    wave5_fin = wave5[final_data]
     # colour4 = wave7[final_data] - wave8[final_data]
     # colour5 = wave9[final_data] - wave10[final_data]
     # colour6 = wave11[final_data] - wave12[final_data]
@@ -330,11 +334,13 @@ def organize_data(exp, data_file):
     y = data['y'][final_data]
     id_ = data['id_'][final_data].astype(np.int32)
 
-    return (cluster_data, base_colour, final_data, x, y, id_)
+    return (cluster_data, base_colour, final_data, x, y, id_, wave1_fin,
+            wave2_fin, wave3_fin, wave5_fin)
 
 
 def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
-              output_id, id_data, x, y, ds9_cat, cent_test, base, res):
+              output_id, id_data, x, y, ds9_cat, cent_test, base, res, w1, w2,
+              w3, w4):
     '''---------------------------------------------------------------------'''
     '''Meanshift clustering to determine the number of clusters in the data,
     which can be passed to KMEANS function'''
@@ -389,7 +395,7 @@ def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
     # Make plots
     if "meanshift_colour" in make_plot:
         meanshift_colour(s_path, X_scaled, n_clusters_, labels,
-                         cluster_centers, bands, base)
+                         cluster_centers, bands, base, w1, w2, w3, w4)
 
     # Make catalgoues
     if "yes" in output_id:
@@ -533,7 +539,8 @@ def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
 
 
 def kmeans(s_path, bands, cluster_data, greatdata, number_clusters, make_plots,
-           output_cluster_id, x, y, id_data, ds9_cat, cent_test, base, res):
+           output_cluster_id, x, y, id_data, ds9_cat, cent_test, base, res, w1,
+           w2, w3, w4):
     '''---------------------------------------------------------------------'''
     '''Perform K-means clustering on colours constructed from HST photometry
     using various combinations of filters'''
@@ -587,7 +594,7 @@ def kmeans(s_path, bands, cluster_data, greatdata, number_clusters, make_plots,
     # Generate plots
     if "kmeans_colour" in make_plots:
         kmeans_colour(s_path, cluster_data, number_clusters, labels,
-                      bands, centers, base)
+                      bands, centers, base, w1, w2, w3, w4)
 
     # Output object and cluster IDs to ID.txt file
     if "yes" in output_cluster_id:
@@ -650,7 +657,8 @@ def ds9_catalogue(clustering, n_clust, cluster_num, waves, x, y, save_):
     return()
 
 
-def meanshift_colour(path, X, n_clusters, labels_, centers, bands, base):
+def meanshift_colour(path, X, n_clusters, labels_, centers, bands, base, w1,
+                     w2, w3, w4):
     colours = ('{}-{}_{}-{}_{}-{}').format(bands[0], bands[1], bands[2],
                                                bands[3], bands[4], bands[5])
     for i in range(1, 3):
@@ -729,6 +737,24 @@ def meanshift_colour(path, X, n_clusters, labels_, centers, bands, base):
 
     pylab.savefig(os.path.join(path_, file_name))
     plt.close()
+
+    fig3 = plt.figure()
+    ax3 = fig3.add_subplot(111)
+    for c in range(0, n_clusters):
+        my_members = labels_ == c
+        clust_col = plt.cm.jet(float(c) / np.max(labels_ + 1))
+        ax2.scatter(base[my_members], w4[labels_ == c], color=clust_col, marker='.', s=4, label=c)
+    ax3.legend(loc='lower right', fontsize=8)
+    ax3.set_xlabel(bands[base1]+' - '+bands[base2])
+    ax3.set_ylabel(bands[base2])
+    plt.gca().invert_yaxis()
+
+    '''Display interactive figure if # removed, if not, figures saved'''
+    file_name = 'meanshift_CMD_{}cl_{}-{}vs{}.png'.format(str(n_clusters),
+                                                          bands[base1], bands[base2],
+                                                          bands[base2])
+    pylab.savefig(os.path.join(path_, file_name))
+    plt.close()
     
     return()
 
@@ -769,7 +795,7 @@ def hms_colour(path, c_data, n_clusters, labels, centers, bands):
 
 
 def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
-                  cluster_centers, base):
+                  cluster_centers, base, w1, w2, w3, w4):
     '''Plot colour-colour diagrams for each colour space'''
     colours = ('{}-{}_{}-{}_{}-{}').format(bands[0], bands[1], bands[2],
                                                bands[3], bands[4], bands[5])
@@ -844,6 +870,25 @@ def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
                                                                 bands[0], bands[1],
                                                                 bands[base1], bands[base2])
 
+    pylab.savefig(os.path.join(path_, file_name))
+    plt.close()
+
+    fig3 = plt.figure()
+    ax3 = fig3.add_subplot(111)
+    for c in range(0, number_clusters):
+        my_members = cluster_number == c
+        clust_col = plt.cm.jet(float(c) / np.max(number_clusters + 1))
+        ax2.scatter(base[my_members], w4[cluster_number == c], color=clust_col, marker='.', s=4, label=c)
+    ax3.legend(loc='lower right', fontsize=8)
+    ax3.set_xlabel(bands[base1]+' - '+bands[base2])
+    ax3.set_ylabel(bands[base2])
+    plt.gca().invert_yaxis()
+
+    '''Display interactive figure if # removed, if not, figures saved'''
+    file_name = 'kmeans_CMD_{}cl_{}-{}vs{}.png'.format(str(number_clusters),
+                                                          bands[base1],
+                                                        bands[base2],
+                                                          bands[base2])
     pylab.savefig(os.path.join(path_, file_name))
     plt.close()
 
