@@ -60,8 +60,9 @@ figure_save_symbol = '/'  # MAC
 # colour being seperated into 2 narrow-broad colours
 '''Change waves in organize_data function'''
 base1 = 3
+base1_cen = 1
 base2 = 5
-
+base2_cen = 2
 # defined functions
 from numpy import mean as avg
 from numpy import square, sqrt
@@ -707,8 +708,8 @@ def meanshift_colour(path, X, n_clusters, labels_, centers, bands, base):
     for b in range(0, n_clusters):
         clust_col = plt.cm.jet(float(b) / np.max(labels_ + 1))
         center = centers[b]
-        base_cen1 = center[(base1-1)/2]
-        base_cen2 = center[(base2-1)/2]
+        base_cen1 = center[base1_cen]
+        base_cen2 = center[base2_cen]
         base_cen = base_cen2 - base_cen1
         ax2.scatter(X[labels_ == b, 0], base[labels_ == b], marker=markers[b],
                     color=clust_col, s=2, label=b)
@@ -823,8 +824,8 @@ def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
     for b in range(0, number_clusters):
         clust_col = plt.cm.jet(float(b) / np.max(cluster_number + 1))
         center = cluster_centers[b]
-        base_cen1 = center[(base1-1)/2]
-        base_cen2 = center[(base2-1)/2]
+        base_cen1 = center[base1_cen]
+        base_cen2 = center[base2_cen]
         base_cen = base_cen2 - base_cen1
         ax2.scatter(cluster_data[cluster_number == b, 0], base[cluster_number == b],
                     marker=markers[b], color=clust_col, s=2, label=b, zorder=1)
