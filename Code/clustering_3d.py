@@ -60,9 +60,9 @@ figure_save_symbol = '/'  # MAC Sharcnet
 # Set the "base" bands in 3d_experiments.txt. Base bands: the broad-broad
 # colour being seperated into 2 narrow-broad colours
 '''Change waves in organize_data function'''
-base1 = 3
+base1 = 2
 base1_cen = 1
-base2 = 5
+base2 = 4
 base2_cen = 2
 
 # defined functions
@@ -122,11 +122,11 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
             ms_n_clusters, bandwidth, ms_score, ms_obj, ms_obj_p_cluster, col = \
                 meanshift(plot_path, experiments[i], cluster_data_,
                           plots, b_width_input, id_list, id_data, x_data,
-                          y_data, ds9_cat, n, base_colour, write_res)
+                          y_data, ds9_cat, n, base_colour, write_res, wave1, wave2, wave3, wave4)
             if "yes" in write_res:
                 meanshift_results(results_path, results_title, experiments[i],
                                   ms_n_clusters, ms_score, bandwidth, ms_obj,
-                                  ms_obj_p_cluster, col, wave1, wave2, wave3, wave4)
+                                  ms_obj_p_cluster, col)
 
         if "hms" in analysis:
             if 'experiments.txt' in bw_in:
@@ -720,7 +720,7 @@ def meanshift_colour(path, X, n_clusters, labels_, centers, bands, base, w1,
         center = centers[b]
         base_cen1 = center[base1_cen]
         base_cen2 = center[base2_cen]
-        base_cen = base_cen2 - base_cen1
+        base_cen = base_cen1 - base_cen2
         ax2.scatter(X[labels_ == b, 0], base[labels_ == b], marker=markers[b],
                     color=clust_col, s=2, label=b)
         ax2.scatter(center[0], base_cen, marker=markers[b],
@@ -743,7 +743,7 @@ def meanshift_colour(path, X, n_clusters, labels_, centers, bands, base, w1,
     for c in range(0, n_clusters):
         my_members = labels_ == c
         clust_col = plt.cm.jet(float(c) / np.max(labels_ + 1))
-        ax2.scatter(base[my_members], w4[labels_ == c], color=clust_col, marker='.', s=4, label=c)
+        ax3.scatter(base[my_members], w4[labels_ == c], color=clust_col, marker='.', s=4, label=c)
     ax3.legend(loc='lower right', fontsize=8)
     ax3.set_xlabel(bands[base1]+' - '+bands[base2])
     ax3.set_ylabel(bands[base2])
@@ -854,7 +854,7 @@ def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
         center = cluster_centers[b]
         base_cen1 = center[base1_cen]
         base_cen2 = center[base2_cen]
-        base_cen = base_cen2- base_cen1
+        base_cen = base_cen1- base_cen2
         ax2.scatter(cluster_data[cluster_number == b, 0], base[cluster_number == b],
                     marker=markers[b], color=clust_col, s=2, label=b, zorder=1)
         ax2.scatter(center[0], base_cen, marker=markers[b],
@@ -878,7 +878,7 @@ def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
     for c in range(0, number_clusters):
         my_members = cluster_number == c
         clust_col = plt.cm.jet(float(c) / np.max(number_clusters + 1))
-        ax2.scatter(base[my_members], w4[cluster_number == c], color=clust_col, marker='.', s=4, label=c)
+        ax3.scatter(base[my_members], w4[cluster_number == c], color=clust_col, marker='.', s=4, label=c)
     ax3.legend(loc='lower right', fontsize=8)
     ax3.set_xlabel(bands[base1]+' - '+bands[base2])
     ax3.set_ylabel(bands[base2])
