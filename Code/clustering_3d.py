@@ -51,8 +51,8 @@ markers = ['o', 'o', 'o', 'o', 'o', 'o', 'o', '*', '*', '*', '*', '*', '*', '*',
 max_num_clusters = 40
 
 # Set the base path and directory symbol for MAC or PC OS
-base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
-# base_path = '/home/akiar/m83_clustering/'  # Sharcnet
+# base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
+base_path = '/home/akiar/m83_clustering/'  # Sharcnet
 # base_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\'  # PC
 figure_save_symbol = '/'  # MAC Sharcnet
 # figure_save_symbol = '\\'  # PC
@@ -62,7 +62,7 @@ figure_save_symbol = '/'  # MAC Sharcnet
 '''Change waves in organize_data function'''
 base1 = 2
 base1_cen = 1
-base2 = 4
+base2 = 5
 base2_cen = 2
 
 # defined functions
@@ -302,7 +302,7 @@ def organize_data(exp, data_file):
     colour1_trim = np.logical_and(wave1_trim, wave2_trim)
     colour2_trim = np.logical_and(wave3_trim, wave4_trim)
     colour3_trim = np.logical_and(wave5_trim, wave6_trim)
-    base_colour_trim = np.logical_and(wave3_trim, wave5_trim)
+    base_colour_trim = np.logical_and(wave4_trim, wave6_trim)
     # colour4_trim = np.logical_and(wave7_trim, wave8_trim)
     # colour5_trim = np.logical_and(wave9_trim, wave10_trim)
     # colour6_trim = np.logical_and(wave11_trim, wave12_trim)
@@ -319,11 +319,11 @@ def organize_data(exp, data_file):
     colour1 = wave1[final_data] - wave2[final_data]
     colour2 = wave3[final_data] - wave4[final_data]
     colour3 = wave5[final_data] - wave6[final_data]
-    base_colour = wave3[final_data] - wave5[final_data]
+    base_colour = wave3[final_data] - wave6[final_data]
     wave1_fin = wave1[final_data]
     wave2_fin = wave2[final_data]
     wave3_fin = wave3[final_data]
-    wave5_fin = wave5[final_data]
+    wave5_fin = wave6[final_data]
     # colour4 = wave7[final_data] - wave8[final_data]
     # colour5 = wave9[final_data] - wave10[final_data]
     # colour6 = wave11[final_data] - wave12[final_data]
@@ -720,7 +720,7 @@ def meanshift_colour(path, X, n_clusters, labels_, centers, bands, base, w1,
         center = centers[b]
         base_cen1 = center[base1_cen]
         base_cen2 = center[base2_cen]
-        base_cen = base_cen1 - base_cen2
+        base_cen = base_cen2 - base_cen1
         ax2.scatter(X[labels_ == b, 0], base[labels_ == b], marker=markers[b],
                     color=clust_col, s=2, label=b)
         ax2.scatter(center[0], base_cen, marker=markers[b],
@@ -854,7 +854,7 @@ def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
         center = cluster_centers[b]
         base_cen1 = center[base1_cen]
         base_cen2 = center[base2_cen]
-        base_cen = base_cen1- base_cen2
+        base_cen = base_cen2- base_cen1
         ax2.scatter(cluster_data[cluster_number == b, 0], base[cluster_number == b],
                     marker=markers[b], color=clust_col, s=2, label=b, zorder=1)
         ax2.scatter(center[0], base_cen, marker=markers[b],
