@@ -7,10 +7,10 @@ from astropy.table import Table
 ratio = 0.2
 data = Table.read('data_v3.txt', format='ascii.commented_header', guess=False)
 aperture = '05'
-band1 = 'mag{}_225'.format(aperture)  # U
-band2 = 'mag{}_336'.format(aperture)  # B
-band3 = 'mag{}_555'.format(aperture)  # V
-band4 = 'mag{}_814'.format(aperture)  # I
+band1 = 'mag{}_657'.format(aperture)  # U
+band2 = 'mag{}_814'.format(aperture)  # B
+band3 = 'mag{}_438'.format(aperture)  # V
+band4 = 'mag{}_555'.format(aperture)  # I
 
 # Colour 1
 wave1 = data[band1]
@@ -33,16 +33,15 @@ wave4_trim = np.logical_and(np.logical_and(wave4 != -99, wave4_unc != -99),
                             wave4_unc < ratio)
 
 colour1_trim = np.logical_and(wave1_trim, wave2_trim)
-colour2_trim = np.logical_and(wave2_trim, wave3_trim)
-colour3_trim = np.logical_and(wave2_trim, wave4_trim)
-
+colour2_trim = np.logical_and(wave3_trim, wave1_trim)
+colour3_trim = np.logical_and(wave4_trim, wave1_trim)
 # Only data that match criteria for both colours
 greatdata = np.logical_and(np.logical_and(colour1_trim, colour2_trim),
                            colour3_trim)
 
 colour1 = wave1[greatdata] - wave2[greatdata]
-colour2 = wave2[greatdata] - wave3[greatdata]
-colour3 = wave2[greatdata] - wave4[greatdata]
+colour2 = wave3[greatdata] - wave1[greatdata]
+colour3 = wave4[greatdata] - wave1[greatdata]
 print len(colour1)
 x = data['x'][greatdata]
 y = data['y'][greatdata]
@@ -51,7 +50,7 @@ fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 ax.scatter(colour1, colour2, colour3, s=2, c='k')
 ax.set_xlabel(band1 + ' - ' + band2)
-ax.set_ylabel(band2 + ' - ' + band2)
-ax.set_zlabel(band2 + ' - ' + band4)
+ax.set_ylabel(band3 + ' - ' + band1)
+ax.set_zlabel(band4 + ' - ' + band1)
 
 plt.show()
