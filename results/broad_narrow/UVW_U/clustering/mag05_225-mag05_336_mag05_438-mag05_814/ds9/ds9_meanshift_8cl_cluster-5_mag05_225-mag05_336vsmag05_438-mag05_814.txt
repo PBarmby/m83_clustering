@@ -1,4 +1,0 @@
-CIRCLE(1576.25,839.98,15) # color = magenta
-CIRCLE(263.47,1420.27,15) # color = magenta
-CIRCLE(1791.83,1429.17,15) # color = magenta
-CIRCLE(609.16,2551.35,15) # color = magenta
