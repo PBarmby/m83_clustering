@@ -52,8 +52,8 @@ markers = ['o', 'o', 'o', 'o', 'o', 'o', 'o', '*', '*', '*', '*', '*', '*', '*',
 max_num_clusters = 40
 
 # Set the base path and directory symbol for MAC or PC OS
-base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
-# base_path = '/home/akiar/m83_clustering/'  # Sharcnet
+# base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
+base_path = '/home/akiar/m83_clustering/'  # Sharcnet
 # base_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\'  # PC
 figure_save_symbol = '/'  # MAC Sharcnet
 # figure_save_symbol = '\\'  # PC
@@ -78,12 +78,13 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                id_list, data_file, write_res, ds9_cat, af_in,
                input_file='3d_experiments.txt'):
     '''DESCRIBE PROCESS HERE'''
+    st = time.time()
     # Create saving directories
     plot_path, results_path = make_save_directory(save_plots, save_results)
 
     # Load data and trials
     data, experiments = load_data_file(data_file, input_file)
-
+    
     '''Run Analysis'''
     for i in range(0, len(experiments)):
         '''-----------------Metrics reset every trial-----------------------'''
@@ -115,7 +116,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
         # Do clustering
 
         if "meanshift" in analysis:
-            st = time.time()
+            start = time.time()
             if 'experiments.txt' in bw_in:
                 b_width_input = experiments['b_width'][i]
             else:
@@ -129,9 +130,8 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                 meanshift_results(results_path, results_title, experiments[i],
                                   ms_n_clusters, ms_score, bandwidth, ms_obj,
                                   ms_obj_p_cluster, col)
-            print "Finished MeanShift"
-            ed = time.time()
-            print "Time: {}".format(ed - st)
+            end = time.time()
+            print "Finished Meanshift: {}".format(end - start)
 
         if "hms" in analysis:
             if 'experiments.txt' in bw_in:
@@ -162,7 +162,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                                              af_obj, af_obj_p_cluster, col)
 
         if "kmeans" in analysis:
-            st = time.time()
+            start = time.time()
             if "experiments.txt" in kmeans_input:
                 km_n_clusters = int(experiments['n_clusters'][i])
             elif "meanshift" in kmeans_input:
@@ -190,9 +190,8 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                     kmeans_results(results_path, results_title, experiments[i],
                                    kmeans_input, a, km_score, total_obj,
                                    num_obj, inertia, col)
-            print "Finished Clustering"
-            ed = time.time()
-            print "Time: {}".format(ed - st)
+            end = time.time()
+            print "Finished KMeans: {}".format(end - start)
 
         if "center_test" in analysis:
             n_clusters = experiments['n_clusters'][i]
@@ -202,7 +201,9 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                                           n_clusters, plots, id_list,
                                           x_data, y_data, id_data, ds9_cat,
                                           n, base_colour, write_res)
-
+    print "Finished Clustering"
+    ed = time.time()
+    print "Total Time: {}".format(ed - st)
 
     # Copy experiments.txt to plots directory
     shutil.copy2('3d_experiments.txt',
