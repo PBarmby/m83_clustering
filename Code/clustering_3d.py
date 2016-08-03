@@ -22,6 +22,7 @@ from astropy.table import Table
 import shutil
 from itertools import cycle
 import mpl_toolkits.mplot3d as p3
+import time as time
 
 # Kmeans imports
 from sklearn.cluster import KMeans
@@ -99,6 +100,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
         damping = 0
         preferences = 0
         n = 0
+        st = time.time()
         '''-----------------------------------------------------------------'''
 
         # Get Data
@@ -193,7 +195,9 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                                           n_clusters, plots, id_list,
                                           x_data, y_data, id_data, ds9_cat,
                                           n, base_colour, write_res)
-                
+        print "Finished Clustering"
+        ed = time.time()
+        print "Time: {}".format(ed - st)
 
     # Copy experiments.txt to plots directory
     shutil.copy2('3d_experiments.txt',

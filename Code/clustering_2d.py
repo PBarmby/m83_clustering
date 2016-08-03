@@ -72,7 +72,6 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                id_list, data_file, write_res, ds9_cat, af_in, hc_input,
                input_file='experiments.txt'):
     '''DESCRIBE PROCESS HERE'''
-    st = time.time()
     # Create saving directories
     plot_path, results_path = make_save_directory(save_plots, save_results)
 
@@ -95,6 +94,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
         damping = 0
         preferences = 0
         n = 0
+        st = time.time()
         '''-----------------------------------------------------------------'''
 
         # Get Data
@@ -209,11 +209,11 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                                           n, wave1, wave2, wave3, wave4)
                 
         print "Finished Clustering"
+        ed = time.time()
+        print "Time: {}".format(ed - st)
     # Copy experiments.txt to plots directory
     shutil.copy2('experiments.txt',
                  plot_path + figure_save_symbol + 'inputs.txt')
-    ed = time.time()
-    print "Time: {}".format(ed - st)
 
     return()
 
