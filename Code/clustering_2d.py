@@ -54,8 +54,8 @@ markers = ['o', 'o', 'o', 'o', 'o', 'o', 'o', '*', '*', '*', '*', '*', '*', '*',
 max_num_clusters = 40
 
 # Set the base path and directory symbol for MAC or PC OS
-# base_path = '/home/akiar/m83_clustering/'  # MAC
-base_path = '/home/akiar/m83_clustering/'  # Sharcnet
+base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
+# base_path = '/home/akiar/m83_clustering/'  # Sharcnet
 # base_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\'  # PC
 figure_save_symbol = '/'  # MAC Sharcnet
 # figure_save_symbol = '\\'  # PC
