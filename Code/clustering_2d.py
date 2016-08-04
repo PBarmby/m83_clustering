@@ -72,6 +72,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                id_list, data_file, write_res, ds9_cat, af_in, hc_input,
                input_file='experiments.txt'):
     '''DESCRIBE PROCESS HERE'''
+    st = time.time()
     # Create saving directories
     plot_path, results_path = make_save_directory(save_plots, save_results)
 
@@ -94,7 +95,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
         damping = 0
         preferences = 0
         n = 0
-        st = time.time()
+        
         '''-----------------------------------------------------------------'''
 
         # Get Data
@@ -110,6 +111,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
         # Do clustering
 
         if "meanshift" in analysis:
+            start = time.time()
             if 'experiments.txt' in bw_in:
                 b_width_input = experiments['b_width'][i]
             else:
@@ -123,6 +125,8 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                 meanshift_results(results_path, results_title, experiments[i],
                                   ms_n_clusters, ms_score, bandwidth, ms_obj,
                                   ms_obj_p_cluster, col)
+            end = time.time()
+            print "Finished MeanShift: {}".format(end - start)
 
         if "hms" in analysis:
             if 'experiments.txt' in bw_in:
@@ -171,6 +175,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                            num_obj, col)
 
         if "kmeans" in analysis:
+            start = time.time()
             if "experiments.txt" in kmeans_input:
                 km_n_clusters = int(experiments['n_clusters'][i])
             elif "meanshift" in kmeans_input:
@@ -198,6 +203,8 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                     kmeans_results(results_path, results_title, experiments[i],
                                    kmeans_input, a, km_score, total_obj,
                                    num_obj, inertia, col)
+            end = time.time()
+            print "Finished KMeans: {}".format(end - start)
 
         if "center_test" in analysis:
             n_clusters = experiments['n_clusters'][i]
@@ -208,9 +215,9 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                                           x_data, y_data, id_data, ds9_cat,
                                           n, wave1, wave2, wave3, wave4)
                 
-        print "Finished Clustering"
-        ed = time.time()
-        print "Time: {}".format(ed - st)
+    print "Finished Clustering"
+    ed = time.time()
+    print "Time: {}".format(ed - st)
     # Copy experiments.txt to plots directory
     shutil.copy2('experiments.txt',
                  plot_path + figure_save_symbol + 'inputs.txt')
