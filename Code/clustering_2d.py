@@ -54,8 +54,8 @@ markers = ['o', 'o', 'o', 'o', 'o', 'o', 'o', '*', '*', '*', '*', '*', '*', '*',
 max_num_clusters = 40
 
 # Set the base path and directory symbol for MAC or PC OS
-base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
-# base_path = '/home/akiar/m83_clustering/'  # Sharcnet
+# base_path = '/home/akiar/m83_clustering/'  # MAC
+base_path = '/home/akiar/m83_clustering/'  # Sharcnet
 # base_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\'  # PC
 figure_save_symbol = '/'  # MAC Sharcnet
 # figure_save_symbol = '\\'  # PC
@@ -661,7 +661,7 @@ def ds9_catalogue(clustering, n_clust, cluster_num, waves, x, y, save_):
         for w in range(0, len(x_coord)): 
             coordinate_string = "{:.2f},{:.2f},".format(x_coord[w], y_coord[w])
             if i > 7:
-                ds9_file.write("CIRCLE(" + coordinate_string + '15) # color = ' + ds_col[2] + '\n')
+                ds9_file.write("CIRCLE(" + coordinate_string + '15) # color = ' + ds_col[i-7] + '\n')
             else:
                 ds9_file.write("CIRCLE(" + coordinate_string + '15) # color = ' + ds_col[i] + '\n')
         ds9_file.close()
