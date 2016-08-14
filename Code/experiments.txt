@@ -1,12 +1,6 @@
 # band1 band2 band3 band4 n_clusters b_width eps min_samples damping preferences
 
-mag05_657 mag05_814 mag05_336 mag05_438 3 0.4 0.3 3 0.5 -20
-mag05_657 mag05_814 mag05_336 mag05_438 3 0.45 0.3 3 0.5 -20
-mag05_657 mag05_814 mag05_336 mag05_438 3 0.5 0.3 3 0.5 -20
-mag05_657 mag05_814 mag05_336 mag05_438 3 0.55 0.3 3 0.5 -20
+mag05_336 mag05_438 mag05_555 mag05_814 3 0.4 0.3 3 0.5 -20
+mag05_336 mag05_555 mag05_438 mag05_814 3 0.4 0.3 3 0.5 -20
 
-mag05_657 mag05_814 mag05_336 mag05_555 3 0.45 0.3 3 0.5 -20
-mag05_657 mag05_814 mag05_336 mag05_555 3 0.5 0.3 3 0.5 -20
-mag05_657 mag05_814 mag05_336 mag05_555 3 0.55 0.3 3 0.5 -20
-mag05_657 mag05_814 mag05_336 mag05_555 3 0.6 0.3 3 0.5 -20
 
