@@ -61,7 +61,7 @@ figure_save_symbol = '/'  # MAC Sharcnet
 # Set the "base" bands in 3d_experiments.txt. Base bands: the broad-broad
 # colour being seperated into 2 narrow-broad colours
 '''Change waves in organize_data function'''
-base1 = 3  # CHANGE
+base1 = 2  # CHANGE
 base1_cen = 1
 base2 = 5  # CHANGE
 base2_cen = 2
@@ -312,7 +312,7 @@ def organize_data(exp, data_file):
     colour1_trim = np.logical_and(wave1_trim, wave2_trim)
     colour2_trim = np.logical_and(wave3_trim, wave4_trim)
     colour3_trim = np.logical_and(wave5_trim, wave6_trim)
-    base_colour_trim = np.logical_and(wave3_trim, wave5_trim)  # CHANGE
+    base_colour_trim = np.logical_and(wave3_trim, wave6_trim)  # CHANGE
     # colour4_trim = np.logical_and(wave7_trim, wave8_trim)
     # colour5_trim = np.logical_and(wave9_trim, wave10_trim)
     # colour6_trim = np.logical_and(wave11_trim, wave12_trim)
@@ -329,11 +329,11 @@ def organize_data(exp, data_file):
     colour1 = wave1[final_data] - wave2[final_data]
     colour2 = wave3[final_data] - wave4[final_data]
     colour3 = wave5[final_data] - wave6[final_data]
-    base_colour = wave3[final_data] - wave5[final_data]  # CHANGE
+    base_colour = wave3[final_data] - wave6[final_data]  # CHANGE
     wave1_fin = wave1[final_data]
     wave2_fin = wave2[final_data]
     wave3_fin = wave3[final_data]
-    wave5_fin = wave5[final_data]  # CHANGE
+    wave5_fin = wave6[final_data]  # CHANGE
     # colour4 = wave7[final_data] - wave8[final_data]
     # colour5 = wave9[final_data] - wave10[final_data]
     # colour6 = wave11[final_data] - wave12[final_data]
