@@ -5,6 +5,10 @@
 The results of the analysis are grouped into the type of band used to make each colour.  % More general notes about results
 
 \subsection{Broad \& Broad Band Combinations}
+The four broad bands were used to create different colours. The only colour that was omitted from the analysis was the \textit{U - I} colour.
+This was omitted because the range between those wavelengths is large enought that it is unlikely the ratio between the flux of those bands has any physical meaning.
+
+\subsubsection{U - B vs. V - I}
 
 \subsection{Broad \& Narrow Band Combinations}
 Each broad and narrow band combination was tested against every broad-broad band combination that did not boarder the narrow band.
@@ -21,17 +25,18 @@ In order to determine this, a cluster hierarchy was created with different bandw
 If a small cluster was created at a low bandwidth level and stayed alive until the number of clusters became 2-3, then it is reasonable to assume that the cluster was meaningful.
 Figure ~\ref{fig:UVWMS1} shows the result of one trial of Mean-Shift clustering with $h=0.6$ which created 4 clusters. 
 Figure ~\ref{fig:UVWMS2} shows the result of one trial of Mean-Shift clustering with $h=0.4$, creating 10 clusters. 
-The structure of cluster $2$ in both Figure ~ref{fig:UVWMS1} and Figure ~ref{fig:UVWMS2} can be seen distinctly. 
-This cluster would have been viewed as noise if the hierarchy was not created, but after testing multiple bandwidth values, it can be seen that these objects are significant. 
+The structure of cluster $2$ in both Figure ~\ref{fig:UVWMS1} and Figure ~\ref{fig:UVWMS2} can be seen distinctly. 
+This cluster would have been viewed as noise if the hierarchy was not created, but after testing multiple bandwidth values, it can be seen that these objects are significant.
+Varying the bandwidth did not have a large affect on the number of clusters produced. Bandwidth values from 0.5 to 1.0 only created a difference in three clusters generated. 
 
-\begin{figure}[H]
+\begin{figure}
 \centering
 \includegraphics[width=\linewidth]{figs/meanshift_color_4cl_mag05_225-mag05_336vsmag05_555-mag05_814}
 \caption{Colour-Colour distribution of the UVW-U and V-I colours, clustered using Mean-Shift with $h=0.6$. The colour of each point corresponds to the cluster the point was assigned to. Cluster numbers can be seen in the legend.}
 \label{fig:UVWMS1}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}
 \centering
 \includegraphics[width=\linewidth]{figs/meanshift_color_10cl_mag05_225-mag05_336vsmag05_555-mag05_814}
 \caption{Colour-Colour distribution of the UVW-U and B-I colours, clustered using K-Means with $h=0.4$. The colour of each point corresponds to the cluster the point was assigned to. Cluster numbers can be seen in the legend.}
@@ -41,19 +46,20 @@ This cluster would have been viewed as noise if the hierarchy was not created, b
 \paragraph{K-Means}
 
 When clustered using K-Means, two types of results were seen.
-Figure ~\ref{fig:UVWKM1}, shows the result of K-Means clustering for $K=5$ against the B-V colour. 
+Figure ~\ref{fig:UVWKM1}, shows the result of K-Means clustering for $K=5$ against the B-V colour.
+
 \begin{figure}
 \centering
 \includegraphics[width=\linewidth]{figs/kmeans_xy_5cl_mag05_225-mag05_336vsmag05_438-mag05_555}
 \caption{Colour-Colour distribution of the UVW-U and B-V colours, clustered using K-Means with $K=5$. The colour of each point corresponds to the cluster the point was assigned to. Cluster numbers can be seen in the legend.}
 \label{fig:UVWKM1}
 \end{figure}
-The algorithm split the data into groups based on its UVW - U colour. The pattern continued for all values of K, and the S Scores of the combination elbowed at $K=5$.
+
+The algorithm split the data into groups based on its UVW - U colour. The pattern continued for all values of K, and the silhouette scores of the combination elbowed at $K=5$.
 The second type of result for K-Means can be seen in Figure ~\ref{fig:UVWKM2}, against the B-I colour. 
 This clustering segmented the data into circular groups within the distribution. 
-Similar to the B-V combination, the S Score elbowed at $K=5$. 
-When the objects were plotted on the whitelight image, both types of segmentation seemed to pick out objects that live in different structures of M83. % Reference Chandar
-% Add test with CLAsPS score to show correlation with labels 
+Similar to the B-V combination, the silhouette score elbowed at $K=5$.
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{figs/kmeans_xy_5cl_mag05_225-mag05_336vsmag05_438-mag05_814}
@@ -61,13 +67,89 @@ When the objects were plotted on the whitelight image, both types of segmentatio
 \label{fig:UVWKM2}
 \end{figure}
 
-\subsubsection{U - OII}
-The U - OII combination was clustered with the B-V, B-I, and V-I colours. % More general information about what we are looking for in this combination
+\paragraph{Astronomy Implications}
+After the clustering was performed, the location of the cluster members were imposed on the whitelight image of M83.
+The algorithms were able to identify sources that are located in unique sections of the galaxy.
+K-Means segmented the data into objects that are located along the spiral arms exclusively, clustered in the denser regions of the arms and nucleus, and in the intra-arm region.
+This pattern of object location was found through all combinations of broad - broad colours.
+The Mean-Shift segmentation was able to identify objects that were located in the spiral arms.
+The objects that were not part of the main cluster appear to be point sources that fall in the back of the galaxy, or are some form of cloud or dust.
 
-\paragraph{Mean-Shift}
+\subsubsection{U - OII}
+The U - OII combination was clustered with the B-V, B-I, and V-I colours using Meanshift followed by KMeans. % More general information about what we are looking for in this combination
+
+\paragraph{2-Dimensions}
+
 This colour seemed to be much more sensitive to bandwidth selection than other combinations.
 With the B-V colour, $h=0.2$ produced $32$ clusters, while $h=0.4$ produced $3$. With the V-I colour, $h=0.35$ produced $17$ clusters, while $h=0.6$ produced $3$.
-Due to this sensitivity, the bandwidth hierarchy was created on much narrower increases in $h$, which produced more meaningful clusters. 
+Due to this sensitivity, the bandwidth hierarchy was created on much narrower increases in $h$, which produced more meaningful clusters.
+After producing the narrow hierarchy, the meanshift algorithm predictad a range of clusters from 3 to 13.
+In each clustering, the algorithm did not seem to segment the data significantly, as similar to UVW - U, it produced one large cluster with several smaller ones.
+The number of clusters predicted reduced linearly with the bandwidth selected, however, the silhouette score saw a sharp drop at $h = 0.33$, which produced 8 clusters, see Figure ~\ref{fig:UOIIMS}. 
+This clustering segmented the data into three main groups, which were two "arms" in the distribution that spread to the redder areas of both colours.
+Despite picking out these two groups, the two arms contained only approximately 5\% of the data and required further investigation. 
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{figs/meanshift_color_8cl_mag05_336-mag05_373vsmag05_438-mag05_555}
+\caption{Colour-Colour distribution of the $U-O_{2}$ and B-V colours, clustered using Meanshift with $h=0.33$. The colour of each point corresponds to the cluster the point was assigned to. Cluster numbers can be seen in the legend.}
+\label{fig:UOIIMS}
+\end{figure}
+
+The K-Means algorithm produced more reliable results, as it produced clusters of relatively similar sizes.
+As K increased, the sum of squares value for each clustering decreased, a trend that is expected.
+The silhouette score was a maximum at $K=3$, and elbowed at $K=5$. Both clusterings were investigated to determine which was optimal.
+At $K=3$, the distribution was segmented according to its U - OII colour.
+At $K=5$, the segmentation was similar, however, the section of data that was significantly red in the U-OII colour was given its own cluster.
+
+With each combination of broad bands, the same patterns existed.
+This combination in 2-Dimensions did not seem to uncover any more detail or interesting objects than the UVW-U combinations.
+
+\paragraph{3-Dimensions}
+
+Following the initial clustering, the colours were each broken down into a combination of the OII band and each other band.
+The colours used in three dimensions were a combination of U-OII, OII-B, OII-V, and OII-I.
+
+The clustering performance in three dimensions was generally better for almost all clustering parameters.
+With all combinations, the clustering algorithms were able to identify a large branch of objects that was fairly red in the U-OII colour, and very blue in the other two, see Figure ~\ref{fig:UOIIKM3d}.
+This branch was identified at all values of K, and most values of h.
+The added complexity of three dimensions removed the restrictions of only using two dimensions, and allowed the algorithms to cluster the distributions more accurately.
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{figs/kmeans_3d_color_3cl_mag05_336-mag05_373vsmag05_373-mag05_438vsmag05_373-mag05_555}
+\caption{Colour-Colour distribution of the $U-O_{2}$, $O_{2}-B$, and $O_{2}-V$ colours, clustered using K-Means with $K=3$. The colour of each point corresponds to the cluster the point was assigned to. Cluster numbers can be seen in the legend.}
+\label{fig:UOIIKM3d}
+\end{figure}
+
+The optimal meanshift clustering was not as apparent in three dimensions.
+In the OII - B vs. OII - V combination, the score and number of clusters did not plateau, and the Meanshift clustering was not considered for the optimal clustering.
+However, in the OII - B vs. OII - I and OII - V vs. OII - I combinations, the number of clusters elbowed at an h value that maximized the silhouette score.
+The number of clusters elbowed at 5, over a range of h values for both combinations.
+In each case, the algorithm was able to pick out groups of outliers more clearly than in two dimensions, and the elbow point was taken as the optimal meanshift clustering.
+
+The K-Means algorithm was superior to meanshift for picking out evenly sized groups in all combinations, however, it was not able to pick out some of the detail lying in the groups of outlier data. 
+In the combinations that meanshift was successful in, the score peaked at $K=4$, and this was chosen for the optimal clustering. In the last combination, the score peaked at $K=3$.
+In addition, each K value was able to pick out the clear branch of objects.
+When projected back into two dimensions, the successful segmentation of K-Means can be seen, as it identifies both branches of red objects, and the dense area around zero, see Figure ~\ref{fig:UOIIKM2d}.
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{figs/kmeans_base_color_3cl_mag05_336-mag05_373vsmag05_438-mag05_555}
+\caption{Colour-Colour distribution of the $U-O_{2}$ and B-V colours, projected from the 3D clustering using K-Means with $K=3$. The colour of each point corresponds to the cluster the point was assigned to. Cluster numbers can be seen in the legend.}
+\label{fig:UOIIKM2d}
+\end{figure}
+
+\paragraph{Astronomy Implications}
+Both 2 and 3 dimensional clusterings were investigated in the whitelight image. 
+The clusterings in three dimensions were able to segment objects more diffinitively than two dimensions.
+This was most noticable in the red branches of the distribution.
+In two dimensions, the clusters that segmented the red branches seemed to be a combination of dim point sources and objects in the back of the galaxy or behind clouds.
+In three dimensions, these clusters were almost entirely objects in the back of the galaxy or behind clouds instead of the combination.
+Additionally, the clusters in three dimensions were better able to detect the boundary between the dense center of the distribution and the outlying branches.
+When projected onto the galaxy, the objects dense center of the distribution were located in the densist areas of the spiral arms.
+The three dimensional clusterings were able to identify these objects and keep them as a seperate cluster.
+
 
 
 
