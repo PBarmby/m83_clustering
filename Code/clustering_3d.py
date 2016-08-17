@@ -342,7 +342,7 @@ def organize_data(exp, data_file):
                              # colour6]).T
     x = data['x'][final_data]
     y = data['y'][final_data]
-    id_ = data['id_'][final_data].astype(np.int32)
+    id_ = data['object_id'][final_data].astype(np.int32)
 
     return (cluster_data, base_colour, final_data, x, y, id_, wave1_fin,
             wave2_fin, wave3_fin, wave5_fin)

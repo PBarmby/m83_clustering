@@ -29,9 +29,9 @@ def data(clustering1, clustering2, survey_data, path_1, path_2, plots):
                         guess=False)
     clust2 = Table.read(path_2 + clustering2, format='ascii.commented_header',
                         guess=False)
-    clust1_data = join(clust1, survey_data, 'id_')
-    clust2_data = join(clust2, survey_data, 'id_')
-    clust_labels = join(clust1, clust2, 'id_')
+    clust1_data = join(clust1, survey_data, 'object_id')
+    clust2_data = join(clust2, survey_data, 'object_id')
+    clust_labels = join(clust1, clust2, 'object_id')
 
     return(clust_labels, clust1_data, clust2_data)
 

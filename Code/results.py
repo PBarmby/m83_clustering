@@ -28,7 +28,7 @@ def results(file_name, general_path, save_path, plots):
 
     general_results_data = load_data(gen_path, general_results_file)
 
-    if general_results_file == '05aperture_results_2d.txt':
+    if general_results_file == '05aperture_results_3d.txt':
         clean_gen_res_data, n_clust = organize_data(general_results_data)
     else:
         clean_gen_res_data = general_results_data
