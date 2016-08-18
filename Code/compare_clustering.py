@@ -125,7 +125,7 @@ def corr_plot(labels, path_, waves1, nclust1, alg1, waves2, nclust2, alg2,
     ax.set_ylabel(y_label, fontsize=8)
 
     plt.show()
-    file_name = '{}-{}cl_{}-{}_vs_{}-{}cl_{}-{}_{}dim_compare.png'.format(alg1,
+    file_name = '{}-{}cl_{}-{}_vs_{}-{}cl_{}-{}_{}-{}_{}dim_compare.png'.format(alg1,
                                                                 nclust1,
                                                                 waves1[0],
                                                                 waves1[1],
@@ -133,6 +133,8 @@ def corr_plot(labels, path_, waves1, nclust1, alg1, waves2, nclust2, alg2,
                                                                 nclust2,
                                                                 waves2[0],
                                                                 waves2[1],
+                                                                waves2[2],
+                                                                waves2[3],
                                                                 dimensions)
     pylab.savefig(os.path.join(path_, file_name))
     plt.close()
