@@ -15,7 +15,7 @@ def extract_cols(filters=our_filters, outfile='mist_ssp_feh'):
     # construct header for output file
     file_header = 'logt_yr '
     for f in filters:
-        file_header = file_header[-5:] + f + ' '
+        file_header = file_header + f[-5:] + ' '
     # generate SSP - this can take a while
     sp = fsps.StellarPopulation(compute_vega_mags=True, add_neb_emission=True, cloudy_dust=True, sfh=0,  zmet=10)
     ages = sp.log_age
