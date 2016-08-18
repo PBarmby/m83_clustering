@@ -5,7 +5,7 @@ Created on Fri Apr 03 13:24:41 2015
 """
 '''------------------------- Important Info -----------------------------------
 MAKE SURE YOU CHANGE THE PATH IN MAKE_SAVE_DIRECTORY
-Currently formatted for 6 colours.
+Currently formatted for 2 colours.
 Must be changed for different n_dimensions:
     - organize_data filters must be changed
     - headers in results files must be changed
@@ -21,6 +21,7 @@ from matplotlib import pyplot as plt
 from astropy.table import Table
 import shutil
 from itertools import cycle
+import time as time
 
 # Kmeans imports
 from sklearn.cluster import KMeans
@@ -36,6 +37,9 @@ from scipy.spatial import distance
 # affinity propagation imports
 from sklearn.cluster import AffinityPropagation
 
+# Hierarchical imports
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.neighbors import kneighbors_graph
 
 '''-----------------------Global Variables----------------------------------'''
 # used for plots
@@ -50,9 +54,10 @@ markers = ['o', 'o', 'o', 'o', 'o', 'o', 'o', '*', '*', '*', '*', '*', '*', '*',
 max_num_clusters = 40
 
 # Set the base path and directory symbol for MAC or PC OS
-base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
+# base_path = '/home/akiar/m83_clustering/'  # MAC
+base_path = '/home/akiar/m83_clustering/'  # Sharcnet
 # base_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\'  # PC
-figure_save_symbol = '/'  # MAC
+figure_save_symbol = '/'  # MAC Sharcnet
 # figure_save_symbol = '\\'  # PC
 
 # defined functions
@@ -64,9 +69,10 @@ from sklearn.metrics.pairwise import pairwise_distances as pdist
 
 
 def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
-               id_list, data_file, write_res, ds9_cat, af_in,
+               id_list, data_file, write_res, ds9_cat, af_in, hc_input,
                input_file='experiments.txt'):
     '''DESCRIBE PROCESS HERE'''
+    st = time.time()
     # Create saving directories
     plot_path, results_path = make_save_directory(save_plots, save_results)
 
@@ -89,10 +95,11 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
         damping = 0
         preferences = 0
         n = 0
+        
         '''-----------------------------------------------------------------'''
 
         # Get Data
-        cluster_data_, greatdata, x_data, y_data, id_data = \
+        cluster_data_, greatdata, x_data, y_data, id_data, wave1, wave2, wave3, wave4 = \
             organize_data(experiments[i], data)
 
         # Set title of results.txt
@@ -104,6 +111,7 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
         # Do clustering
 
         if "meanshift" in analysis:
+            start = time.time()
             if 'experiments.txt' in bw_in:
                 b_width_input = experiments['b_width'][i]
             else:
@@ -112,15 +120,17 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
             ms_n_clusters, bandwidth, ms_score, ms_obj, ms_obj_p_cluster, col = \
                 meanshift(plot_path, experiments[i], cluster_data_,
                           plots, b_width_input, id_list, id_data, x_data,
-                          y_data, ds9_cat, n)
+                          y_data, ds9_cat, n, wave1, wave2, wave3, wave4)
             if "yes" in write_res:
                 meanshift_results(results_path, results_title, experiments[i],
                                   ms_n_clusters, ms_score, bandwidth, ms_obj,
                                   ms_obj_p_cluster, col)
+            end = time.time()
+            print "Finished MeanShift: {}".format(end - start)
 
         if "hms" in analysis:
             if 'experiments.txt' in bw_in:
-                b_width_input = experiments['bandwidth'][i]
+                b_width_input = experiments['b_width'][i]
             else:
                 b_width_input = 'estimate'
 
@@ -134,18 +144,38 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                 preferences = float(experiments['preferences'][i])
             else: 
                 damping = 0.95
-                preferences = -len(cluster_data_)*0.1
+                preferences = -len(cluster_data_)*0.15
             af_n_clusters, af_score, af_obj, af_obj_p_cluster, col = \
                 affinity_propagation(plot_path, experiments[i], cluster_data_,
                                      plots, damping, preferences, id_list,
-                                     id_data, x_data, y_data, ds9_cat, n)
+                                     id_data, x_data, y_data, ds9_cat, n,
+                                     wave1, wave2, wave3, wave4)
             if "yes" in write_res:
                 affinity_propagation_results(results_path, results_title,
                                              experiments[i], af_n_clusters,
                                              af_score, damping, preferences,
                                              af_obj, af_obj_p_cluster, col)
+        
+        if "hc" in analysis:
+            if "experiments.txt" in hc_input:
+                hc_n_clusters = int(experiments['n_clusters'][i])
+            elif "meanshift" in kmeans_input:
+                hc_n_clusters = ms_n_clusters
+            elif "affinity" in kmeans_input:
+                hc_n_clusters = af_n_clusters
+            hc_score, num_obj, col = hierarchical(plot_path, experiments[i],
+                                           cluster_data_, greatdata,
+                                           hc_n_clusters, plots, id_list,
+                                           x_data, y_data, id_data, ds9_cat,
+                                           n)
+            total_obj = num_obj.sum()
+            if "yes" in write_res:
+                hc_results(results_path, results_title, experiments[i],
+                           hc_input, hc_n_clusters, hc_score, total_obj,
+                           num_obj, col)
 
         if "kmeans" in analysis:
+            start = time.time()
             if "experiments.txt" in kmeans_input:
                 km_n_clusters = int(experiments['n_clusters'][i])
             elif "meanshift" in kmeans_input:
@@ -167,23 +197,27 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
                                            cluster_data_, greatdata,
                                            a, plots, id_list,
                                            x_data, y_data, id_data, ds9_cat,
-                                           n)
+                                           n, wave1, wave2, wave3, wave4)
                 total_obj = num_obj.sum()
                 if "yes" in write_res:
                     kmeans_results(results_path, results_title, experiments[i],
                                    kmeans_input, a, km_score, total_obj,
                                    num_obj, inertia, col)
+            end = time.time()
+            print "Finished KMeans: {}".format(end - start)
 
         if "center_test" in analysis:
             n_clusters = experiments['n_clusters'][i]
-            for n in range(1, 11):
-                km_scor, num_obj, inertia = kmeans(plot_path, experiments[i],
+            for n in range(1, 21):
+                km_scor, num_obj, inertia, col = kmeans(plot_path, experiments[i],
                                           cluster_data_, greatdata,
                                           n_clusters, plots, id_list,
                                           x_data, y_data, id_data, ds9_cat,
-                                          n)
+                                          n, wave1, wave2, wave3, wave4)
                 
-
+    print "Finished Clustering"
+    ed = time.time()
+    print "Time: {}".format(ed - st)
     # Copy experiments.txt to plots directory
     shutil.copy2('experiments.txt',
                  plot_path + figure_save_symbol + 'inputs.txt')
@@ -253,18 +287,23 @@ def organize_data(exp, data_file):
     # Make colours
     colour1 = wave1[final_data] - wave2[final_data]
     colour2 = wave3[final_data] - wave4[final_data]
+    wave1_fin = wave1[final_data]
+    wave2_fin = wave2[final_data]
+    wave3_fin = wave3[final_data]
+    wave4_fin = wave4[final_data]
 
     cluster_data = np.vstack([colour1, colour2]).T 
 
     x = data['x'][final_data]
     y = data['y'][final_data]
-    id_ = data['id_'][final_data].astype(np.int32)
+    id_ = data['object_id'][final_data].astype(np.int32)
 
-    return (cluster_data, final_data, x, y, id_)
+    return (cluster_data, final_data, x, y, id_, wave1_fin, wave2_fin,
+            wave3_fin, wave4_fin)
 
 
 def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
-              output_id, id_data, x, y, ds9_cat, cent_test):
+              output_id, id_data, x, y, ds9_cat, cent_test, w1, w2, w3, w4):
     '''---------------------------------------------------------------------'''
     '''Meanshift clustering to determine the number of clusters in the data,
     which can be passed to KMEANS function'''
@@ -317,7 +356,7 @@ def meanshift(s_path, bands, cluster_data, make_plot, bw_input,
     # Make plots
     if "meanshift_colour" in make_plot:
         meanshift_colour(s_path, X_scaled, n_clusters_, labels,
-                         cluster_centers, bands)
+                         cluster_centers, bands, w1, w2, w3, w4)
     # Make catalgoues
     if "yes" in output_id:
         id_catologue('meanshift', n_clusters_, labels, bands, id_data, x, y,
@@ -392,7 +431,8 @@ def hms(s_path, bands, cluster_data, make_plot, bw_input, output_id, id_data,
 
 
 def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
-                         output_id, id_data, x, y, ds9_cat, cent_test):
+                         output_id, id_data, x, y, ds9_cat, cent_test, w1, w2,
+                         w3, w4):
     '''---------------------------------------------------------------------'''
     '''Perform Affinity Propagation clustering to determine the number of
     clusters in a given set of colours'''
@@ -403,7 +443,7 @@ def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
     # X_scaled = preprocessing.scale(cluster_data)
 
     # Compute similarities
-    similarities = pdist(cluster_data)
+    similarities = cluster_data
     # Compute Affinity Propagation
     af = AffinityPropagation(preference=pref, damping=damp).fit(similarities)
 
@@ -446,7 +486,7 @@ def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
     # Make plot
     if 'affinity' in make_plots:
         affinity_plot(labels, cluster_centers_indices, cluster_data,
-                      n_clusters_, bands, s_path)
+                      n_clusters_, bands, s_path, w1, w2, w3, w4)
 
     # Write ID file
     if "yes" in output_id:
@@ -459,7 +499,8 @@ def affinity_propagation(s_path, bands, cluster_data, make_plots, damp, pref,
 
 
 def kmeans(s_path, bands, cluster_data_, greatdata, number_clusters, make_plots,
-           output_cluster_id, x, y, id_data, ds9_cat, cent_test):
+           output_cluster_id, x, y, id_data, ds9_cat, cent_test, w1, w2, w3,
+           w4):
     '''---------------------------------------------------------------------'''
     '''Perform K-means clustering on colours constructed from HST photometry
     using various combinations of filters'''
@@ -509,7 +550,7 @@ def kmeans(s_path, bands, cluster_data_, greatdata, number_clusters, make_plots,
     # Generate plots
     if "kmeans_colour" in make_plots:
         kmeans_colour(s_path, cluster_data, number_clusters, labels,
-                      bands, centers)
+                      bands, centers, cent_test, w1, w2, w3, w4)
 
     # Output object and cluster IDs to ID.txt file
     if "yes" in output_cluster_id:
@@ -519,6 +560,62 @@ def kmeans(s_path, bands, cluster_data_, greatdata, number_clusters, make_plots,
         ds9_catalogue('kmeans', number_clusters, labels, bands, x, y, s_path)
     
     return(score, objects_per_cluster, sum_of_squares, colours)
+
+
+def hierarchical(s_path, bands, cluster_data_, greatdata, number_clusters, make_plots,
+                 output_cluster_id, x, y, id_data, ds9_cat, cent_test):
+    '''Perform Agglomerative Hierarchical Clustering'''
+    # Define the structure A of the data. Here a 10 nearest neighbors
+    
+    connectivity = kneighbors_graph(cluster_data_, n_neighbors=20)
+
+    # Compute clustering
+    hc = AgglomerativeClustering(n_clusters=number_clusters, connectivity=connectivity,
+                                 linkage='ward').fit(cluster_data_)
+    
+    # Compute statistics
+    labels = hc.labels_
+    if number_clusters > 1:
+        score = metrics.silhouette_score(cluster_data_, labels)
+        sample_score = silhouette_samples(cluster_data_, labels)
+    else:
+        score = np.array(-99.0, dtype=float)
+        sample_score = np.array(-99.0, dtype=float)
+
+    # Set up save_path
+    colours = ('{}-{}_{}-{}').format(bands[0], bands[1], bands[2], bands[3])
+
+    # Identify which cluster each object belongs to
+    objects_per_cluster = np.zeros(max_num_clusters, dtype=np.int16)
+    for i in range(0, number_clusters):
+        x_cluster = cluster_data_[labels == i]
+        objects_per_cluster[i] = len(x_cluster)
+        if -99.0 in sample_score:
+            write_cluster_stats(s_path, 'kmeans', number_clusters, i,
+                                objects_per_cluster[i], 'N/A',
+                                x_cluster, score,
+                                sample_score, cent_test, colours)
+        else:
+            write_cluster_stats(s_path, 'kmeans', number_clusters, i,
+                                objects_per_cluster[i], 'N/A',
+                                x_cluster, score,
+                                sample_score[labels == i], cent_test, colours)
+
+    # Format for writing results
+    objects_per_cluster.sort()  # sort from smallest to largest
+    objects_per_cluster = objects_per_cluster[::-1]  # reverse sort
+    # Generate plots
+    if "h_colour" in make_plots:
+        h_colour(s_path, cluster_data_, number_clusters, labels, bands)
+
+    # Output object and cluster IDs to ID.txt file
+    if "yes" in output_cluster_id:
+        id_catologue('HC', number_clusters, labels, bands, id_data, x, y,
+                     s_path)
+    if "yes" in ds9_cat:
+        ds9_catalogue('HC', number_clusters, labels, bands, x, y, s_path)
+    
+    return(score, objects_per_cluster, colours)
 
 
 def id_catologue(clustering, number_clusters, cluster_number, waves, id_data,
@@ -572,18 +669,24 @@ def ds9_catalogue(clustering, n_clust, cluster_num, waves, x, y, save_):
     return()
 
 
-def meanshift_colour(path, X, n_clusters, labels_, centers, bands):
+def meanshift_colour(path, X, n_clusters, labels_, centers, bands, w1, w2, w3,
+           w4):
+    colours = ('{}-{}_{}-{}').format(bands[0], bands[1], bands[2], bands[3])
+    path_ = ('{}{}{}').format(path, figure_save_symbol, colours)
+    if not os.path.exists(path_):
+        os.makedirs(path_)
 
     for i in range(1, 2):
         fig = plt.figure()
         ax = fig.add_subplot(111)
         for k in range(0, n_clusters):
+            clust_col = plt.cm.jet(float(k) / np.max(labels_ + 1))
             my_members = labels_ == k
             cluster_center = centers[k]
-            ax.scatter(X[my_members, 0], X[my_members, i], color=colors[k],
+            ax.scatter(X[my_members, 0], X[my_members, i], color=clust_col,
                        marker=markers[k], label=k, s=2, zorder=1)
             ax.scatter(cluster_center[0], cluster_center[i], marker=markers[k],
-                       color=colors[k], edgecolor='k', s=100, zorder=2)
+                       color=clust_col, edgecolor='k', s=100, zorder=2)
 
         # Format plot
         ax.xaxis.set_major_locator(plt.MultipleLocator(1.0))
@@ -597,12 +700,26 @@ def meanshift_colour(path, X, n_clusters, labels_, centers, bands):
         file_name = 'meanshift_color_{}cl_{}-{}vs{}-{}.png'.format(str(n_clusters),
                                                                 bands[0], bands[1],
                                                                 bands[i*2], bands[i*2+1])
-        colours = ('{}-{}_{}-{}').format(bands[0], bands[1], bands[i*2], bands[i*2+1])
-        path_ = ('{}{}{}').format(path, figure_save_symbol, colours)
-        if not os.path.exists(path_):
-            os.makedirs(path_)
         pylab.savefig(os.path.join(path_, file_name))
         plt.close()
+
+    fig2 = plt.figure()
+    ax2 = fig2.add_subplot(111)
+    for c in range(0, n_clusters):
+        my_members = labels_ == c
+        clust_col = plt.cm.jet(float(c) / np.max(labels_ + 1))
+        ax2.scatter(X[my_members, 1], w4[labels_ == c], color=clust_col, marker='.', s=4, label=c)
+    ax2.legend(loc='lower right', fontsize=8)
+    ax2.set_xlabel(bands[2]+' - '+bands[3])
+    ax2.set_ylabel(bands[3])
+    plt.gca().invert_yaxis()
+
+    '''Display interactive figure if # removed, if not, figures saved'''
+    file_name = 'meanshift_CMD_{}cl_{}-{}vs{}.png'.format(str(n_clusters),
+                                                          bands[2], bands[3],
+                                                          bands[3])
+    pylab.savefig(os.path.join(path_, file_name))
+    plt.close()
     return()
 
 
@@ -642,8 +759,23 @@ def hms_colour(path, c_data, n_clusters, labels, centers, bands):
 
 
 def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
-                  cluster_centers):
+                  cluster_centers, cent_test, w1, w2, w3, w4):
     '''Plot colour-colour diagrams for each colour space'''
+    colours = ('{}-{}_{}-{}').format(bands[0], bands[1], bands[2], bands[3])
+    if cent_test == 0:
+        file_name = 'kmeans_col_{}cl_{}-{}vs{}-{}.png'.format(str(number_clusters),
+                                                                  bands[0], bands[1], bands[2],
+                                                                  bands[3])
+        path_ = ('{}{}{}').format(path, figure_save_symbol, colours)
+    else:
+        file_name = 'kmeans_{}_col_{}cl_{}-{}vs{}-{}.png'.format(str(cent_test),
+                                                                  str(number_clusters),
+                                                                  bands[0], bands[1], bands[2],
+                                                                  bands[3])
+        path_ = ('{}{}{}{}{}').format(path, figure_save_symbol, colours,
+                                      figure_save_symbol, 'cent_test_'+str(number_clusters))
+    if not os.path.exists(path_):
+        os.makedirs(path_)
 
     for i in range(1, 2):
         fig = plt.figure()
@@ -663,21 +795,33 @@ def kmeans_colour(path, cluster_data, number_clusters, cluster_number, bands,
                      fontsize=16)
         ax.legend(loc='lower right')
 
-        file_name = 'kmeans_col_{}cl_{}-{}vs{}-{}.png'.format(str(number_clusters),
-                                                             bands[0], bands[1], bands[i*2],
-                                                             bands[i*2+1])
-        colours = ('{}-{}_{}-{}').format(bands[0], bands[1], bands[i*2],
-                                         bands[i*2+1])
-        path_ = ('{}{}{}').format(path, figure_save_symbol, colours)
-        if not os.path.exists(path_):
-            os.makedirs(path_)
         pylab.savefig(os.path.join(path_, file_name))
         plt.close()
+
+    fig2 = plt.figure()
+    ax2 = fig2.add_subplot(111)
+    for c in range(0, number_clusters):
+        my_members = cluster_number == c
+        clust_col = plt.cm.jet(float(c) / np.max(cluster_number + 1))
+        ax2.scatter(cluster_data[my_members, 1], w4[cluster_number == c],
+                    color=clust_col, marker='.', s=4, label=c)
+    ax2.legend(loc='lower right', fontsize=8)
+    ax2.set_xlabel(bands[2]+' - '+bands[3])
+    ax2.set_ylabel(bands[3])
+    plt.gca().invert_yaxis()
+
+    '''Display interactive figure if # removed, if not, figures saved'''
+    file_name = 'kmeans_CMD_{}cl_{}-{}vs{}.png'.format(str(number_clusters),
+                                                          bands[2], bands[3],
+                                                          bands[3])
+    pylab.savefig(os.path.join(path_, file_name))
+    plt.close()
+
     return ()
 
 
 def affinity_plot(labels, cluster_center_indices, X, n_clusters, bands,
-                  s_path):
+                  s_path, w1, w2, w3, w4):
     for i in range(1, 2):
         fig1 = plt.figure()
         ax = fig1.add_subplot(111)
@@ -825,7 +969,7 @@ def affinity_propagation_results(save_path, name, bands,
                                                  # bands[9], bands[10],
                                                  # bands[11],
                                                  'N/A', damp, pref,  'N/A')
-    outputs = '{} {:.4f} {} {} {}'.format('N/A', s_score, n_clusters, total_obj,
+    outputs = '{} {} {} {} {}'.format('N/A', s_score, n_clusters, total_obj,
                                        np.array_str(obj_per_cluster,
                                                     max_line_width=500)[1:-1])
 
@@ -843,7 +987,7 @@ def write_cluster_stats(save_path, clustering, n_clust, cluster, n_obj,
     if cen_test == 0:
         name = 'cluster_statistics.txt'
     else:
-        name = 'cent_test_statistics.txt'
+        name = '{}cl_cent_test_statistics.txt'.format(n_clust)
 
     colour_path = '{}{}{}'.format(save_path, figure_save_symbol, cols)
     if not os.path.exists(colour_path):
@@ -967,11 +1111,15 @@ def user_input():
     inputs.add_argument("-a", "--analysis",
                         help="Choose the methods you would like to use",
                         choices=['meanshift', 'hms', 'kmeans', 'affinity',
-                        'center_test'], nargs='*', default=[])
+                        'center_test', 'hc'], nargs='*', default=[])
 
     # Optional Arguments: Parameter secification
     inputs.add_argument("-kmi", "--kmeans_input",
                         help="Choose the number of clusters input for kmeans",
+                        choices=['meanshift', 'affinity', 'experiments.txt'],
+                        default=['experiments.txt'])
+    inputs.add_argument("-hci", "--hierarchical_input",
+                        help="Choose the number of clusters input for hc",
                         choices=['meanshift', 'affinity', 'experiments.txt'],
                         default=['experiments.txt'])
     inputs.add_argument("-bwi", "--bandwidth_input",
@@ -988,7 +1136,8 @@ def user_input():
                         help="Choose the plots you would like to make",
                         choices=['meanshift_density', 'meanshift_colour',
                                  'kmeans_density', 'kmeans_colour',
-                                 'affinity', 'hms'], nargs='*', default=[])
+                                 'affinity', 'hms', 'hc'], nargs='*',
+                                 default=[])
     inputs.add_argument("-wr", "--write_results", help="Write main results",
                         choices=['yes', 'no'], default=['yes'])
 
@@ -1003,7 +1152,8 @@ def user_input():
     clustering(criteria.plot_path, criteria.results_path, criteria.analysis,
                criteria.kmeans_input, criteria.bandwidth_input, criteria.plots,
                criteria.id_list, criteria.data_file, criteria.write_results,
-               criteria.ds_cat, criteria.affinity_input)
+               criteria.ds_cat, criteria.affinity_input,
+               criteria.hierarchical_input)
 
     return()
 
