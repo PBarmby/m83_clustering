@@ -63,10 +63,10 @@ def parameters(file1, file2):
 
     # file 2 parameters
     n_clust2 = int(file2[start2+1])
-    wave1_2 = file1[start2+5:start1+14]
-    wave2_2 = file1[start2+15:start1+24]
-    wave3_2 = file1[start2+26:start1+35]
-    wave4_2 = file1[start2+36:start1+45]
+    wave1_2 = file2[start2+5:start1+14]
+    wave2_2 = file2[start2+15:start1+24]
+    wave3_2 = file2[start2+26:start1+35]
+    wave4_2 = file2[start2+36:start1+45]
     file2_waves = np.array([wave1_2, wave2_2, wave3_2, wave4_2])
 
     return(file1_waves, n_clust1, clustering_1, file2_waves, n_clust2,
