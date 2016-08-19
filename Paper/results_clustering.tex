@@ -9,13 +9,144 @@ A complete discussion of all the combinations can be found in Appendix 1 \textbf
 \subsection{Broad - Broad Band Combinations}
 Table~\ref{tab:BBcolours} lists the broad band combinations that were clustered. 
 Each combination was clustered in two and three dimensions using K-Means, and Meanshift.
-The $U - B$ and $V - I$ combination was clustered more effectively than the $U - V$ and $B - I$ combination.
+In both dimensions, the $U - B$ and $V - I$ combination was clustered more effectively than the $U - V$ and $B - I$ combination, and will be the combination used for discussion.
 
 \subsubsection{2-Dimensions}
+K-Means performed more effectively than Meanshift in 2-dimensions.
+K-Means was able to identify the branch of red $U - B$ objects at low values of $K$.
+As $K$ increased, the algorithm was also able to identify a group of objects that are red in $V - I$, and blue in $U - B$. 
+The optimal clustering selected was at $K=6$ (Figure~\ref{fig:KMBB6} despite the high score of $K=3$.
+$K=6$ is the point where the score begins to plateau, and it uncovers more detail in the distribution than $K=3$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figs/kmeans_col_6cl_mag05_555-mag05_814vsmag05_336-mag05_438}
+\caption{Colour-Colour distribution of the $U - B$ and $V - I$ colours, clustered using K-Means with $K=6$. The colour of each point corresponds to the cluster the point was assigned to. Cluster numbers can be seen in the legend.}
+\label{fig:KMBB6}
+\end{figure}
+
+K-Means was able to identify objects based on their location in colour space.
+The boundaries of each cluster roughly line up with integers in each colour, and identify groups of objects that are relatively blue and red, seperating them from objects with extremes of either colour.
+
+Meanshift was able to identify the branch of objects that is red in the $U - B$ colour (Cluster 2 in Figure~\ref{fig:KMBB6}).
+However, the segmentation following that branch did not correspond to meaningful groups in colour space.
+Additionally, the bandwidth values caused Meanshift to converge at 5 clusters, where it was unable to identify the branch of red objects.
 
 \subsubsection{3-Dimensions}
+Three dimensional clustering was performed with the colour combinations found in Table~\ref{tab:BB3dcolours}.
+
+\begin{table*}
+\centering
+\caption{Broad band colour combinations in three dimensions}
+\label{tab:BBcolours}
+\begin{tabular}{lllll}
+\hline\hline
+Base Colour 1 & Base Colour 2 & Colour 1 & Colour 2 & Colour 3 \\
+\hline
+$U - B$ & $V - I$ & $U - B$ & $B - V$ & $B - I$ \\
+$U - V$ & $B - I$ & $U - V$ & $B - V$ & $V - I$ \\
+\hline
+\end{tabular}
+\end{table*}
+
+Both K-Means and Meanshift identified interesting clusters in three dimensions. 
+Similar to two dimensions, K-Means was able to identify objects that were in specific regions of the colour space.
+The optimal K-Means clustering was found at $K=4$ (Figure~\ref{fig:BB3dKM4}), as the score peaked, and the red branch of objects was identified.
+The three dimensional clustering was driven by the $B - I$ vs. $U - B$ distribution, as the clusters were almost completely seperated in that space.
+The clusters overlapped extensively in the $B - V$ vs. $U - B$ space. \textbf{PB: Do you know why this would be? Would it be from the range of colour in the B-I dimension?}
+This pattern could be a result of the colour distribution in the $B - I$ space, as the range of object colour in this dimension is much larger than in the $B - V$ colour.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figs/kmeans_3d_color_4cl_mag05_336-mag05_438vsmag05_438-mag05_555vsmag05_438-mag05_814}
+\caption{Colour-Colour-Colour distribution of the $U - B$, $B - V$, and $B - I$ colours, clustered using K-Means with $K=4$. The colour of each point corresponds to the cluster the point was assigned to. Cluster numbers can be seen in the legend.}
+\label{fig:BB3dKM4}
+\end{figure}
+
+The clustering in three dimensions illustrates how the algorithm is able to identify two distinct branches of objects beyond the dense center of the distribution.
+Cluster 4 is a branch of objects that is quite red in both the $U - B$ and $B - V$ colours, but is neutral in the $B - I$ colour.
+Cluster 3 is a branch of objects quite blue in the $U - B$ colour, but red in the other two.
+The algorithm then segments the dense section of the distribution between the bluer and redder objects in the $B - V$ and $B - I$ colours.
+These two clusters are not ideal, as the dense portion of the distribution could be argued as the same cluster. 
+However, in order to identify the two distinct branches, this clustering is necessary.
+The clusters projected into the base colours can be seen in Figure~\ref{BB2dKM4}, where the branches of objects are clearly identified.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figs/kmeans_base_color_4cl_mag05_336-mag05_438vsmag05_555-mag05_814}
+\caption{Colour-Colour distribution of the $U - B$, and $V - I$ colours, projected from the three dimensional clustering using K-Means with $K=4$. The colour of each point corresponds to the cluster the point was assigned to. Cluster numbers can be seen in the legend.}
+\label{fig:BB3dKM4p}
+\end{figure}
+
+Meanshift was also able to produce interesting clusters in three dimensions. 
+The optimal clustering was chosen at $h=0.75$ which produced 4 clusters.
+This clustering was the peak score, but was not the number of clusters for most intervals of bandwidth.
+Most bandwidth values predicted 6 clusters, however, the score and cluster seperation at those intervals was quite poor.
+Figure~\ref{fig:BB3dMS4} shows the three dimensional clustering at $h=0.75$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figs/meanshift_3d_color_4cl_mag05_336-mag05_438vsmag05_438-mag05_555vsmag05_438-mag05_814}
+\caption{Colour-Colour-Colour distribution of the $U - B$, $B - V$, and $B - I$ colours, using Meanshift with $h=0.75$. The colour of each point corresponds to the cluster the point was assigned to. Cluster numbers can be seen in the legend.}
+\label{fig:BB3dMS4}
+\end{figure}
+
+Meanshift was able to identify two groups of objects that sit beyond the dense area of the distribution.
+Figure~\ref{fig:BBMS3d4p} shows the projection into the original space, where the cluster location is easier to identify.
+The clustering identified two groups of ojbects which are quite red in the $V - I$ colour, but have different $U - B$ colours. 
+Cluster 4 is blue in the $U - B$ colour while Cluster 2 is redder.
+This identification highlights Meanshift's ability to find outliers in the distribution, as it does not pick out the large branch of objects that are red in $U - B$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figs/meanshift_base_color_4cl_mag05_336-mag05_438vsmag05_555-mag05_814}
+\caption{Colour-Colour distribution of the $U - B$, and $V - I$ colours, projected from the three dimensional clustering using Meanshift with $h=0.75$. The colour of each point corresponds to the cluster the point was assigned to. Cluster numbers can be seen in the legend.}
+\label{fig:BB3dMS4p}
+\end{figure}
 
 \subsubsection{M83 Locations}
+
+\paragraph{K-Means Clusterings}
+The clusters from the two dimensional clustering show distinct locations in M83.
+The branch of red $U - B$ objects found in Cluster 2 of Figure~\ref{fig:KMBB6} are objects that lie loosly around the spiral arms.
+These objects are generally not found in the concentrated regions of the arms, and lie to the left and right of these areas.
+On the whitelight image, these objects appear to be isolated, dim point sources that could be lying behind clouds of dust, in the back of the galaxy, or on their own outside the arm.
+\textbf{PB: What could these objects actually be? Young star clusters, clouds, background sources/galaxies?}
+
+The branch of red $V - I$ objects found in Cluster 1 of Figure~\ref{fig:KMBB6} are objects that lie primarely in the dense regions of the spiral arms, with a few objects lying in the nucleus, and in the region south of the nucleus.
+These objects also appear to be quite dim point sources, or no detection in the whitelight image.
+This could mean that the objects are some form of cloud, nebula, or background galaxy. 
+These objects are interesting as their $V - I$ colour stretches to values over 3, indicating very red emission. \textbf{PB: is this all true...}
+
+Despite the seemingly arbitrary segmentation of clusters 3 and 5, the objects seem to inhabit different regions of M83.
+These two clusters generally trace each others location in the galaxy. 
+Cluster 5 is generally confined to the denser regions of the arms, while cluster 3 fills in the areas between the objects in cluster 5.
+Cluster 5 objects appear to be bright point sources on the whitelight image, while cluster 3 objects are dim or non-existant.
+\textbf{PB: what could these objets be?}.
+
+Interestingly, despite their difference in colour, clusters 6 and 4 trace one another around the galaxy similar to clusters 5 and 3.
+Cluster 6 objects are concentrated in the centers of the dense regions of the spiral arms, and the intra arm regions.
+Cluster 4 objects stay mainly concentrated in the spiral arms, filling in the rest of the dense area between cluster 6 objects and the intra arm regions.
+Cluster 4 objects are not as apparent in the intra arm region as cluster 6, but still appear in denser areas. \textbf{PB: what could these objects be?}
+
+In the three dimensional clustering (Figure~\ref{fig:BB3dKM4p}), clusters 4 and 3 follow similar patterns found in two dimensions.
+These clusters are the red $U - B$ branch of objects and the red shelf of $V - I$ objects that span the whole range of $U - B$ colour.
+Cluster 4 objects are generally located in the spiral arms, but their location is not concentrated, and they are fanned across the entire width of the arms.
+This is in agreement with the cluster that identified the red branch in two dimensions, however, three dimensions seems to include more objects that could be considered redder than the rest of the distribution.
+Cluster 3 objects trace cluster 4, but are in the dense regions of the spiral arms, and do not fan out. \textbf{PB: What could these be? Should I talk more about the similarities of the 2d and 3d clustering and why one is preferable over the other?}
+Clusters 1 and 2 in three dimensions do not provide the same detail as two dimensions as they lump all the objects in the center of the distribution into two groups.
+There are no patterns in object location in these two clusters.
+
+\paragraph{Meanshift Clusterings}
+The outlying clusters identified by Meanshift in three dimensions are located in interesting areas of M83.
+There is almost no overlap between the locations of the objects in these two groups. 
+Cluster 2 objects are fanned out through the spiral arms, and in the core of the galaxy.
+These objects appear to be dim point sources on the whitelight image, and could be background objects. 
+Cluster 4 objects are also found in the spiral arms, however, they are almost only concentrated in the dense areas. 
+These objeccts are found in the same regions of the arms as cluster 2, but they are not close to one another. 
+This could indicate that these two classes of objects are different physical objects in M83. \textbf{Not sure if this is the right result of their locations}
+Lastly, cluster 3, a single object, does not appear to be a meaningful object. It does not seem to be detected in the whitelight image, as it is in an area without a clear, independent point source.
+Since this object has very blue colours, it is not clear what it could be, and may be noise. \textbf{Not sure if this is true!}
 
 \subsection{U - OII: Successful Clustering}
 The U - OII combination was clustered with the B-V, B-I, and V-I colours using Meanshift followed by KMeans. % More general information about what we are looking for in this combination
