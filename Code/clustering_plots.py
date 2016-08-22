@@ -10,11 +10,12 @@ base1 = 3
 base2 = 5
 b_wave = 5
 
-def plotting(dimensions, s_path):
+def plotting(dimensions, model_name, s_path):
+    model_file = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\model_colours\\{}'.format(model_name)
     survey_data = Table.read('data_v3.txt', format='ascii.commented_header',
                              guess=False)
     save_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\results\\{}\\'.format(s_path)
-
+    model = Table.read(model_file, format='ascii.commented_header', guess=False)
     if '2d' in dimensions:  # Check if 2D or 3D 
         plots = Table.read('plots.txt', format='ascii.commented_header',
                            guess=False)  # Load bands to plot
@@ -23,7 +24,8 @@ def plotting(dimensions, s_path):
             waves = plots[i]
             colours = ('{}-{}_{}-{}').format(waves[0], waves[1], waves[2],
                                              waves[3])
-
+            mod_filt_2d = np.vstack([model[waves[0]], model[waves[1]],
+                                     model[waves[2]], model[waves[3]]])
             n_clusters = plots['n_clust'][i]  # Find the number of clusters
             algorithm = plots['clustering'][i]  # Which algorithm
 
@@ -37,7 +39,7 @@ def plotting(dimensions, s_path):
                                                           waves)
             make_2d_plots(colour1_2d, colour2_2d, waves, n_clusters,
                           algorithm, cluster_data_2d, centers_2d,
-                          save_path, wave)
+                          save_path, wave, mod_filt_2d)
 
     if '3d' in dimensions:
         plots_3d = Table.read('plots_3d.txt', format='ascii.commented_header',
@@ -47,6 +49,9 @@ def plotting(dimensions, s_path):
             colours = ('{}-{}_{}-{}_{}-{}').format(waves[0], waves[1],
                                                    waves[2], waves[3],
                                                    waves[4], waves[5])
+            mod_filt_3d = np.vstack([model[waves[0]], model[waves[1]],
+                                     model[waves[2]], model[waves[3]],
+                                     model[waves[4]], model[waves[5]]])
             n_clusters = plots_3d['n_clust'][j]
             algorithm = plots_3d['clustering'][j]
             id_file_3d, centers_3d = load_files(n_clusters, algorithm,
@@ -56,8 +61,8 @@ def plotting(dimensions, s_path):
             colour1, colour2, colour3, base, wave_base = load_3d_cluster_data(cluster_data_3d,
                                                              waves)
             make_3d_plots(colour1, colour2, colour3, waves, n_clusters,
-                     algorithm, cluster_data_3d, centers_3d,
-                     save_path, base, wave_base)
+                          algorithm, cluster_data_3d, centers_3d,
+                          save_path, base, wave_base, mod_filt_3d)
     return()
 
 
@@ -111,7 +116,8 @@ def load_3d_cluster_data(filter_data, bands):
     return(colour1, colour2, colour3, base_colour, base_wave)
 
 
-def make_2d_plots(c1, c2, bands, n_clust, alg, c_data, centers, path, base_wave):
+def make_2d_plots(c1, c2, bands, n_clust, alg, c_data, centers, path,
+                  base_wave, model_data):
     colours = ('{}-{}_{}-{}').format(bands[0], bands[1], bands[2],
                                            bands[3])
     # Find cluster centers
@@ -130,6 +136,8 @@ def make_2d_plots(c1, c2, bands, n_clust, alg, c_data, centers, path, base_wave)
                    marker='o', label=k, s=2, zorder=1)
         ax.scatter(cluster_center_1, cluster_center_2, marker='o',
                    color=clust_col, edgecolor='k', s=100, zorder=2)
+    # Plot model colours
+    ax.plot(model_data[0] - model_data[1], model_data[2] - model_data[3])
     # Format plot
     ax.xaxis.set_major_locator(plt.MultipleLocator(0.5))
     ax.yaxis.set_major_locator(plt.MultipleLocator(0.5))
@@ -171,7 +179,7 @@ def make_2d_plots(c1, c2, bands, n_clust, alg, c_data, centers, path, base_wave)
 
 
 def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
-                  path, base_colour, base_wave):
+                  path, base_colour, base_wave, model_data):
     colours = ('{}-{}_{}-{}_{}-{}').format(bands[0], bands[1], bands[2],
                                            bands[3], bands[4], bands[5])
     # Find cluster centers
@@ -198,7 +206,9 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
                             marker='o', label=k, s=2, zorder=1)
                 ax.scatter(cluster_center_1, cluster_center_3, marker='o',
                             color=clust_col, edgecolor='k', s=100, zorder=2)
-
+        # Plot model colours
+        ax.plot(model_data[0] - model_data[1],
+                model_data[i*2] - model_data[i*2+1])
         # Format plot
         ax.xaxis.set_major_locator(plt.MultipleLocator(1.0))
         ax.set_xlabel(bands[0] + ' - ' + bands[1])
@@ -231,14 +241,18 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
                     marker='o', color=clust_col, s=2, label=x)
         ax1.scatter(cluster_center_1, cluster_center_2, cluster_center_3,
                     c=clust_col, edgecolor='k', marker='o', s=100)
+    # Plot model colours
+    ax1.plot(model_data[0] - model_data[1], model_data[2] - model_data[3],
+             model_data[4] - model_data[5])
+    # Format plot
     ax1.set_xlabel(bands[0] + ' - ' + bands[1])
     ax1.set_ylabel(bands[2]+' - '+bands[3])
     ax1.set_zlabel(bands[4]+' - '+bands[5])
     ax1.legend(loc='upper left', fontsize=8)
     file_name = '{}_3d_{}cl_{}-{}vs{}-{}vs{}-{}.png'.format(alg, str(n_clust),
-                                                                  bands[0], bands[1],
-                                                                  bands[2], bands[3],
-                                                                  bands[4], bands[5])
+                                                            bands[0], bands[1],
+                                                            bands[2], bands[3],
+                                                            bands[4], bands[5])
     pylab.savefig(os.path.join(path_, file_name))
     plt.close()
 
@@ -256,6 +270,10 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
                     color=clust_col, s=2, label=b, zorder=1)
         ax2.scatter(cluster_center_1, base_cen, marker='o',
                     color=clust_col, s=100, edgecolor='k', zorder=2)
+    # Plot model colours
+    ax2.plot(model_data[0] - model_data[1],
+             model_data[base1] - model_data[base2])  # Plot original colours
+    # Format Plot
     ax2.xaxis.set_major_locator(plt.MultipleLocator(1.0))
     ax2.set_xlabel(bands[0] + ' - ' + bands[1])
     ax2.set_ylabel(bands[base1]+' - ' + bands[base2])

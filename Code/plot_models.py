@@ -3,12 +3,12 @@ import numpy as np
 from matplotlib import pyplot as plt
 import mpl_toolkits.mplot3d as p3
 from astropy.table import Table
-w1 = 0  # colour 1 
-w2 = 1  # colour 1 
+w1 = 0  # colour 1
+w2 = 1  # colour 1
 w3 = 1  # colour 2
-w4 = 2  # colour 2 
-w5 = 1  # colour 3 
-w6 = 3  # colour 3 
+w4 = 2  # colour 2
+w5 = 1  # colour 3
+w6 = 3  # colour 3
 
 def make_plots(file_name, band1, band2, band3, band4):
     load_file = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\model_colours\\{}'.format(file_name)
@@ -40,12 +40,12 @@ def make_plots(file_name, band1, band2, band3, band4):
                 sur_filt[w3] - sur_filt[w4],
                 sur_filt[w5] - sur_filt[w6], marker='.', s=4)
     ax2.plot(mod_filt[w1] - mod_filt[w2],
-                mod_filt[w3] - mod_filt[w4],
-                mod_filt[w5] - mod_filt[w6])
+             mod_filt[w3] - mod_filt[w4],
+             mod_filt[w5] - mod_filt[w6])
     ax2.set_xlabel(bands[w1] + ' - ' + bands[w2])
     ax2.set_ylabel(bands[w3] + ' - ' + bands[w4])
     ax2.set_zlabel(bands[w5] + ' - ' + bands[w6])
-    
+
     return
 
 
