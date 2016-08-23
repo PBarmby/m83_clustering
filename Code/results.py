@@ -257,20 +257,19 @@ def cluster_centers_plot(cluster_data, path):
     '''Plot the centers of each cluster after a center_test'''
     # Find the number of trials
     n_trials = np.arange(0, len(cluster_data[cluster_data['clust_num'] == 1]))
+
     # Make table of cluster centers and cluster number
-    # cen_1: colour 1 center coordinate  
-    cluster_centers = np.array(cluster_data['clust_num', 'cen_1', 'cen_2'])
+    # cen_1(2): colour 1(2) center coordinate
+    # cluster_centers = np.array(cluster_data['clust_num', 'cen_1', 'cen_2'])
     # Find the number of clusters imposed
     n_clusters = max(cluster_data['clust_num'])
     fig = plt.figure(figsize=(12, 8))
-    for c in range(1, 3):  # Loop over the number of colours used
-        ax = fig.add_subplot(1, 2, c)  # Create subplot for each colour
-        for i in range(0, len(n_trials)):  # Loop over each trial in each colour
-            for k in range(0, len(cluster_centers)):  # Loop over every center point
-                if cluster_centers['clust_num'][k] == 1:  # Find the first cluster of a clustering
-                    for n in range(k, k+n_clusters):  # Loop over each cluster
-                        ax.scatter(i, cluster_centers['cen_' + str(c)][n],
-                                   s=10, c=colors[n-k])  # Plot the center of each cluster
+    for c in range(1, 3):  # CHANGE Loop over the number of colours used
+        ax = fig.add_subplot(1, 2, c)  # CHANGE Create subplot for each colour
+        for k in range(0, len(cluster_data), n_clusters):  # Loop over every center point
+            for n in range(k, k+n_clusters):  # Loop over each cluster
+                ax.scatter(k/n_clusters, cluster_data['cen_' + str(c)][n],
+                           s=10, c=colors[n-k])  # Plot the center of each cluster
         ax.set_ylabel('Colour ' + str(c) + ' Cluster Centers', fontsize=10)
         ax.set_xlabel('Trial', fontsize=10)
     plt.suptitle(str(len(n_trials)) + ' Trials vs. Cluster Centers in each Colour')

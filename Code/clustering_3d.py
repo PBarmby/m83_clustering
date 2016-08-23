@@ -61,7 +61,7 @@ figure_save_symbol = '/'  # MAC Sharcnet
 # Set the "base" bands in 3d_experiments.txt. Base bands: the broad-broad
 # colour being seperated into 2 narrow-broad colours
 '''Change waves in organize_data function'''
-base1 = 2  # CHANGE
+base1 = 3  # CHANGE
 base1_cen = 1
 base2 = 5  # CHANGE
 base2_cen = 2
@@ -195,12 +195,15 @@ def clustering(save_plots, save_results, analysis, kmeans_input, bw_in, plots,
 
         if "center_test" in analysis:
             n_clusters = experiments['n_clusters'][i]
-            for n in range(1, 21):
+            for n in range(1, 40):
+                start = time.time()
                 km_scor, num_obj, inertia, col = kmeans(plot_path, experiments[i],
                                           cluster_data_, greatdata,
                                           n_clusters, plots, id_list,
                                           x_data, y_data, id_data, ds9_cat,
-                                          n, base_colour, write_res)
+                                          n, base_colour, write_res, wave1, wave2, wave3, wave4)
+                end = time.time()
+                print "Finished KMeans {}: {}".format(n, end - start)
     print "Finished Clustering"
     ed = time.time()
     print "Total Time: {}".format(ed - st)
@@ -312,7 +315,7 @@ def organize_data(exp, data_file):
     colour1_trim = np.logical_and(wave1_trim, wave2_trim)
     colour2_trim = np.logical_and(wave3_trim, wave4_trim)
     colour3_trim = np.logical_and(wave5_trim, wave6_trim)
-    base_colour_trim = np.logical_and(wave3_trim, wave6_trim)  # CHANGE
+    base_colour_trim = np.logical_and(wave4_trim, wave6_trim)  # CHANGE
     # colour4_trim = np.logical_and(wave7_trim, wave8_trim)
     # colour5_trim = np.logical_and(wave9_trim, wave10_trim)
     # colour6_trim = np.logical_and(wave11_trim, wave12_trim)
@@ -329,7 +332,7 @@ def organize_data(exp, data_file):
     colour1 = wave1[final_data] - wave2[final_data]
     colour2 = wave3[final_data] - wave4[final_data]
     colour3 = wave5[final_data] - wave6[final_data]
-    base_colour = wave3[final_data] - wave6[final_data]  # CHANGE
+    base_colour = wave4[final_data] - wave6[final_data]  # CHANGE
     wave1_fin = wave1[final_data]
     wave2_fin = wave2[final_data]
     wave3_fin = wave3[final_data]
@@ -733,7 +736,7 @@ def meanshift_colour(path, X, n_clusters, labels_, centers, bands, base, w1,
         center = centers[b]
         base_cen1 = center[base1_cen]
         base_cen2 = center[base2_cen]
-        base_cen = base_cen2 - base_cen1  # CHANGE
+        base_cen = base_cen1 - base_cen2  # CHANGE
         ax2.scatter(X[labels_ == b, 0], base[labels_ == b], marker=markers[b],
                     color=clust_col, s=2, label=b)
         ax2.scatter(center[0], base_cen, marker=markers[b],
