@@ -429,11 +429,13 @@ Two clear features are visible, a branch of objects that are red in the U-$O_{3}
 
 \paragraph{Meanshift}
 The Meanshift score plateaued clearly at 7 clusters. There is a large drop in score between 5 and 7 clusters, and both clusterings were able to identify both branches.
-Additionally, Meanshift was able to identify sub-clusters within the blue branch of objects, that are objects with extremely blue colours, see Figure ~\ref{fig:OIIIVMS3d}.
+Meanshift was able to identify sub-clusters within the blue branch of objects, that are objects with extremely blue colours, see Figure ~\ref{fig:OIIIVMS3d}.
 The Meanshift clustering was more effective than K-Means, as it did not segment the dense area after it had identified each branch.
 The clustering with 5 clusters was chosen as the optimal clustering as the clustering with 7 clusters divided the red branch in two, causing significant overlap in the two and three dimensional spaces.
-This segmentation is not as strong as the other combinations as the optimal clustering combines two branches of objects.
-The result is the combination of objects that clearly have very different colours.
+When projected into two dimensions, the blue branch of objects is not completely identified.
+A large portion of objects are assigned to the large cluster that lie at the base of the blue branch.
+This segmentation does not identify the branches of objects as well as other combinations.
+Additionally, the number of clusters where the bandwidth and score relation plateaus is between seven and nine clusters, does not align with the optimal clustering.
 
 \begin{figure}
 \centering
