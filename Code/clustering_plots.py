@@ -6,8 +6,8 @@ import pylab as pylab
 from astropy.table import Table, join
 from matplotlib import pyplot as plt
 import mpl_toolkits.mplot3d as p3
-base1 = 3
-base2 = 5
+base1 = 2
+base2 = 4
 b_wave = 5
 
 def plotting(dimensions, model_name, s_path):
@@ -137,7 +137,8 @@ def make_2d_plots(c1, c2, bands, n_clust, alg, c_data, centers, path,
         ax.scatter(cluster_center_1, cluster_center_2, marker='o',
                    color=clust_col, edgecolor='k', s=100, zorder=2)
     # Plot model colours
-    ax.plot(model_data[0] - model_data[1], model_data[2] - model_data[3])
+    ax.plot(model_data[0] - model_data[1], model_data[2] - model_data[3],
+            color='r')
     # Format plot
     ax.xaxis.set_major_locator(plt.MultipleLocator(0.5))
     ax.yaxis.set_major_locator(plt.MultipleLocator(0.5))
@@ -208,7 +209,7 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
                             color=clust_col, edgecolor='k', s=100, zorder=2)
         # Plot model colours
         ax.plot(model_data[0] - model_data[1],
-                model_data[i*2] - model_data[i*2+1])
+                model_data[i*2] - model_data[i*2+1], color='r')
         # Format plot
         ax.xaxis.set_major_locator(plt.MultipleLocator(1.0))
         ax.set_xlabel(bands[0] + ' - ' + bands[1])
@@ -243,7 +244,7 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
                     c=clust_col, edgecolor='k', marker='o', s=100)
     # Plot model colours
     ax1.plot(model_data[0] - model_data[1], model_data[2] - model_data[3],
-             model_data[4] - model_data[5])
+             model_data[4] - model_data[5], color='r')
     # Format plot
     ax1.set_xlabel(bands[0] + ' - ' + bands[1])
     ax1.set_ylabel(bands[2]+' - '+bands[3])
@@ -272,7 +273,7 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
                     color=clust_col, s=100, edgecolor='k', zorder=2)
     # Plot model colours
     ax2.plot(model_data[base1] - model_data[base2],
-             model_data[0] - model_data[1])  # Plot original colours
+             model_data[0] - model_data[1], color='r')
     # Format Plot
     ax2.xaxis.set_major_locator(plt.MultipleLocator(1.0))
     ax2.set_xlabel(bands[0] + ' - ' + bands[1])

@@ -355,14 +355,16 @@ These locations agree with the two dimensional clustering, however, clusters 1 a
 The three dimensional clustering was stronger as the objects in each cluster were not similar to the objects in the other two clusters, which was not the case in two dimensions.
 % ----------------------------------------------
 
-% UNSUCCESSFUL NAROW BAND CLUSTERING ----------------------------------------------
-\subsection{OIII-V vs. U - B: Unsuccessful Clustering}
-The $O_{3}$-V colour was clustered with the U-B colour in two dimensions and the U-$O_{3}$, and B-$O_{3}$ colours in three dimensions.
+% UNSUCCESSFUL NARROW BAND CLUSTERING ----------------------------------------------
+\subsection{$O_{3}$-V vs. U - B: Unsuccessful Clustering}
+The $O_{3}$-V colour was clustered with the U - B colour in two dimensions and the U-$O_{3}$, and B-$O_{3}$ colours in three dimensions.
+The clustering methods were not successful at identifying structure in this combination in both two and three dimensions.
 
 \subsubsection{2-Dimensions}
 
 \paragraph{Meanshift}
-The Meanshift clustering does not seem to provide meaningful segmentation. The meanshift parameters do not display the same patterns as other combinations. 
+The Meanshift clustering does not seem to provide meaningful segmentation.
+The meanshift parameters do not display the same patterns as other combinations. 
 The Meanshift score does not plateau at any number of clusters, and the large center cluster contains almost all of the objects in each segmentation.
 Meanshift identifies the branch of blue objects at all bandwidth levels, but as the number of clusters increases the clusters are forced into segmenting the blue objects, not the rest of the distribution.
 At $h=0.2$, 8 clusters are produced, and Meanshift identifies many clusters in the blue branch, and a larger cluster of objects that are quite red in the U-B cluster.
@@ -374,17 +376,23 @@ The K-Means two dimensional clustering segmented the data into sections of U-B c
 As K increased, K-Means was able to identify a branch of objects that are bluer in both colours.
 The segmentation in the colour-colour space translated into the U-B vs B CMD. 
 Each clustering segmented the CMD by U-B colour, and the cluster of bluer objects appears to be a group of objects bright in the U band with a brightest B magnitude of approximately 25.
-The K-Means score begins to plateau at K=4, however K=5 has a slightly higher score than the rest of the plateau.
-This is because K=5 is the first clustering to identify the branch of bluer objects.
-Despite the plateau, the clustering scores are not as high as other combinations, and the segmentation appears to be arbitrary. 
+The K-Means score begins to plateau at K=4, however K=5 has a slightly higher score than the rest of the plateau as this is the first clustering to identify the branch of bluer objects.
+Despite the plateau, the clustering scores are not as high as other combinations, and the segmentation appears to be arbitrary.
+K-Means' optimal clustering would be $K=4$, which did not identify the clear branch of blue objects.
+
+\paragraph{M83 Locations}
 
 \subsubsection{3-Dimensions}
+The three dimensional distribution displays more structure than two dimensions.
+Two clear features are visible, a branch of objects that are red in the U-$O_{3}$ colour, and neutral in the rest, and a second branch of objects that are blue in the $O_{3}$-V colour, red in the B-$O_{3}$ colour, and neutral in the U-$O_{3}$ colour.
 
 \paragraph{Meanshift}
 The Meanshift score plateaued clearly at 7 clusters. There is a large drop in score between 5 and 7 clusters, and both clusterings were able to identify both branches.
 Additionally, Meanshift was able to identify sub-clusters within the blue branch of objects, that are objects with extremely blue colours, see Figure ~\ref{fig:OIIIVMS3d}.
 The Meanshift clustering was more effective than K-Means, as it did not segment the dense area after it had identified each branch.
 The clustering with 5 clusters was chosen as the optimal clustering as the clustering with 7 clusters divided the red branch in two, causing significant overlap in the two and three dimensional spaces.
+This segmentation is not as strong as the other combinations as the optimal clustering combines two branches of objects.
+The result is the combination of objects that clearly have very different colours.
 
 \begin{figure}
 \centering
@@ -394,12 +402,11 @@ The clustering with 5 clusters was chosen as the optimal clustering as the clust
 \end{figure}
 
 \paragraph{K-Means}
-The three dimensional distribution displays more structure than two dimensions.
-Two clear features are visible, a branch of objects that are red in the U-$O_{3}$ colour, and neutral in the rest, and a second branch of objects that are blue in the $O_{3}$-V colour, red in the B-$O_{3}$ colour, and neutral in the U-$O_{3}$ colour.
-At all values of K, K-Means is able to identify the first branch of objects. However, it is not until K=6 that the algorithm is able to identify the second branch as its own cluster, see Figure~\ref{fig:OIIIVKM3d}.
+At all values of K, K-Means is able to identify the first branch of objects. However, it is not until K=6 that the algorithm was able to identify the second branch as its own cluster, see Figure~\ref{fig:OIIIVKM3d}.
 By this point, the algorithm has segmented the dense area of the distribution by its U-$O_{3}$ colour.
 When projected into two dimensions, there is significant overlap between the clusters that were segmented by colour, and the first branch of objects does not seem to be its own cluster in two dimensions.
-The score at K=6 causes a slight peak in the trend, which signifies the effect of picking out both branches of objects. However, the score is still significantly lower than the clusterings that do not identify these branches.
+The score at K=6 causes a slight peak, which shows the effect of picking out both branches of objects.
+However, the score is still significantly lower than the clusterings that do not identify these branches.
 
 \begin{figure}
 \centering
