@@ -359,17 +359,29 @@ The three dimensional clustering was stronger as the objects in each cluster wer
 \subsection{$O_{3}$-V vs. U - B: Unsuccessful Clustering}
 The $O_{3}$-V colour was clustered with the U - B colour in two dimensions and the U-$O_{3}$, and B-$O_{3}$ colours in three dimensions.
 The clustering methods were not successful at identifying structure in this combination in both two and three dimensions.
+The results were driven by the colour distribution.
+In two dimensions, the majority of the objects had $O_{3} - V$ colours between $-0.5$ and $+0.5$. 
+This did not give the clustering algorithms enough information to use, and caused the poor segmentation.
 
 \subsubsection{2-Dimensions}
 
 \paragraph{Meanshift}
 The Meanshift clustering does not seem to provide meaningful segmentation.
 The meanshift parameters do not display the same patterns as other combinations. 
-The Meanshift score does not plateau at any number of clusters, and the large center cluster contains almost all of the objects in each segmentation.
-Meanshift identifies the branch of blue objects at all bandwidth levels, but as the number of clusters increases the clusters are forced into segmenting the blue objects, not the rest of the distribution.
-At $h=0.2$, 8 clusters are produced, and Meanshift identifies many clusters in the blue branch, and a larger cluster of objects that are quite red in the U-B cluster.
+The Meanshift score did not plateau at any number of clusters, and the large center cluster contained almost all of the objects in each segmentation.
+Meanshift identified the branch of blue objects at all bandwidth levels, but as the number of clusters increases the clusters are forced into segmenting the blue objects, not the rest of the distribution.
+At $h=0.2$, 8 clusters are produced (Figure~\ref{fig:OIIIV2dMS}), and Meanshift identified many clusters in the blue branch, and a larger cluster of objects that are quite red in the U-B cluster.
 This clustering results in a peak in the score.
-Despite the identification of different parts of the distribution, the algorithms performance does not match the patterns of other combinations, and seems to be a weak colour combination. 
+Despite identifying different parts of the distribution, the algorithms performance does not match the patterns of other combinations.
+Additionally, the cluster centers do not match the model colours. 
+Meanshift was not able to segment the stellar population based on age, as it had in other combinations.
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{figs/unsuccessful/meanshift_color_8cl_mag05_502-mag05_555vsmag05_336-mag05_438}
+\caption{Colour-Colour distribution of the $O_{3}$-V and U - B colours, clustered using Meanshift with $h=0.28$. The colour of each point corresponds to the cluster the point was assigned to. Cluster numbers can be seen in the legend.}
+\label{fig:OIIIV2dMS}
+\end{figure}
 
 \paragraph{K-Means}
 The K-Means two dimensional clustering segmented the data into sections of U-B colour.
@@ -378,9 +390,38 @@ The segmentation in the colour-colour space translated into the U-B vs B CMD.
 Each clustering segmented the CMD by U-B colour, and the cluster of bluer objects appears to be a group of objects bright in the U band with a brightest B magnitude of approximately 25.
 The K-Means score begins to plateau at K=4, however K=5 has a slightly higher score than the rest of the plateau as this is the first clustering to identify the branch of bluer objects.
 Despite the plateau, the clustering scores are not as high as other combinations, and the segmentation appears to be arbitrary.
-K-Means' optimal clustering would be $K=4$, which did not identify the clear branch of blue objects.
+K-Means optimal clustering was $K=4$ (Figure~\ref{fig:OIIIV2dKM}), which did not identify the clear branch of blue objects.
+Despite the poor segmentation, the cluster centers aligned well with the colour models, tracing them through the distribution.
+The clusters selected different ages of the stellar population, but the segmentation was still poor, and a result of the distribution. 
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{figs/unsuccessful/kmeans_color_4cl_mag05_502-mag05_555vsmag05_336-mag05_438}
+\caption{Colour-Colour distribution of the $O_{3}$-V and U - B colours, clustered using K-Means with $K=4$. The colour of each point corresponds to the cluster the point was assigned to. Cluster numbers can be seen in the legend.}
+\label{fig:OIIIV2dKM}
+\end{figure}
+
+\paragraph{Cluster Comparison}
+Figure~\ref{fig:OIIIV2dcomp} shows the comparison between the optimal K-Means and Meanshift clusterings.
+There is little agreement between the two methods on which clusters the objects belong to.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figs/unsuccessful/kmeans-4cl_mag05_502-mag05_555_vs_meanshift-8cl_mag05_-mag05__mag05_-mag05__2ddim_compare}
+\caption{Comparison of object cluster assignment between K-Means at K=4 and Meanshift at h=0.28 in two dimensions.}
+\label{fig:OIIIV2dcomp}
+\end{figure}
+
+The only clusters that agree are cluster four in K-Means and six in Meanshift.
+These clusters are the red branch of objects in the $O_{3}$-V colour.
+The Meanshift clusters that segment the blue branch are quite small, and K-Means is unable to identify those objects as independent clusters.
 
 \paragraph{M83 Locations}
+The K-Means clusters did not show distinct patterns through M83.
+Since the segmentation does not pick out specific structure in the distribution, it was unlikely that the spatial relationships were as significant as other colour combination.
+This was confirmed as there did not seem to be a difference in location between the objects in cluster 1 and 4 in Figure~\ref{fig:OIIIV2dKM}.
+The objects Meanshift clusters 2, 3, 4, 5, 7, and 8 identify objects that are spread out through the spiral arms, without any objects in the core.
+Despite their interesting locations, these clusters combined consisted of less than 1\% of the data in the combination, and the other clusters did not create meaningful patterns.
 
 \subsubsection{3-Dimensions}
 The three dimensional distribution displays more structure than two dimensions.
@@ -418,7 +459,8 @@ However, the score is still significantly lower than the clusterings that do not
 \paragraph{M83 Locations}
 After investigating each clustering on the whitelight image, most segmentations did not identify sets of objects that were located in specific areas of the galaxy.
 Cluster 4 of the strongest Meanshift clustering identified objects that were located in the less dense regions of the spiral arms of M83.
-This cluster isolated the branch of red objects in the colour distribution. Additionally, this cluster was clearly defined in the CMD and split the objects at colour 0.
+This cluster isolated the branch of red objects in the colour distribution.
+Additionally, this cluster was clearly defined in the CMD and split the objects at colour 0.
 The largest cluster in the blue branch of objects picked isolated objects in the spiral arm, with only one object located in the nucleus.
 All of these objects appear to be background galaxy objects or objects behind clouds, as few of the objects appeared in the whitelight image.
 The other two clusters that segmented the blue branch were also objects that appear to be background or covered by clouds, indicating that these objects are quite bright in the $O_{3}$ band, and not in the V band.
