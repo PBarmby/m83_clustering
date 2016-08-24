@@ -210,6 +210,22 @@ This distribution was used to check the clustering and ensure that the clusterin
 \label{fig:inertia}
 \end{figure}
 
+Following the inertia test, the cluster centers were tested by running K-Means for 40 trials with the same value of $K$.
+This test was run to determine if the clusterings were stable as K-Means is initiallized randomly, and the clusters produced can depend on the starting position.
+Figure~\ref{fig:cen_test} shows the result of the three dimensional clustering test for the $U - O_{2}$ and $B - V$ combination.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figs/methods/3_cl_cluster_centers}
+\caption{Distribution of the cluster center as a function of the trial number for the three dimensional $U - O_{2}$ and $B - V$ combination with $K=3$. The left panel plots the centers in the $U - O_{2}$ colour, and the right panel plots the centers in the $B - V$ colour. Each line of dots represents a single cluster, and the colours represent the cluster number.}
+\label{fig:inertia}
+\end{figure}
+
+It is clear that each initialization found different clusters first as the colours in each line are not constant. 
+Despite the random initialization the final cluster centers did not change.
+This distribution of cluster centers represents a strong clustering. 
+If the cluster centers vary across multiple initializations of K-Means, the clustering would not be reliable, and the combination would not be considered for analysis.
+
 The behavior of the bandwidth parameter was investigated for each Meanshift clustering.
 Figure~\ref{fig:bad_ms} shows the relation between the score and number of clusters for the three dimensional $U - O_{2}$ and $B - I$ combination.
 The blue dots represent the Meanshift clusterings.
