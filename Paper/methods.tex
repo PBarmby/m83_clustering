@@ -1,17 +1,15 @@
 %\section{Clustering Analysis}
 As the size of galactic surveys grows, the number of dimensions available for analysis increases.
-In this survey, 45 different colour combinations are possible, creating a space of 45 possible dimensions. 
-Clustering methods provide an efficient way of finding structure in high dimentional data by searching for structure in the feature spaces that cannot be visually inspected. 
-A feature space is a set of \textit{n} features that are associated with measurable quantities.
-The following techniques were used to cluster the data, and determine the most significant features. 
-All analysis was implemented using the \textit{sklearn.cluster} Python package. % Reference this properly 
+Clustering methods provide an efficient way of finding structure in high dimentional data by searching for structure in colour spaces that are difficult to visualize. 
+The following techniques were used to cluster the data.
+All analysis was implemented using the \textit{sklearn.cluster} Python package. \textbf{how do we cite this?} 
 
 \subsection{Mean Shift Clustering} 
-Mean Shift is a non-parametric clustering technique that is based on probability density function estimates of each point in the data. % Should we mentioned sklearn.cluster as the implementation? 
-Mean Shift is a very powerful algorithm, but has not been widely used in astronomy. % Find a paper using it 
+Mean Shift is a non-parametric clustering technique that is based on probability density function estimates at each point in the data. % Should we mentioned sklearn.cluster as the implementation? 
+Mean Shift is a very powerful algorithm, but has not been widely used in astronomy. % Find a paper using it
+Because Mean Shift moves towards the local mode near the data on which it was initialized, it is useful for estimating the number of signifcant clusters in a dataset \citet{comanciciu02}
 At each point, the algorithm estimates the density around that point using a small sample of objects surrounding the point.
 The power of Mean Shift clustering is that the clusters are not confined to a particular shape.
-Because Mean Shift moves towards the local mode near the data on which it was initialized, it is useful for estimating the number of signifcant clusters in a dataset \citet{comanciciu02}
 The algorithm is based on two components: kernal density estimation, and density gradient estimation.
 We will highlight the major components of the algorithm, for a full description of the, see \citet{vatturi09}.
 
@@ -23,6 +21,9 @@ The desnity estimator for a multivariate density kernal is given by:
 \hat{f}(x) = \frac{c_{k,d}}{nh^d} \sum_{i=1}^n k\Bigg( \norm{\frac{x-x_{i}}{h}}^2 \Bigg)
 \end{equation}
 Where $h$ is the magnitude of the bandwidth matrix, $k(x)$ is the profile of kernal $K(x)$, and $c_{k,d}$ is a constant making $K(x)$ integrate to one\citet{vatturi09}.
+Estimating the bandwidth correctly is critical to determining the correct number of clusters.
+If the bandwidth is too low, the density estimate will be undersmoothed, and Mean Shift will produce many small clusters \citet{vatturi09}. This is a result of the large density gradient resulting from a low bandwidth, causing many data points to be interpreted as local modes.
+Conversly, if the bandwidth is too large, a small number of large clusters will be detected, resulting in groupings of data that may blur the underlying structure \citet{vatturi09}.
 
 The second element of Mean Shift is density gradient estimation. 
 The density gradient is estimated from the gradient of equation~\ref{eq:ms_de}\citet{vatturi09}.
@@ -47,11 +48,6 @@ x^{i+1} = x^i + m_{h,K}(x^i)
 \end{equation}
 Shifting the data points by equation~\ref{eq:ms} ensures that when the points converge, the center is the area of highest local density, or density ``mode". 
 The density mode can be interpretted as the center of a significant cluster in the data set, and is used to classify the objects that were shifted towards it.
-Equation~\ref{eq:ms_de} introduces the bandwidth parameter $h$. 
-Estimating the bandwidth correctly is critical to determining the correct number of clusters.
-If the bandwidth is too low, the density estimate will be undersmoothed, and Mean Shift will produce many small clusters \citet{vatturi09}. This is a result of the large density gradient resulting from a low bandwidth, causing many data points to be interpreted as local modes.
-% I'm not sure if my logic here is correct - take a look to make sure
-Conversly, if the bandwidth is too large, a small number of large clusters will be detected, resulting in groupings of data that may blur the underlying structure \citet{vatturi09}.
 % Add section about bandwidth estimation
 % Discuss drawbacks
 
