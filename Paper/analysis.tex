@@ -172,7 +172,7 @@ This means that the algorithm has found the balance between the natural clusters
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\linewidth]{figs/methods/silhouette_score_plots_example}
+\includegraphics[width=\linewidth]{figs/methods/silhouette_score_relation}
 \caption{Distribution of the silhouette score as a result of the number of clusters imposed for the $UVW - U$ and $V - I$ colours. The \textit{blue} points are the scores of Meanshift clustering, \textit{red} points are scores of K-Means.}
 \label{fig:sscore}
 \end{figure}
@@ -197,10 +197,37 @@ If this is the case, the clustering only created the smaller clusters as a resul
 \subsubsection{Parameter Relationships}
 In addition to metrics, the relationships between various parameters were investigated to determine how the each clustering method behaved.
 
-The K-Means clusterings were checked
+Each K-Means clustering was checked by plotting the sum-of-squares value for each value of $K$.
+Figure~\ref{fig:inertia} shows the inertia distribution for the $H\beta - B$ vs. $V - I$ colour.
+As $K$ increases, the inertia value decreases as the inertia value represent the total distance between the total distance between the points of each cluster.
+The value decreases with $K$ as the total distance in each cluster decreases as more clusters are introduced.
+This distribution was used to check the clustering and ensure that the clusterings were successful.
 
-The Mean-Shift scores do not follow a similar distribution as K-Means, as the accuracy of Mean-Shift is more directly related to the bandwidth parameter, seen in Figure~\ref{fig:bwscore}.
-The optimal Mean-Shift clustering was chosen by finding the bandwidth where the relation between the bandwidth and number of clusters reached an elbow, usually between 3 - 5 clusters.
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figs/methods/inertia_plot}
+\caption{Distribution of the inertia as a result of the number of clusters for the $H\beta - B$ and $V - I$ combination.}
+\label{fig:inertia}
+\end{figure}
+
+The behavior of the bandwidth parameter was investigated for each Meanshift clustering.
+Figure~\ref{fig:bad_ms} shows the relation between the score and number of clusters for the three dimensional $U - O_{2}$ and $B - I$ combination.
+The blue dots represent the Meanshift clusterings.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figs/methods/silhouette_score_bad_ms}
+\caption{Distribution of the silhouette score as a result of the number of clusters imposed for the three dimensional $U - O_{2}$ and $B - I$ combination. The \textit{blue} points are the scores of Meanshift clustering, \textit{red} points are scores of K-Means.}
+\label{fig:bad_ms}
+\end{figure}
+
+It is clear that an optimal clustering cannot be determined from this relation, as the score decreases linearly with the number of clusters Meanshift predicts.
+The Mean-Shift scores do not follow a similar distribution as K-Means, as the accuracy of Meanshift is related to the bandwidth parameter, seen in Figure~\ref{fig:bwscore}.
+The optimal Mean-Shift clustering was chosen by finding the bandwidth where the relation between the bandwidth and number of clusters reached an elbow, or where the relation between bandwidth and silhouette score elbowed.
+In both panels of Figure~\ref{fig:bwscore} that the bandwidth parameter predicts five clusters.
+Both distributions elbow at the same bandwidth interval, maximizing the score and predicting the same number of clusters for bandwidth valeus following the elbow.
+The bandwidth parameter was the primary indicator of the optimal Meanshift clustering.
+If a trend could not be found with the bandwidth parameter, then the silhouette score and number of clusters was investigated.
 
 \begin{figure}[H]
 \centering
