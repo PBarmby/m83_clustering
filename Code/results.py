@@ -264,8 +264,8 @@ def cluster_centers_plot(cluster_data, path):
     # Find the number of clusters imposed
     n_clusters = max(cluster_data['clust_num'])
     fig = plt.figure(figsize=(12, 8))
-    for c in range(1, 3):  # CHANGE Loop over the number of colours used
-        ax = fig.add_subplot(1, 2, c)  # CHANGE Create subplot for each colour
+    for c in range(1, 4):  # CHANGE Loop over the number of colours used
+        ax = fig.add_subplot(2, 2, c)  # CHANGE Create subplot for each colour
         for k in range(0, len(cluster_data), n_clusters):  # Loop over every center point
             for n in range(k, k+n_clusters):  # Loop over each cluster
                 ax.scatter(k/n_clusters, cluster_data['cen_' + str(c)][n],

@@ -4,18 +4,35 @@
 import numpy as np 
 import os
 from astropy.table import Table
-
+from scipy.stats import binned_statistic as bs
 # base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
 base_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\'  # PC
 # figure_save_symbol = '//'  # MAC
 figure_save_symbol = '\\'  # PC
 
 
+def binned_stats():
+    data = Table.read('data_v3.txt', format='ascii.commented_header',
+                      guess=False)
+    band_names = data.colnames
+    for i in range(11, len(data.colnames), 4):
+        band = band_names[i]
+        band_mag = data[band]
+        band_unc = data[band+'_unc']
+        trim = np.logical_and(band_mag != -99, band_unc != -99)
+        band_mag_trim = band_mag[trim]
+        band_unc_trim = band_unc[trim]
+        stats = bs(band_mag_trim, band_unc_trim, 'median')
+        print '__________{}_________'.format(band)
+        print 'unc_bins: {}'.format(stats[0])
+        print 'mag_bins: {} \n'.format(stats[1])
+        
+
 def band_unc_limit(path_):
     '''Creates file with each band at various uncertainty limits and counts
     the number of objects valid at each limit. 
         - removes all -99 objects'''
-    data = Table.read('data_v3-test.txt', format='ascii.commented_header',
+    data = Table.read('data_v3.txt', format='ascii.commented_header',
                       guess=False)
     band_names = data.colnames
 

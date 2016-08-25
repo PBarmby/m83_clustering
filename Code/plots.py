@@ -23,6 +23,8 @@ cluster_colours = ['y', 'g', 'b', 'r', 'c', 'm', 'k', 'w', 'brown', 'darkgray', 
 def plotting(data_table, path, plots, threshold, survey_objects):
     plot_path = make_directory(path)
     data_, trial = load_data(data_table, 'plots.txt')
+    model_file = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\model_colours\\{}'.format('mist_ssp_feh+0.5.txt')
+    model = Table.read(model_file, format='ascii.commented_header', guess=False)
 
     for i in range(0, len(trial)):
 
@@ -31,6 +33,10 @@ def plotting(data_table, path, plots, threshold, survey_objects):
                                                        trial['band2'][i],
                                                        trial['band3'][i],
                                                        trial['band4'][i])
+        mod_filt_2d = np.vstack([model[trial['band1'][i]],
+                                 model[trial['band2'][i]],
+                                 model[trial['band3'][i]],
+                                 model[trial['band4'][i]]])
         if 'bvb' in plots:
             band_v_band(wave1, wave2, wave3, wave4, grd, trial[i], plot_path)
         if 'w_hist' in plots:
@@ -39,7 +45,7 @@ def plotting(data_table, path, plots, threshold, survey_objects):
         if 'c_hist' in plots:
             colour_histogram(c1, c2, trial[i], plot_path)
         if 'cvc' in plots:
-            colour_v_colour(c1, c2, trial[i], plot_path)
+            colour_v_colour(c1, c2, trial[i], plot_path, mod_filt_2d)
         if 'wvc' in plots:
             wave_v_colour(wave1, wave2, wave3, wave4, c1, c2, grd, trial[i],
                           plot_path)
@@ -214,7 +220,7 @@ def colour_histogram(colour1, colour2, trial, path):
     return
 
 
-def colour_v_colour(colour1, colour2, trial, path):
+def colour_v_colour(colour1, colour2, trial, path, model_cols):
 
     path_ = ('{}\\color_color').format(path)
     if not os.path.exists(path_):
@@ -238,6 +244,8 @@ def colour_v_colour(colour1, colour2, trial, path):
     fig = plt.figure()
     ax = fig.add_subplot(111)
     ax.scatter(colour1, colour2, marker='.', c='k', s=1)
+    ax.plot(model_cols[0] - model_cols[1], model_cols[2] - model_cols[3],
+            color = 'm')
     ax.set_title('Colour-Colour Plot')
     ax.set_xlabel(trial['band1'] + ' - ' + trial['band2'])
     ax.set_ylabel(trial['band3'] + ' - ' + trial['band4'])
