@@ -22,7 +22,7 @@ def binned_stats():
         trim = np.logical_and(band_mag != -99, band_unc != -99)
         band_mag_trim = band_mag[trim]
         band_unc_trim = band_unc[trim]
-        stats = bs(band_mag_trim, band_unc_trim, 'median')
+        stats = bs(band_mag_trim, band_unc_trim, statistic='median', bins=10)
         print '__________{}_________'.format(band)
         print 'unc_bins: {}'.format(stats[0])
         print 'mag_bins: {} \n'.format(stats[1])
