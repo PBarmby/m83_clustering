@@ -6,7 +6,7 @@ The dataset used for this study is the Wide-Field Camera-3
 Early Release Science (ERS) observations of the nearby spiral galaxy Messier 83 (M83).
 M83 is a grand-design spiral of type SAB, located at a distance of 4.66~Mpc \citep{tully13}
 and the largest member of the M83 subgroup of the nearby Centaurus group of galaxies \citep{tully15}.
-The galaxy's apparent radius of $\sim12$~arcmin \citep{} is reasonably well-matched to the camera's field of view (XX true? XX)
+The galaxy's apparent radius of $\sim12$~arcmin \citep{} is reasonably well-matched to the camera's field of view.
 {\bf And here we note some other interesting things about M83.}
 
 %\item Intro to WFC3 ERS dataset
@@ -30,8 +30,8 @@ and a super-Eddington off-nuclear black hole \citep{soria14}.
 
 \begin{table}
 \centering
-\caption{
-\label{tab:filters}}
+\caption{List of filters from ERS survey with band names and exposure times.}
+\label{tab:filters}
 \begin{tabular}{lll}
 \hline\hline
 Filter & Name & Exposure time\\
@@ -66,7 +66,7 @@ between completeness and reliability was achieved.
 Nine objects are flagged in the catalog as being problematic 
 and we remove them from our analysis.
 
-[to be re-organized] As a check on the catalog we used Sextractor to detect and photometer objects in the individual images.
+As a check on the catalog we used Sextractor to detect and photometer objects in the individual images.
 While the aperture photometry measurements matched well, the derived uncertainties were much smaller than those reported in the catalog.
 Indeed, the catalog uncertainties seem to be physically unreasonable, with median uncertainty values well above 1~magnitude in
 most bandpasses, and the catalog notes do not recommend them for use except in a relative sense.
@@ -88,8 +88,8 @@ Figure~\ref{fig:mag_unc} shows the distributions of magnitudes and uncertainties
 %Numbers are calculated based on the 0.5 aperture filters - can be changed if we decide otherwise
 \begin{table}
 \centering
-\caption{
-\label{tab:cat_numbers}}
+\caption{List of filter names with the number of objects detected, the number of objects with an uncertainty < 0.2 mag, and the 0.5 px aperture magnitude for which the median uncertainty is 0.2.}
+\label{tab:cat_numbers}
 \begin{tabular}{lrrlr}
 \hline\hline
 Filter & $N_{\rm obj}$ & $N_{\rm good}$ & $m_{\rm good}$ \\
@@ -118,12 +118,16 @@ F814W &  67050 & 59600 & m \\
 \label{fig:mag_unc}
 \end{figure*}
 
-% TODO: discuss (this might also go in a different section)
-Our analysis in this paper is primarily concerned with colours, rather than luminosities.
-Uncertainties in colours are computed as the quadrature sum of the relevant magnitudes.
-Observations in 10 bands allow the generation of 45 different colours,
-but not all of these colours are likely to be useful in characterizing components of the galaxy.
-%TODO: may use different number than 0.2.
+\subsection{Colour Models}
+\textbf{Discuss colour models. Figure is broad-band combination with model.}
+
+\begin{figure}
+\label{fig:model_colour}
+\centering
+\includegraphics[width=0.5\textwidth]{figs/data/plot_mag05_555-mag05_814vsmag05_336-mag05_438}
+\caption{Colour-colour distribution of $V - I$ and $U - B$ with colour model plotted in pink.}
+\end{figure}
+
 
 \subsection{Published catalogs}
 
