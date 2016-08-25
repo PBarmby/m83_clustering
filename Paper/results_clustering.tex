@@ -354,33 +354,43 @@ The objects in cluster 3 were located in the densist areas of the spiral arms.
 These locations agree with the two dimensional clustering, however, clusters 1 and 2 are much more pronounced in three dimensions.
 The three dimensional clustering was stronger as the objects in each cluster were not similar to the objects in the other two clusters, which was not the case in two dimensions.
 % ----------------------------------------------
-
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
 % UNSUCCESSFUL NARROW BAND CLUSTERING ----------------------------------------------
-\subsection{$O_{3}$-V vs. U - B: Unsuccessful Clustering}
-The $O_{3}$-V colour was clustered with the U - B colour in two dimensions and the U-$O_{3}$, and B-$O_{3}$ colours in three dimensions.
+%
+
+\subsection{$H\alpha - I$ vs. B - V: Unsuccessful Clustering}
+The $H\alpha - I$ colour was clustered with the B - V colour in two dimensions and the B-$H\alpha$, and V-$H\alpha$ colours in three dimensions.
 The clustering methods were not successful at identifying structure in this combination in both two and three dimensions.
 The results were driven by the colour distribution.
-In two dimensions, the majority of the objects had $O_{3} - V$ colours between $-0.5$ and $+0.5$. 
-This did not give the clustering algorithms enough information to use, and caused the poor segmentation.
+In two dimensions, the majority of the objects had B - V colours between $0$ and $+2$. 
+This distribution did not provide enough variance for the clustering algorithms, and caused the poor segmentation.
 
 \subsubsection{2-Dimensions}
 
 \paragraph{Meanshift}
-The Meanshift clustering does not seem to provide meaningful segmentation.
-The meanshift parameters do not display the same patterns as other combinations. 
+The Meanshift clustering did not seem to create meaningful segmentation.
+The Meanshift parameters did not display the same patterns as other combinations. 
 The Meanshift score did not plateau at any number of clusters, and the large center cluster contained almost all of the objects in each segmentation.
-Meanshift identified the branch of blue objects at all bandwidth levels, but as the number of clusters increases the clusters are forced into segmenting the blue objects, not the rest of the distribution.
-At $h=0.2$, 8 clusters are produced (Figure~\ref{fig:OIIIV2dMS}), and Meanshift identified many clusters in the blue branch, and a larger cluster of objects that are quite red in the U-B cluster.
-This clustering results in a peak in the score.
-Despite identifying different parts of the distribution, the algorithms performance does not match the patterns of other combinations.
-Additionally, the cluster centers do not match the model colours. 
-Meanshift was not able to segment the stellar population based on age, as it had in other combinations.
+As the bandwidth was increased, Meanshift increased the segmentation amoung outliers, increasing the number of clusters which only contained one object
+The bandwidth relationships were not found in this combination, making the optimal clustering selection difficult. 
+The difference in score between $h=0.65$ and $h=0.6072$ was the largest of any interval, and $h=0.6072$ was selected as the optimal clustering with five clusters (Figure~\ref{fig:HAlphaI2dMS}).
+Meanshift was able to identify a small group of objects that were blue in B - V colour (cluster 2), but this cluster represented less than 1\% of the objects in the clustering. 
+\textbf{cluster statistics}
 
 \begin{figure}
 \centering
-\includegraphics[width=\linewidth]{figs/unsuccessful/meanshift_color_8cl_mag05_502-mag05_555vsmag05_336-mag05_438}
-\caption{Colour-Colour distribution of the $O_{3}$-V and U - B colours, clustered using Meanshift with $h=0.28$. The colour of each point corresponds to the cluster the point was assigned to. Cluster numbers can be seen in the legend.}
-\label{fig:OIIIV2dMS}
+\includegraphics[width=\linewidth]{figs/unsuccessful/meanshift_color_5cl_mag05_657-mag05_814vsmag05_438-mag05_555}
+\caption{Colour-Colour distribution of the $H\alpha - I$ and B - V colours, clustered using Meanshift with $h=0.6072$. The colour of each point corresponds to the cluster the point was assigned to. Cluster numbers can be seen in the legend.}
+\label{fig:HAlphaI2dMS}
 \end{figure}
 
 \paragraph{K-Means}
@@ -396,7 +406,7 @@ The clusters selected different ages of the stellar population, but the segmenta
 
 \begin{figure}
 \centering
-\includegraphics[width=\linewidth]{figs/unsuccessful/kmeans_color_4cl_mag05_502-mag05_555vsmag05_336-mag05_438}
+\includegraphics[width=\linewidth]{figs/unsuccessful/kmeans_color_5cl_mag05_657-mag05_814vsmag05_438-mag05_555}
 \caption{Colour-Colour distribution of the $O_{3}$-V and U - B colours, clustered using K-Means with $K=4$. The colour of each point corresponds to the cluster the point was assigned to. Cluster numbers can be seen in the legend.}
 \label{fig:OIIIV2dKM}
 \end{figure}

@@ -128,7 +128,7 @@ def make_2d_plots(c1, c2, bands, n_clust, alg, c_data, centers, path,
     fig = plt.figure()
     ax = fig.add_subplot(111)
     for k in range(0, n_clust):
-        clust_col = plt.cm.jet(float(k+2) / np.max(c_data['cluster_number'] + 1))
+        clust_col = plt.cm.jet(float(k) / np.max(c_data['cluster_number'] + 1))
         my_members = c_data['cluster_number'] == k
         cluster_center_1 = num_clust_data['cen_1'][k]
         cluster_center_2 = num_clust_data['cen_2'][k]
@@ -155,14 +155,14 @@ def make_2d_plots(c1, c2, bands, n_clust, alg, c_data, centers, path,
     if not os.path.exists(path_):
         print "New_path"
         os.makedirs(path_)
-    # pylab.savefig(os.path.join(path_, file_name))
-    # plt.close()
+    pylab.savefig(os.path.join(path_, file_name))
+    plt.close()
 
     fig2 = plt.figure()
     ax2 = fig2.add_subplot(111)
     for c in range(0, n_clust):
         my_members = c_data['cluster_number'] == c
-        clust_col = plt.cm.jet(float(c+2) / np.max(c_data['cluster_number'] + 1))
+        clust_col = plt.cm.jet(float(c) / np.max(c_data['cluster_number'] + 1))
         ax2.scatter(c2[my_members], base_wave[my_members],
                     color=clust_col, marker='.', s=4, label=c+1)
     ax2.legend(loc='lower right', fontsize=8)
@@ -174,8 +174,8 @@ def make_2d_plots(c1, c2, bands, n_clust, alg, c_data, centers, path,
     file_name = '{}_CMD_{}cl_{}-{}vs{}.png'.format(alg, str(n_clust),
                                                    bands[2], bands[3],
                                                    bands[3])
-    # pylab.savefig(os.path.join(path_, file_name))
-    # plt.close()
+    pylab.savefig(os.path.join(path_, file_name))
+    plt.close()
 
     return
 
@@ -227,8 +227,8 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
         if not os.path.exists(path_):
             print "made path"
             os.makedirs(path_)
-        # pylab.savefig(os.path.join(path_, file_name))
-        # plt.close()
+        pylab.savefig(os.path.join(path_, file_name))
+        plt.close()
 
     # 3d plot
     fig1 = plt.figure()
@@ -255,8 +255,8 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
                                                             bands[0], bands[1],
                                                             bands[2], bands[3],
                                                             bands[4], bands[5])
-    # pylab.savefig(os.path.join(path_, file_name))
-    # plt.close()
+    pylab.savefig(os.path.join(path_, file_name))
+    plt.close()
 
     # Base colour plot
     fig2 = plt.figure()
@@ -287,8 +287,8 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
                                                              bands[1],
                                                              bands[base1],
                                                              bands[base2])
-    # pylab.savefig(os.path.join(path_, file_name))
-    # plt.close()
+    pylab.savefig(os.path.join(path_, file_name))
+    plt.close()
 
     fig3 = plt.figure()
     ax3 = fig3.add_subplot(111)
@@ -307,6 +307,6 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
                                                           bands[base1],
                                                           bands[base2],
                                                           bands[b_wave])
-    # pylab.savefig(os.path.join(path_, file_name))
-    # plt.close()
+    pylab.savefig(os.path.join(path_, file_name))
+    plt.close()
     return
