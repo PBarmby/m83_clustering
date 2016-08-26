@@ -1,6 +1,8 @@
 '''Makes histograms of magnitude distribution and distribution with uncertainty
     limit
-        - data: data_v3.txt'''
+        - data: data_v3.txt
+ Run from Spyder terminal
+ Set limit variable in each function'''
 import numpy as np
 import os, os.path
 import pylab as pb
@@ -11,7 +13,7 @@ from astropy.table import Table
 def mag_hist_cut(path): 
     data_ = load_data('data_v3.txt')
     plot_path = make_directory(path)
-    limit = 0.4
+    limit = 0.4  # CHANGE
     filters = data_.colnames
     for i in range(11, len(filters), 2):
         # Load wave and uncertainty
@@ -50,7 +52,7 @@ def mag_hist_cut(path):
 def unc_hist_cut(path):
     data_ = load_data('data_v3.txt')
     plot_path = make_directory(path)
-    limit = 0.4
+    limit = 0.4  # CHANGE
     filters = data_.colnames
     for i in range(11, len(filters), 2):
         # Load wave and uncertainty

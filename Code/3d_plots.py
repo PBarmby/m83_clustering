@@ -1,8 +1,13 @@
+'''Create 3-dimensional plots by setting bands and aperture
+    - Creates interactive plot
+    - Set bands in 'select data section' '''
+
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 from astropy.table import Table
 
+# -----------------------------------------------------------------------------
 '''Select data for analysis'''
 ratio = 0.2
 data = Table.read('data_v3.txt', format='ascii.commented_header', guess=False)
@@ -11,6 +16,8 @@ band1 = 'mag{}_657'.format(aperture)  # U
 band2 = 'mag{}_814'.format(aperture)  # B
 band3 = 'mag{}_438'.format(aperture)  # V
 band4 = 'mag{}_555'.format(aperture)  # I
+# -----------------------------------------------------------------------------
+
 
 # Colour 1
 wave1 = data[band1]

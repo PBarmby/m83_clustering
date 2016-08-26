@@ -2,7 +2,10 @@
     - data_v2.txt has corrected 657 filter and removed flags 
     - data_v3.txt uses data_V2.txt to correct the mag_unc:
         - narrow filters: v2_unc/15
-        - broad filters: v2_unc/10'''
+        - broad filters: v2_unc/10
+   
+label_cat(): make catalogue of label data
+mk_cat(): make new version of data_v(n).txt'''
 import numpy as np
 from astropy.table import Table
 import os

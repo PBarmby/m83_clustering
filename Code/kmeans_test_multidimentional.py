@@ -1,3 +1,7 @@
+'''Set bands and aperture
+Performs K-Means clustering in 6 colour space and creates interactive plots
+Choose colours to plot in plotting area by changing index of X (array of all colours)'''
+
 import numpy as np 
 from astropy.table import Table
 from matplotlib import pyplot as plt 
@@ -135,6 +139,9 @@ print ("Sum-of-Squares: {}").format(sos)
 fig = plt.figure()
 ax = fig.add_subplot(111)
 
+
+'''Plotting'''
+# Choose colours by changing X index
 colors = cycle('bgrcmykbgrcmykbgrcmykbgrcmyk')
 markers = cycle('ooooooo*******')
 for i, col, mark in zip(range(n_clust), colors, markers):

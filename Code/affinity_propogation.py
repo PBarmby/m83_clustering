@@ -1,3 +1,5 @@
+'''Perform Affinity Propagation clustering and produce interactive plots '''
+
 print(__doc__)
 import numpy as np
 from sklearn.cluster import AffinityPropagation

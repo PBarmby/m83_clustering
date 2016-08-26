@@ -1,15 +1,42 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Apr 03 13:24:41 2015
-@author: Owner
-"""
 '''------------------------- Important Info -----------------------------------
-MAKE SURE YOU CHANGE THE PATH IN MAKE_SAVE_DIRECTORY
-Currently formatted for 6 colours.
-Must be changed for different n_dimensions:
-    - organize_data filters must be changed
-    - headers in results files must be changed
-        - New files for different dimesions
+1. Select path based on machine (MAC, PC, Sharcnet) in --Global Variables--
+    base_path is used as the base directory for which the --results_path and --plot_path 
+        arguments are created
+
+2. Set the "base bands" from 3d_experiments.txt and change parameters in functions.
+    These are the bands from the broad - broad colour that are being transformed
+    into the additional colours for 3d clustering
+    for 3d clustering.
+        Ex.         # band1 band2 band3 band4 band5 band6
+            2d Colour: 336 373 438 555
+            3d Colour: 336 373 373 438 373 555
+            base1 = 3 (array index for 438 band in 3d colours)
+            base2 = 5 (array index for 555 band in 3d colours)
+            base(1 or 2)_cen never changes
+            GO TO organize_data() function and change:
+                base_colour_trim - waves to remove -99 and uncertainty limit for base colour
+                base_colour - bands to make base colour with
+                wave5_fin - wave to use in CMD with base colour
+            GO TO meanshift_colour() AND kmeans_colour() and change:
+                base_cen = base_cen1 - base_cen2
+                    either select which bands to subtract in order to transform
+                    3d cluster centers back into the 2d base colour.
+
+3. Currently formatted for 3 colours.
+    Must be changed for different n_dimensions:
+    - organize_data filters must be changed (remove comments and format np.logical_and()s)
+    - headers in results files must be changed to reflect n_bands
+    - Create new results files and directories for different dimesions
+
+4. Inputs: 3d_experiments.txt
+    Select bands for colours
+    Set clustering parameters
+
+5. Outputs: 05aperture_results_3d.txt (optional argument) -wr
+            3d_cluster_statistics.txt (optional argument) -wr 
+            colour_colour directory and plots (optional argument) -p
+            CMDs for each combination (optional argument) -p
+            id_ and ds9 files (optional argument) -id -ds 
 ----------------------------------------------------------------------------'''
 
 import os
@@ -40,6 +67,25 @@ from sklearn.cluster import AffinityPropagation
 
 
 '''-----------------------Global Variables----------------------------------'''
+
+#--------------------------Select Path-----------------------------------------
+# Set the base path and directory symbol for MAC or PC OS
+# base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
+base_path = '/home/akiar/m83_clustering/'  # Sharcnet
+# base_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\'  # PC
+figure_save_symbol = '/'  # MAC Sharcnet
+# figure_save_symbol = '\\'  # PC
+#------------------------------------------------------------------------------
+
+#--------------------------Base Bands------------------------------------------
+# Set the "base" bands in 3d_experiments.txt. Base bands: the broad-broad
+# colour being seperated into 2 narrow-broad colours
+base1 = 3  # CHANGE
+base1_cen = 1
+base2 = 5  # CHANGE
+base2_cen = 2
+#------------------------------------------------------------------------------
+
 # used for plots
 colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'b', 'g', 'r', 'c', 'm', 'y', 'k',
           'b', 'g', 'r', 'c', 'm', 'y', 'k', 'b', 'g', 'r', 'c', 'm', 'y', 'k',
@@ -50,21 +96,6 @@ markers = ['o', 'o', 'o', 'o', 'o', 'o', 'o', '*', '*', '*', '*', '*', '*', '*',
 
 # need this so that output files always have the same number of columns
 max_num_clusters = 40
-
-# Set the base path and directory symbol for MAC or PC OS
-# base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
-base_path = '/home/akiar/m83_clustering/'  # Sharcnet
-# base_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\'  # PC
-figure_save_symbol = '/'  # MAC Sharcnet
-# figure_save_symbol = '\\'  # PC
-
-# Set the "base" bands in 3d_experiments.txt. Base bands: the broad-broad
-# colour being seperated into 2 narrow-broad colours
-'''Change waves in organize_data function'''
-base1 = 3  # CHANGE
-base1_cen = 1
-base2 = 5  # CHANGE
-base2_cen = 2
 
 # defined functions
 from numpy import mean as avg

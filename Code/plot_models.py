@@ -1,4 +1,5 @@
-'''Plot model colours from FSPS'''
+'''Plot model colours from FSPS
+set w1 - 6 for 3d colours from plots_3d.txt'''
 import numpy as np
 from matplotlib import pyplot as plt
 import mpl_toolkits.mplot3d as p3
