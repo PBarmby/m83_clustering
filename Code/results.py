@@ -28,7 +28,7 @@ def results(file_name, general_path, save_path, plots):
 
     general_results_data = load_data(gen_path, general_results_file)
 
-    if general_results_file == '05aperture_results_3d.txt':
+    if general_results_file == '05aperture_results_2d.txt':
         clean_gen_res_data, n_clust = organize_data(general_results_data)
     else:
         clean_gen_res_data = general_results_data
@@ -110,52 +110,53 @@ def silhouette_vs_nclust(results_table, path):
     # compute fraction of objects in smallest cluster
     smallest_clust_fract = results_table['size_smallest']/total_obj
 
-    fig = plt.figure(figsize=(12, 5))
-    ax = fig.add_subplot(121)
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
     ax.scatter(num_clust[results_table['clustering'] == 'kmeans'],
                results_table['score'][results_table['clustering']=='kmeans'],
                c='r', label='kmeans')
     ax.scatter(num_clust[results_table['clustering'] == 'meanshift'],
                results_table['score'][results_table['clustering']=='meanshift'],
                c='b', label='meanshift')
-    # ax.scatter(num_clust[results_table['clustering'] == 'affinity'],
-      #         results_table['score'][results_table['clustering']=='affinity'],
-      #        c='y', label='affinity')
     ax.legend(loc='best', fontsize=11)
     ax.set_xlabel('Number of clusters')
     ax.set_ylabel('Score')
     ax.set_title('Number of Clusters vs Silhouette Score', fontsize=11)
 
-    ax = fig.add_subplot(122)
+    filename = 'score_vs_nclust.png'
+    pylab.savefig(os.path.join(path, filename))
+
+    fig2 = plt.figure()
+    ax2 = fig2.add_subplot(111)
     # Plot Meanshift biggest vs smallest
-    ax.scatter(s_score[results_table['clustering'] == 'meanshift'],
+    ax2.scatter(s_score[results_table['clustering'] == 'meanshift'],
                biggest_clust_fract[results_table['clustering'] == 'meanshift'],
                c='r', marker='o', label='MS Largest')
-    ax.scatter(s_score[results_table['clustering'] == 'meanshift'],
+    ax2.scatter(s_score[results_table['clustering'] == 'meanshift'],
                smallest_clust_fract[results_table['clustering'] == 'meanshift'],
                c='b', marker='o', label='MS Smallest')
     # Plot Kmeans biggest vs. smallest
-    ax.scatter(s_score[results_table['clustering'] == 'kmeans'],
+    ax2.scatter(s_score[results_table['clustering'] == 'kmeans'],
                biggest_clust_fract[results_table['clustering'] == 'kmeans'],
                c='y', marker='o', label='KM Largest')
-    ax.scatter(s_score[results_table['clustering'] == 'kmeans'],
+    ax2.scatter(s_score[results_table['clustering'] == 'kmeans'],
                smallest_clust_fract[results_table['clustering'] == 'kmeans'],
                c='g', marker='o', label='KM Smallest')
 
-    ax.legend(loc='upper left', fontsize=7)
-    ax.set_xlabel('Score')
-    ax.set_ylabel('Fractional Size')
-    ax.set_title('Silhouette Score vs. Fractional Size of Cluster',
+    ax2.legend(loc='upper left', fontsize=7)
+    ax2.set_xlabel('Score')
+    ax2.set_ylabel('Fractional Size')
+    ax2.set_title('Silhouette Score vs. Fractional Size of Cluster',
                  fontsize=11)
 
-    filename = 'silhouette_score_plots.png'
+    filename = 'score_vs_size.png'
     pylab.savefig(os.path.join(path, filename))
     return
 
 
 def bandwidth_vs_score(results_table, path):
-    '''Create a plot of the bandwidth from mean-shift vs. the
-    silhouette_score'''
+    '''Create a plot of the bandwidth vs. the
+    silhouette_score and the number of clusters'''
     # Remove now bandwidth or score
     remove = []
     for i in range(0, len(results_table)):
@@ -165,20 +166,24 @@ def bandwidth_vs_score(results_table, path):
             remove.append(i)
     results_table.remove_rows(remove)
 
-    fig = plt.figure(figsize=(12, 5))
-    ax = fig.add_subplot(121)
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
     ax.scatter(results_table['b_width'], results_table['score'], marker='o')
     ax.set_xlabel('Bandwidth', fontsize=11)
     ax.set_ylabel('Score', fontsize=11)
     ax.set_title('Bandwidth vs. Score', fontsize=12)
 
-    ax = fig.add_subplot(122)
-    ax.scatter(results_table['b_width'], results_table['n_clust'], marker='o')
-    ax.set_xlabel('Bandwidth', fontsize=11)
-    ax.set_ylabel('N_clusters', fontsize=11)
-    ax.set_title('Bandwidth vs. N_clusters', fontsize=12)
+    filename = 'h_vs_score.png'
+    pylab.savefig(os.path.join(path, filename))
 
-    filename = 'meanshift_parameters.png'
+    fig2 = plt.figure()
+    ax2 = fig2.add_subplot(122)
+    ax2.scatter(results_table['b_width'], results_table['n_clust'], marker='o')
+    ax2.set_xlabel('Bandwidth', fontsize=11)
+    ax2.set_ylabel('N_clusters', fontsize=11)
+    ax2.set_title('Bandwidth vs. N_clusters', fontsize=12)
+
+    filename = 'h_vs_nclust.png'
     pylab.savefig(os.path.join(path, filename))
     return
 

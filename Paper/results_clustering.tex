@@ -32,6 +32,7 @@ The second feature is the group of objects that spread above $1$ in the $V - I$ 
 The last feature is the branch of red objects spanning from $-0.5$ to $+2$ in the $U - B$ colour.
 These objects are likely young objects that lie in the back of the galaxy or behind dust lanes as they are reddened in the $U - B$ colour, but are relatively neutral in the $V - I$ colour. \textbf{I think thats right}. 
 
+% KMEANS
 The strongest K-Means clustering was selected at $K=5$ (Figure~\ref{fig:BB2dKM5}) as it is the point where the silhouette score began to plateau.
 K-Means was able to identify the branch of red $U - B$ objects at low values of $K$.
 As $K$ increased, the algorithm was also able to identify a group of objects that are red in $V - I$, and blue in $U - B$. 
@@ -69,6 +70,7 @@ Despite their difference in colour, cluster 5 also traces clusters 1 and 3 aroun
 Cluster 4 objects stay mainly concentrated in the spiral arms, filling in the dense area in the interarm regions.
 Cluster 4 objects are not as apparent in the interarm region as clusters 1 and 3, but still appear in denser areas. \textbf{PB: what could these objects be?}
 
+% MEANSHIFT
 The strongest Meanshift clustering was selected as the point where the relation between bandwidth and the number of clusters plateaued, and can be seen in Figure~\ref{fig:BB2dMS5}.
 Its bandwidth was $h=0.6$, which produced five clusters.
 
@@ -115,29 +117,27 @@ The first feature is a group of objects that are neutral in the $B - V$ and $B -
 The second feature is a branch of objets that is neutral in the $U - B$ and $B - I$ colours, but quite red ($0 - +4$) in the $B - V$ colour.
 The last feature is a group of objects that are quite blue ($-1$ and beyond) in the $U - B$ colour, and quite red in the $B - V$, and $B - I$ colours ($0 - +5$).
 
+% KMEANS
 K-Means was able to identify objects that were in specific regions of the colour space.
 The optimal K-Means clustering was found at $K=4$ (Figure~\ref{fig:BB3dKM4}), as the score peaked, and the red branch of objects was identified.
-Figure~\ref{fig:BB3dKMproj} displays the projection of the three dimensional clustering into each of its two dimensional components. 
+Figure~\ref{fig:BB3dKMprojBV} and Figure~\ref{fig:BB3dKMprojBI} display the projections of the three dimensional clustering into two of its two dimensional components with the original colour from the two dimensional space.
 It is clear that the three dimensional clustering was driven by the $B - I$ vs. $U - B$ distribution, as the clusters were almost completely seperated in that space.
 The clusters overlapped extensively in the $B - V$ vs. $U - B$ space. \textbf{PB: Do you know why this would be? Would it be from the range of colour in the B-I dimension?}
 This could be a result of the colour distribution in the $B - I$ space, as the range of object colour in this dimension is much larger than in the $B - V$ colour.
 This relationship was found through all colour combinations.
 
-\begin{figure*}
+\begin{figure*}[H]
 \centering
-\subfloat[$U - B$ vs. $B - V$ Distribution.]{\includegraphics[width=0.5\textwidth]{figs/broad/kmeans_3d_projection_4cl_mag05_336-mag05_438vsmag05_438-mag05_555}\label{fig:BB3dKMprojBV}}
+\subfloat[$U - B$ vs. $B - V$ vs. $B - I$ distribution.]{\includegraphics[width=0.45\textwidth]{figs/broad/kmeans_3d_4cl_mag05_336-mag05_438vsmag05_438-mag05_555vsmag05_438-mag05_814}\label{fig:BB3dKM4}}
 \hfill
-\subfloat[$U - B$ vs. $B - I$ Distribution.]{\includegraphics[width=0.5\textwidth]{figs/broad/kmeans_3d_projection_4cl_mag05_336-mag05_438vsmag05_438-mag05_814}\label{fig:BB3dKMprojBI}}
-\caption{$U - B$ vs. $B - V$ and $B - I$ projections from three dimensional clustering.}
-\label{fig:BB3dKMproj}
-\end{figure*}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\linewidth]{figs/broad/kmeans_3d_4cl_mag05_336-mag05_438vsmag05_438-mag05_555vsmag05_438-mag05_814}
+\subfloat[$U - B$ vs. $V - I$ projection from three dimensional clustering.]{\includegraphics[width=0.45\textwidth]{figs/broad/kmeans_base_color_4cl_mag05_336-mag05_438vsmag05_555-mag05_814}\label{fig:BB3dKM4base}}
+\hfill
+\subfloat[$U - B$ vs. $B - V$ Distribution.]{\includegraphics[width=0.45\textwidth]{figs/broad/kmeans_3d_projection_4cl_mag05_336-mag05_438vsmag05_438-mag05_555}\label{fig:BB3dKMprojBV}}
+\hfill
+\subfloat[$U - B$ vs. $B - I$ Distribution.]{\includegraphics[width=0.45\textwidth]{figs/broad/kmeans_3d_projection_4cl_mag05_336-mag05_438vsmag05_438-mag05_814}\label{fig:BB3dKMprojBI}}
 \caption{Colour-Colour-Colour distribution of the $U - B$, $B - V$, and $B - I$ colours, clustered using K-Means with $K=4$. The colour of each point corresponds to the cluster the point was assigned to. Cluster numbers can be seen in the legend.}
-\label{fig:BB3dKM4}
-\end{figure}
+\label{fig:BB3dKMtotal}
+\end{figure*}
 
 The three dimensional clustering illustrates how the algorithm is able to identify two distinct branches of objects beyond the dense center of the distribution.
 Cluster 4 is a branch of objects that is quite red in both the $U - B$ and $B - V$ colours, but is neutral in the $B - I$ colour.
@@ -146,13 +146,6 @@ The algorithm then segments the dense section of the distribution between the bl
 These two clusters are not ideal, as the dense portion of the distribution could be argued as the same cluster. 
 However, at $K = 3$, the branches were not identified, so the segmentation of the dense region is necessary.
 The clusters projected into the base colours can be seen in Figure~\ref{BB3dKM4base}, where the branches of objects are clearly identified.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\linewidth]{figs/broad/kmeans_base_color_4cl_mag05_336-mag05_438vsmag05_555-mag05_814}
-\caption{Colour-Colour distribution of the $U - B$, and $V - I$ colours, projected from the three dimensional clustering using K-Means with $K=4$. The colour of each point corresponds to the cluster the point was assigned to. Cluster numbers can be seen in the legend.}
-\label{fig:BB3dKM4base}
-\end{figure}
 
 The cluster centers of clusters 1, 2, and 4, match the model colours predicted.
 The red branch of objects traces the older stellar population, while clusters 1 and 2 trace the young and intermediate ages of the population.

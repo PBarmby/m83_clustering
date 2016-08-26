@@ -1,14 +1,5 @@
 # band1 band2 band3 band4 band5 band6 n_clust clustering
 
-mag05_673 mag05_814 mag05_438 mag05_673 mag05_555 mag05_673 4 meanshift
-mag05_673 mag05_814 mag05_438 mag05_673 mag05_555 mag05_673 6 meanshift
-mag05_673 mag05_814 mag05_438 mag05_673 mag05_555 mag05_673 7 meanshift
-mag05_673 mag05_814 mag05_438 mag05_673 mag05_555 mag05_673 9 meanshift
-mag05_673 mag05_814 mag05_438 mag05_673 mag05_555 mag05_673 3 kmeans
-mag05_673 mag05_814 mag05_438 mag05_673 mag05_555 mag05_673 4 kmeans
-mag05_673 mag05_814 mag05_438 mag05_673 mag05_555 mag05_673 5 kmeans
-mag05_673 mag05_814 mag05_438 mag05_673 mag05_555 mag05_673 6 kmeans
-mag05_673 mag05_814 mag05_438 mag05_673 mag05_555 mag05_673 7 kmeans
-mag05_673 mag05_814 mag05_438 mag05_673 mag05_555 mag05_673 8 kmeans
+mag05_336 mag05_438 mag05_438 mag05_555 mag05_438 mag05_814 4 kmeans
 
 
