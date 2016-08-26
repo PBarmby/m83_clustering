@@ -7,9 +7,9 @@ All methods were implemented using the \textit{sklearn.cluster} Python package \
 \subsection{Mean Shift Clustering} 
 Mean Shift is a non-parametric clustering technique that is based on probability density function estimates at each point in the data. % Should we mentioned sklearn.cluster as the implementation? 
 Mean Shift is a very powerful algorithm, but has not been widely used in astronomy. % Find a paper using it
-Because Mean Shift moves towards the local mode near the data on which it was initialized, it is useful for estimating the number of signifcant clusters in a dataset \citet{comanciciu02}
-At each point, the algorithm estimates the density around that point using a small sample of objects surrounding the point.
 The power of Mean Shift clustering is that the clusters are not confined to a particular shape.
+Because Mean Shift moves towards the local mode near the data on which it was initialized, it is useful for estimating the number of signifcant clusters in a dataset \citep{comanciciu02}.
+At each point, the algorithm estimates the density around that point using a small sample of objects surrounding the point.
 The algorithm is based on two components: kernal density estimation, and density gradient estimation.
 We will highlight the major components of the algorithm, for a full description of the, see \citet{vatturi09}.
 
@@ -20,7 +20,8 @@ The desnity estimator for a multivariate density kernal is given by:
 \label{eq:ms_de}
 \hat{f}(x) = \frac{c_{k,d}}{nh^d} \sum_{i=1}^n k\Bigg( \norm{\frac{x-x_{i}}{h}}^2 \Bigg)
 \end{equation}
-Where $h$ is the magnitude of the bandwidth matrix, $k(x)$ is the profile of kernal $K(x)$, and $c_{k,d}$ is a constant making $K(x)$ integrate to one\citet{vatturi09}.
+
+Where \textit{n} are a set of independent \textit{d}-dimensional data points, $h$ is the magnitude of the bandwidth matrix, $k(x)$ is the profile of kernal $K(x)$, and $c_{k,d}$ is a constant making $K(x)$ integrate to one\citet{vatturi09}.
 Estimating the bandwidth correctly is critical to determining the correct number of clusters.
 If the bandwidth is too low, the density estimate will be undersmoothed, and Mean Shift will produce many small clusters \citet{vatturi09}. This is a result of the large density gradient resulting from a low bandwidth, causing many data points to be interpreted as local modes.
 Conversly, if the bandwidth is too large, a small number of large clusters will be detected, resulting in groupings of data that may blur the underlying structure \citet{vatturi09}.
@@ -51,7 +52,7 @@ The density mode can be interpretted as the center of a significant cluster in t
 % Add section about bandwidth estimation
 % Discuss drawbacks
 
-\subsection{Affinity Propagation Clustering}
+\subsection{Affinity Propagation Clustering}\label{sec:methods_ap}
 
 Affinity propagation (AP) is a relatively new clustering technique developed by \citet{frey07}.
 Here, we will breifly describe the main compoments of AP, for a full description of the technique, see \citet{frey07}.

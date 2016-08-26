@@ -103,6 +103,11 @@ Frey B.~J.,  Dueck D.,  2007, Science, 315, 972
   P.~P.,  {Soria} R.,  {Stockdale} C.,    {Winkler} P.~F.,  2014, \apjs, 212,
   21
 
+\bibitem[\protect\citeauthoryear{Pedregosa, Varoquaux, Gramfort
+  et~al.,}{Pedregosa et~al.}{2011}]{sklearn}
+Pedregosa F.,  Varoquaux G.,  Gramfort A.,    et~al., 2011, Journal of Machine
+  Learning Research, 12, 2825
+
 \bibitem[\protect\citeauthoryear{{Ryon}, {Bastian}, {Adamo}, {Konstantopoulos},
   {Gallagher}, {Larsen}, {Hollyhead}, {Silva-Villa} \& {Smith}}{{Ryon}
   et~al.}{2015}]{ryon15}
