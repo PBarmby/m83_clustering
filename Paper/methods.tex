@@ -1,6 +1,6 @@
 %\section{Clustering Analysis}
 As the size of galactic surveys grows, the number of dimensions available for analysis increases.
-Clustering methods provide an efficient way of finding structure in high dimentional data by searching for structure in colour spaces that are difficult to visualize. 
+Clustering methods provide an efficient way of finding structure in high dimensional data by searching for structure in colour spaces that are difficult to visualize. 
 The following techniques were used to cluster the data.
 All methods were implemented using the \textit{sklearn.cluster} Python package \citep{sklearn}.
 
@@ -8,23 +8,23 @@ All methods were implemented using the \textit{sklearn.cluster} Python package \
 Mean Shift is a non-parametric clustering technique that is based on probability density function estimates at each point in the data. % Should we mentioned sklearn.cluster as the implementation? 
 Mean Shift is a very powerful algorithm, but has not been widely used in astronomy. % Find a paper using it
 The power of Mean Shift clustering is that the clusters are not confined to a particular shape.
-Because Mean Shift moves towards the local mode near the data on which it was initialized, it is useful for estimating the number of signifcant clusters in a dataset \citep{comanciciu02}.
+Because Mean Shift moves towards the local mode near the data on which it was initialized, it is useful for estimating the number of significant clusters in a dataset \citep{comanciciu02}.
 At each point, the algorithm estimates the density around that point using a small sample of objects surrounding the point.
-The algorithm is based on two components: kernal density estimation, and density gradient estimation.
+The algorithm is based on two components: kernel density estimation, and density gradient estimation.
 We will highlight the major components of the algorithm, for a full description of the, see \citet{vatturi09}.
 
 The first element of Mean Shift is kernel density estimation. 
 The major parameter of Mean Shift is bandwidth, \textbf{\textit{H}}, which is assumed to be proportional to the matrix $\textbf{\textit{H}} = h^2\textbf{\textit{I}}$, with $h>0$ \citet{vatturi09}.
-The desnity estimator for a multivariate density kernal is given by: 
+The density estimator for a multivariate density kernel is given by: 
 \begin{equation} 
 \label{eq:ms_de}
 \hat{f}(x) = \frac{c_{k,d}}{nh^d} \sum_{i=1}^n k\Bigg( \norm{\frac{x-x_{i}}{h}}^2 \Bigg)
 \end{equation}
 
-Where \textit{n} are a set of independent \textit{d}-dimensional data points, $h$ is the magnitude of the bandwidth matrix, $k(x)$ is the profile of kernal $K(x)$, and $c_{k,d}$ is a constant making $K(x)$ integrate to one\citet{vatturi09}.
+Where \textit{n} are a set of independent \textit{d}-dimensional data points, $h$ is the magnitude of the bandwidth matrix, $k(x)$ is the profile of kernel $K(x)$, and $c_{k,d}$ is a constant making $K(x)$ integrate to one\citet{vatturi09}.
 Estimating the bandwidth correctly is critical to determining the correct number of clusters.
 If the bandwidth is too low, the density estimate will be undersmoothed, and Mean Shift will produce many small clusters \citet{vatturi09}. This is a result of the large density gradient resulting from a low bandwidth, causing many data points to be interpreted as local modes.
-Conversly, if the bandwidth is too large, a small number of large clusters will be detected, resulting in groupings of data that may blur the underlying structure \citet{vatturi09}.
+Conversely, if the bandwidth is too large, a small number of large clusters will be detected, resulting in groupings of data that may blur the underlying structure \citet{vatturi09}.
 
 The second element of Mean Shift is density gradient estimation. 
 The density gradient is estimated from the gradient of equation~\ref{eq:ms_de}\citet{vatturi09}.
@@ -34,7 +34,7 @@ The density gradient is given by:
 \nabla\hat{f}_{h,K}(x) = \frac{2c_{k,d}}{nh^(d+2)} \Bigg[ \sum_{i=1}^n k^{\prime} \Bigg( \norm{\frac{x-x_{i}}{h}}^2 \Bigg) \Bigg] \\ \Bigg[\frac{\sum_{i=1}^n x_{i}k^{\prime} \Bigg( \norm{\frac{x-x_{i}}{h}}^2 \Bigg)}{\sum_{i=1}^n k^{\prime} \Bigg( \norm{\frac{x-x_{i}}{h}}^2 \Bigg)} - x \Bigg]
 \end{multline}
 The second term of equation~\ref{eq:ms_dg}, is the Mean Shift; the difference between the weighted mean using $k^{\prime}$, and $x$ \citet{vatturi09}.
-Applying a normal kernal to the Mean Shift, the second term of equation~\ref{eq:ms_dg} becomes: 
+Applying a normal kernel to the Mean Shift, the second term of equation~\ref{eq:ms_dg} becomes: 
 \begin{equation} 
 \label{eq:ms_sh}
 m_{h,K}(x) = \frac{\sum_{i=1}^n x_{i} exp \Bigg(\norm{\frac{x-x_{i}}{h}}^2 \Bigg)}{\sum_{i=1}^n exp \Bigg(\norm{\frac{x-x_{i}}{h}}^2 \Bigg)} - x
@@ -48,14 +48,14 @@ The points are shifted by:
 x^{i+1} = x^i + m_{h,K}(x^i)
 \end{equation}
 Shifting the data points by equation~\ref{eq:ms} ensures that when the points converge, the center is the area of highest local density, or density ``mode". 
-The density mode can be interpretted as the center of a significant cluster in the data set, and is used to classify the objects that were shifted towards it.
+The density mode can be interpreted as the center of a significant cluster in the data set, and is used to classify the objects that were shifted towards it.
 % Add section about bandwidth estimation
 % Discuss drawbacks
 
 \subsection{Affinity Propagation Clustering}\label{sec:methods_ap}
 
 Affinity propagation (AP) is a relatively new clustering technique developed by \citet{frey07}.
-Here, we will breifly describe the main compoments of AP, for a full description of the technique, see \citet{frey07}.
+Here, we will briefly describe the main components of AP, for a full description of the technique, see \citet{frey07}.
 AP takes the similarities between the data points as input for clustering, and uses a series of "messages" between data points to determine the number of clusters and their centers.
 The centers of AP clustering are actual data points, called exemplars, which make it useful for clustering as it does not create average centers for each cluster. 
 The first input required for AP are the \textit{preferences} of each data point which describes the likelihood of a data point to be chosen as an exemplar \citet{frey07}.
@@ -64,7 +64,7 @@ The preferences are a measure of the similarity between a point \textit{i} and a
 \label{eq:sim}
 s(i,k) = -\norm{x_i - x_k}^2
 \end{equation}
-Similarity values influence the number of clusters AP identifies, as the larger similarity values are likely chosen as eemplars \citet{frey07}.
+Similarity values influence the number of clusters AP identifies, as the larger similarity values are likely chosen as exemplars \citet{frey07}.
 Preference values could be estimated using the median value of the similarities, the minimum value, or randomized to see the effects over various clusterings \citet{frey07}.
 
 Once the preference value is determined, two messages are computed between all the data points.
@@ -87,13 +87,13 @@ The availabilities of all points are initialized to zero, and the first iteratio
 Each iteration updates equation~\ref{eq:resp} and equation~\ref{eq:avail} to determine the optimal exemplars for the data.
 
 As the process iterates, for point \textit{i}, the value of \textit{k} that maximizes $a(i,k) + r(i,k)$ identifies \textit{i} as an exemplar if $k=i$, or gives the exemplar of point \textit{i} \citet{frey07}.
-In order to ensure that the message passing does not cause numerical oscilations, the messages are damped as they are updated.
+In order to ensure that the message passing does not cause numerical oscillations, the messages are damped as they are updated.
 The previous message value is multiplied by a damping-factor $\lambda$, and $1 - \lambda$ multiplied by the update value is added.
 The damping-factor has a value between zero and one, with a default value of 0.5 \citet{frey07}.
 
 \subsection{K-Means Clustering}
 K-Means clustering is one of the most widely used clustering methods and has been used to identify a wide range of interstellar and intergalactic objects. % List papers that have done so
-It is simple, robust, and easy to implement when analyzing high dimentional spaces, making it a powerful way to analyze galactic surveys. 
+It is simple, robust, and easy to implement when analyzing high dimensional spaces, making it a powerful way to analyze galactic surveys. 
 Generally, k-means begins by selecting $k$ data points at random and deems these points cluster centers.
 Each object in the data set is then assigned to a cluster center by computing the least-squares distance to each center.
 K-Means aims to minimize the sum of squares within each cluster given by:
