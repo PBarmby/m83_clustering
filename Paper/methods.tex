@@ -2,9 +2,12 @@
 As the size of photometric surveys grows, the number of dimensions available for analysis increases.
 Clustering methods provide an efficient way of finding structure in high dimensional data by searching for structure in colour spaces that are difficult to visualize. 
 Three different techniques were used to cluster the data;
-all were implemented using the \textit{sklearn.cluster} Python package \citep{sklearn}. %version number?
+all were implemented using the \textit{sklearn.cluster} Python package version 0.17 \citep{sklearn}. %AKK: please check that this is the right version number
+%AKK: is AP in sklearn - or did you implement this yourself?
 
-\subsection{Mean Shift Clustering} 
+\subsection{Mean Shift Clustering}
+\label{sec:methods_ms}
+
 Mean Shift is a non-parametric clustering technique that is based on probability density function estimates at each point in the data. 
 Mean Shift is a very powerful algorithm, but has not been widely used in astronomy. % Find a paper using it
 The power of Mean Shift clustering is that the clusters are not confined to a particular shape.
@@ -20,7 +23,7 @@ The density estimator for a multivariate density kernel is given by:
 \label{eq:ms_de}
 \hat{f}(x) = \frac{c_{k,d}}{nh^d} \sum_{i=1}^n k\Bigg( \norm{\frac{x-x_{i}}{h}}^2 \Bigg)
 \end{equation}
-where $x_i$ are a set of $n$ independent \textit{d}-dimensional data points, $h$ is the magnitude of the bandwidth matrix, $k(x)$ is the profile of kernel $K(x)$, and $c_{k,d}$ is a normalization constant. %unclear what difference between $K$ and $k$ is
+where $x_i$ are a set of $n$ independent \textit{d}-dimensional data points, $h$ is the magnitude of the bandwidth matrix, $k(x)$ is the profile of kernel $K(x)$, and $c_{k,d}$ is a normalization constant. %AKK: unclear what difference between $K$ and $k$ is
 Estimating the bandwidth correctly is critical to determining the correct number of clusters.
 If the bandwidth is too low, the density estimate will be undersmoothed, and Mean Shift will produce many small clusters.
 Conversely, if the bandwidth is too large, a small number of large clusters will be detected, resulting in groupings of data that may blur the underlying structure \citet{vatturi09}.
@@ -50,58 +53,57 @@ The density mode can be interpreted as the centre of a significant cluster in th
 % Add section about bandwidth estimation
 % Discuss drawbacks
 
-\subsection{Affinity Propagation Clustering}\label{sec:methods_ap}
+\subsection{Affinity Propagation Clustering}
+\label{sec:methods_ap}
 
 Affinity propagation (AP) is a relatively new clustering technique developed by \citet{frey07}.
-Here, we will briefly describe the main components of AP, for a full description of the technique, see \citet{frey07}.
-AP takes the similarities between the data points as input for clustering, and uses a series of "messages" between data points to determine the number of clusters and their centers.
-The centers of AP clustering are actual data points, called exemplars, which make it useful for clustering as it does not create average centers for each cluster. 
-The first input required for AP are the \textit{preferences} of each data point which describes the likelihood of a data point to be chosen as an exemplar \citet{frey07}.
+The main components are described here; for a full description of the technique, see \citet{frey07}.
+AP takes the similarities between the data points as input for clustering, and uses a series of ``messages'' between data points to determine the number of clusters and their centers.
+The centres of AP clustering are actual data points, called exemplars; unlike other methods AP does not create average centres for each cluster. 
+The first inputs required for AP are the \textit{preferences} of each data point which describe the likelihood of a data point to be chosen as an exemplar.
 The preferences are a measure of the similarity between a point \textit{i} and a candidate exemplar \textit{k} defined by: 
 \begin{equation}
 \label{eq:sim}
 s(i,k) = -\norm{x_i - x_k}^2
 \end{equation}
-Similarity values influence the number of clusters AP identifies, as the larger similarity values are likely chosen as exemplars \citet{frey07}.
-Preference values could be estimated using the median value of the similarities, the minimum value, or randomized to see the effects over various clusterings \citet{frey07}.
+Similarity values influence the number of clusters AP identifies, as the larger similarity values are likely chosen as exemplars.
+Preference values could be estimated using the median value of the similarities, the minimum value, or randomized to see the effects over various clusterings.
+%how does our implementation estimate preference values?
 
 Once the preference value is determined, two messages are computed between all the data points.
-The first message is the "responsibility" $r(i,k)$, which is sent from point \textit{i} to candidate exemplar \textit{k}:\citet{frey07}
-
+The first message is the ``responsibility'' $r(i,k)$, which is sent from point \textit{i} to candidate exemplar \textit{k}:
 \begin{equation}
 \label{eq:resp}
 r(i,k) \leftarrow s(i,k) - max_{k^\prime s.t,  k^\prime \neq k} \{ a(i,k^\prime) + s(i,k^\prime) \}
 \end{equation}
-
-Responsibility measures the evidence of how suitable point \textit{k} is to be an exemplar of point \textit{i} \citet{frey07}, after considering other potential exemplars for point \textit{i}.
-The "availability", $a(i,k^\prime)$ in equation~\ref{eq:resp}, is sent from candidate exemplar \textit{k} to point \textit{i} to compute the evidence for how appropriate it would be for point \textit{i} to choose candidate \textit{k} as an exemplar, considering evidence from other points that believe candidate \textit{k} should be their exemplar \citet{frey07}: 
-
+Responsibility measures the suitability of point \textit{k} to be an exemplar of point \textit{i} \citet{frey07}, after considering other potential exemplars for point \textit{i}.
+The ``availability'', $a(i,k^\prime)$ in Equation~\ref{eq:resp}, is sent from candidate exemplar \textit{k} to point \textit{i} to compute the evidence for how appropriate it would be for point \textit{i} to choose candidate \textit{k} as an exemplar, considering evidence from other points that believe candidate \textit{k} should be their exemplar: %rewrite to avoid implying that data points ``believe'' anything
 \begin{equation}
 \label{eq:avail}
 a(i,k) \leftarrow min\Big\{ 0, r(k,k) + \sum\limits_{i^\prime s.t, i^\prime \notin \{i,k\}} max\{0, r(i^\prime, k)\}\Big\}
 \end{equation}
 
-The availabilities of all points are initialized to zero, and the first iteration of responsibilities are set to the input preferences \citet{frey07}. 
+The availabilities of all points are initialized to zero, and the first iteration of responsibilities are set to the input preferences.
 Each iteration updates equation~\ref{eq:resp} and equation~\ref{eq:avail} to determine the optimal exemplars for the data.
-
 As the process iterates, for point \textit{i}, the value of \textit{k} that maximizes $a(i,k) + r(i,k)$ identifies \textit{i} as an exemplar if $k=i$, or gives the exemplar of point \textit{i} \citet{frey07}.
 In order to ensure that the message passing does not cause numerical oscillations, the messages are damped as they are updated.
-The previous message value is multiplied by a damping-factor $\lambda$, and $1 - \lambda$ multiplied by the update value is added.
-The damping-factor has a value between zero and one, with a default value of 0.5 \citet{frey07}.
+The previous message value is multiplied by a damping factor $0 <\lambda<1$, and $1 - \lambda$ multiplied by the update value is added. %AKK: pls clarify second part of this sentence
+The damping factor has a default value of 0.5. %AKK: what value did we use? Does it change as the algorithm runs?
+
 
 \subsection{K-Means Clustering}
 K-Means clustering is one of the most widely used clustering methods and has been used to identify a wide range of interstellar and intergalactic objects. % List papers that have done so
-It is simple, robust, and easy to implement when analyzing high dimensional spaces, making it a powerful way to analyze galactic surveys. 
-Generally, k-means begins by selecting $k$ data points at random and deems these points cluster centers.
-Each object in the data set is then assigned to a cluster center by computing the least-squares distance to each center.
+It is simple, robust, and easy to implement when analyzing high dimensional spaces, making it a powerful way to analyze multi-band photometric surveys. 
+Generally, k-means begins by selecting $k$ data points at random and deems these points cluster centres. %Generally? When does it not?
+Each object in the data set is then assigned to a cluster centre by computing the least-squares distance to each centre.
 K-Means aims to minimize the sum of squares within each cluster given by:
 \begin{equation}
 \label{eq:km_sos}
 J = \sum_{n=1}^N \sum_{k=1}^K min \big( \norm{x_n - \mu_k}^2 \big)
 \end{equation}
-Each point, $x$, is then assigned to the cluster center with the lowest distance in equation~\ref{eq:km_sos}\citet{tammour16}.
-Once all data points have been assigned, the centers are re-calculated by taking the average of all the points in each cluster. 
-This process continues until the centers do not change after two consecutive iterations \citet{sanchez-almeida13}. 
+Each point, $x$, is then assigned to the cluster centre with the lowest distance in equation~\ref{eq:km_sos}. % use different ref \citet{tammour16}.
+Once all data points have been assigned, the centres are re-calculated by taking the average position of all the points in each cluster. 
+This process continues until the centres do not change after two consecutive iterations \citet{sanchez-almeida13}. %change by how much?
 
 % Discuss drawbacks
 % K-Means requires the number of clusters to be inputed by the user. 
