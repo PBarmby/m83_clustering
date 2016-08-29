@@ -1,4 +1,19 @@
-'''Compare the results of two classifications'''
+'''Compare the results of two classifications
+1. Run from Spyder terminal
+    Argument 1 (dim): '2d' or '3d' or '2a3' - puts dimensions of each clustering in file name
+    Argument 2 (df_1): first id_ file from clustering
+    Argument 3 (df_2): second id_ file from clustering
+    Argument 4 (d1_path): path to df_1
+    Argument 5 (d2_path): path to df_2
+    Argument 6 (save_path): set path to save figures
+    Argument 7 (plots): choose plots ('corr' or 'broad_pos') ONLY CORR WORKS
+        Corr creates plots with bubbles comparing the objects in each clustering
+        broad_pos was going to plot the objects in [U-B] vs. [V-I] space
+            (probably not useful)
+
+IMPORTANT: This file gets the BAND names from the name of the id_ file in parameters() function
+                Do not change the format of the id_ file titles'''
+
 import os
 import numpy as np
 import pylab

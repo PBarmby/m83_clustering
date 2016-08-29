@@ -88,10 +88,6 @@ Frey B.~J.,  Dueck D.,  2007, Science, 315, 972
 {Kim} H.,  {Whitmore} B.~C.,  {Chandar} R.,  {Saha} A.,    et~al., 2012, \apj,
   753, 26
 
-\bibitem[\protect\citeauthoryear{{Kuntzer}, {Tewes} \& {Courbin}}{{Kuntzer}
-  et~al.}{2016}]{kuntzer16}
-{Kuntzer} T.,  {Tewes} M.,    {Courbin} F.,  2016, ArXiv e-prints
-
 \bibitem[\protect\citeauthoryear{{Larsen}}{{Larsen}}{1999}]{larsen1999}
 {Larsen} S.~S.,  1999, \aaps, 139, 393
 
@@ -106,6 +102,11 @@ Frey B.~J.,  Dueck D.,  2007, Science, 315, 972
 {Long} K.~S.,  {Kuntz} K.~D.,  {Blair} W.~P.,  {Godfrey} L.,  {Plucinsky}
   P.~P.,  {Soria} R.,  {Stockdale} C.,    {Winkler} P.~F.,  2014, \apjs, 212,
   21
+
+\bibitem[\protect\citeauthoryear{Pedregosa, Varoquaux, Gramfort
+  et~al.,}{Pedregosa et~al.}{2011}]{sklearn}
+Pedregosa F.,  Varoquaux G.,  Gramfort A.,    et~al., 2011, Journal of Machine
+  Learning Research, 12, 2825
 
 \bibitem[\protect\citeauthoryear{{Ryon}, {Bastian}, {Adamo}, {Konstantopoulos},
   {Gallagher}, {Larsen}, {Hollyhead}, {Silva-Villa} \& {Smith}}{{Ryon}

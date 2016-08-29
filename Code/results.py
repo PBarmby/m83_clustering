@@ -28,7 +28,7 @@ def results(file_name, general_path, save_path, plots):
 
     general_results_data = load_data(gen_path, general_results_file)
 
-    if general_results_file == '05aperture_results_3d.txt':
+    if general_results_file == '05aperture_results_2d.txt':
         clean_gen_res_data, n_clust = organize_data(general_results_data)
     else:
         clean_gen_res_data = general_results_data
@@ -110,52 +110,53 @@ def silhouette_vs_nclust(results_table, path):
     # compute fraction of objects in smallest cluster
     smallest_clust_fract = results_table['size_smallest']/total_obj
 
-    fig = plt.figure(figsize=(12, 5))
-    ax = fig.add_subplot(121)
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
     ax.scatter(num_clust[results_table['clustering'] == 'kmeans'],
                results_table['score'][results_table['clustering']=='kmeans'],
                c='r', label='kmeans')
     ax.scatter(num_clust[results_table['clustering'] == 'meanshift'],
                results_table['score'][results_table['clustering']=='meanshift'],
                c='b', label='meanshift')
-    # ax.scatter(num_clust[results_table['clustering'] == 'affinity'],
-      #         results_table['score'][results_table['clustering']=='affinity'],
-      #        c='y', label='affinity')
     ax.legend(loc='best', fontsize=11)
     ax.set_xlabel('Number of clusters')
     ax.set_ylabel('Score')
     ax.set_title('Number of Clusters vs Silhouette Score', fontsize=11)
 
-    ax = fig.add_subplot(122)
+    filename = 'score_vs_nclust.png'
+    pylab.savefig(os.path.join(path, filename))
+
+    fig2 = plt.figure()
+    ax2 = fig2.add_subplot(111)
     # Plot Meanshift biggest vs smallest
-    ax.scatter(s_score[results_table['clustering'] == 'meanshift'],
+    ax2.scatter(s_score[results_table['clustering'] == 'meanshift'],
                biggest_clust_fract[results_table['clustering'] == 'meanshift'],
                c='r', marker='o', label='MS Largest')
-    ax.scatter(s_score[results_table['clustering'] == 'meanshift'],
+    ax2.scatter(s_score[results_table['clustering'] == 'meanshift'],
                smallest_clust_fract[results_table['clustering'] == 'meanshift'],
                c='b', marker='o', label='MS Smallest')
     # Plot Kmeans biggest vs. smallest
-    ax.scatter(s_score[results_table['clustering'] == 'kmeans'],
+    ax2.scatter(s_score[results_table['clustering'] == 'kmeans'],
                biggest_clust_fract[results_table['clustering'] == 'kmeans'],
                c='y', marker='o', label='KM Largest')
-    ax.scatter(s_score[results_table['clustering'] == 'kmeans'],
+    ax2.scatter(s_score[results_table['clustering'] == 'kmeans'],
                smallest_clust_fract[results_table['clustering'] == 'kmeans'],
                c='g', marker='o', label='KM Smallest')
 
-    ax.legend(loc='upper left', fontsize=7)
-    ax.set_xlabel('Score')
-    ax.set_ylabel('Fractional Size')
-    ax.set_title('Silhouette Score vs. Fractional Size of Cluster',
+    ax2.legend(loc='upper left', fontsize=7)
+    ax2.set_xlabel('Score')
+    ax2.set_ylabel('Fractional Size')
+    ax2.set_title('Silhouette Score vs. Fractional Size of Cluster',
                  fontsize=11)
 
-    filename = 'silhouette_score_plots.png'
+    filename = 'score_vs_size.png'
     pylab.savefig(os.path.join(path, filename))
     return
 
 
 def bandwidth_vs_score(results_table, path):
-    '''Create a plot of the bandwidth from mean-shift vs. the
-    silhouette_score'''
+    '''Create a plot of the bandwidth vs. the
+    silhouette_score and the number of clusters'''
     # Remove now bandwidth or score
     remove = []
     for i in range(0, len(results_table)):
@@ -165,20 +166,24 @@ def bandwidth_vs_score(results_table, path):
             remove.append(i)
     results_table.remove_rows(remove)
 
-    fig = plt.figure(figsize=(12, 5))
-    ax = fig.add_subplot(121)
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
     ax.scatter(results_table['b_width'], results_table['score'], marker='o')
     ax.set_xlabel('Bandwidth', fontsize=11)
     ax.set_ylabel('Score', fontsize=11)
     ax.set_title('Bandwidth vs. Score', fontsize=12)
 
-    ax = fig.add_subplot(122)
-    ax.scatter(results_table['b_width'], results_table['n_clust'], marker='o')
-    ax.set_xlabel('Bandwidth', fontsize=11)
-    ax.set_ylabel('N_clusters', fontsize=11)
-    ax.set_title('Bandwidth vs. N_clusters', fontsize=12)
+    filename = 'h_vs_score.png'
+    pylab.savefig(os.path.join(path, filename))
 
-    filename = 'meanshift_parameters.png'
+    fig2 = plt.figure()
+    ax2 = fig2.add_subplot(122)
+    ax2.scatter(results_table['b_width'], results_table['n_clust'], marker='o')
+    ax2.set_xlabel('Bandwidth', fontsize=11)
+    ax2.set_ylabel('N_clusters', fontsize=11)
+    ax2.set_title('Bandwidth vs. N_clusters', fontsize=12)
+
+    filename = 'h_vs_nclust.png'
     pylab.savefig(os.path.join(path, filename))
     return
 
@@ -257,20 +262,19 @@ def cluster_centers_plot(cluster_data, path):
     '''Plot the centers of each cluster after a center_test'''
     # Find the number of trials
     n_trials = np.arange(0, len(cluster_data[cluster_data['clust_num'] == 1]))
+
     # Make table of cluster centers and cluster number
-    # cen_1: colour 1 center coordinate  
-    cluster_centers = np.array(cluster_data['clust_num', 'cen_1', 'cen_2'])
+    # cen_1(2): colour 1(2) center coordinate
+    # cluster_centers = np.array(cluster_data['clust_num', 'cen_1', 'cen_2'])
     # Find the number of clusters imposed
     n_clusters = max(cluster_data['clust_num'])
     fig = plt.figure(figsize=(12, 8))
-    for c in range(1, 3):  # Loop over the number of colours used
-        ax = fig.add_subplot(1, 2, c)  # Create subplot for each colour
-        for i in range(0, len(n_trials)):  # Loop over each trial in each colour
-            for k in range(0, len(cluster_centers)):  # Loop over every center point
-                if cluster_centers['clust_num'][k] == 1:  # Find the first cluster of a clustering
-                    for n in range(k, k+n_clusters):  # Loop over each cluster
-                        ax.scatter(i, cluster_centers['cen_' + str(c)][n],
-                                   s=10, c=colors[n-k])  # Plot the center of each cluster
+    for c in range(1, 4):  # CHANGE Loop over the number of colours used
+        ax = fig.add_subplot(2, 2, c)  # CHANGE Create subplot for each colour
+        for k in range(0, len(cluster_data), n_clusters):  # Loop over every center point
+            for n in range(k, k+n_clusters):  # Loop over each cluster
+                ax.scatter(k/n_clusters, cluster_data['cen_' + str(c)][n],
+                           s=10, c=colors[n-k])  # Plot the center of each cluster
         ax.set_ylabel('Colour ' + str(c) + ' Cluster Centers', fontsize=10)
         ax.set_xlabel('Trial', fontsize=10)
     plt.suptitle(str(len(n_trials)) + ' Trials vs. Cluster Centers in each Colour')

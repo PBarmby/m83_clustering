@@ -1,0 +1,55 @@
+% Discussion
+\textbf{This should be where we present a process for future surveys.}
+
+After analyzing the results of all filter combinations it was determined that clustering in colour spaces presents an effective way of analyzing photometric surveys.
+
+The most effective clustering method was K-Means.
+It consistently produced reliable clusters in two and three dimensions, and could be used to segment blanket surveys regardless of the underlying distribution.
+K-Means was able to segment data in to equal groups, but it often missed the detail of the distribution.
+Determining the optimal clustering from the K-Means method was more methodical than others.
+The silhouette score was a clear indicator of when the optimal clustering had occured, as the peak score or elbow corresponded to the clustering the had identified the most structure in the distribution.
+The center and inertia tests also aided the clustering evaluation, as they provided a fast way of identifying reliable colour combinations.
+
+Meanshift was able to determine which objects were outliers from the central distribtion.
+The Meanshift method performed well in three dimensions, but was less reliable in two dimensions.
+One of Meanshift's benefits was that the cluster shapes were not confined to circles and spheres as K-Means were.
+It was able to create clusters of uneven sizes, which proved beneficial when the distribution was extremely dense, with branches of objects spanning a large range of colour.
+The Meanshift algorithm was able to create more isolated clusters than K-Means, and proved effective in most colour combinations.
+Meanshift struggled when the distribution was relatively flat throughout the range of colours.
+In this case, the algoithm would pick out small groups of objects that did not seperate themselves from the main distribution.
+Overall, Meanshift was not as reliable as K-Means, but given the proper distribution, it was able to identify meaningful clusters.
+Meanshift should be used when the density of the distribution is uneven, and when observers are searching for significant groups of outliers in colour space.
+\textbf{Should we talk about what types of objects these could be?}
+Determining the optimal clustering was more difficult with Meanshift, as many distributions were sensitive to the bandwidth parameter.
+The relation between the bandwidth and the silhouette score proved most effective at identifying the optimal clustering, as the elbow in that distribution identified the number of clusters that Meanshift converged on.
+
+Affinity propagation performed well with smaller datasets, but was not able to handle a $0.2$ uncertainty limit.
+Affinity propagation was very sensitive to its parameters, and time should be taken to determine the optimal \textbf{preference} values and damping factor.
+The message passing of Affinity Propagation makes it a very strong clustering method as it relies directly on the data in order to determine the number of clusters.
+When the size of the dataset was appropriate, Affinity Propagation was able to identify meaningful clusters that were similar to the segmentations of K-Means.
+The method should be used for datasets with a small number of samples. \textbf{What type of surveys would these be?}
+
+In most colour combinations (\textbf{Not $H\alpha$}), the three dimensional colour combinations produced more effective clusterings. 
+This is a result of the additional information revealed from the higher dimensional space.
+The three dimensional space highlighted the structures revealed from two dimensions.
+This was clear from the narrow band combinations.
+In most narrow band combinations, it was clear that two branches of objects seperated themselves from the dense center of the distribution, but neither clustering method was able to identify the whole branch.
+In three dimensions, these branches were clearly seperated from the rest of the distribution, and the clustering methods were able to identify them.
+\textbf{Do we need to give examples in the discussion section?}
+
+The broad band colour combinations that was most effective at identifying different colour classes of objects was $U - B$ and $V - I$.
+In two and three dimensions this distribution was more effective than $U - V$ and $B - I$. 
+\textbf{not sure why this is the case - not really a difference in the distributions. the successful combination had a smaller colour range. The unsuccessful had less distinguissed outliers.}
+This combination had a clear branch of objects that were redder in the $U - B$ colour, and the clustering methods were able to identify these objects.
+
+The narrow band colour combinations that were most effective at identifying different colour classes of objects were $U - O_{2}$, $H\beta - B$, $H\alpha - I$ ($U - B$).
+These combinations all contained clear branches of objects that the methods identified in two and three dimensions.
+Objects in these clusters were located in distinct locations in M83, and were generally different types of point sources.
+The $H\alpha - I$ and $U - B$ combination was the only combination that performed better in two dimensions.
+The three dimensional distribution did not reveal any more information than two dimensions, and the clear branch of objects in two dimensions was lost.
+
+Overall, the clustering algorithms were able to identify specific classes of objects in two and three dimensional colour spaces.
+These classes either categorized objects by integer colour intervals or identified outliers from the distribution. 
+In both cases, the objects in each cluster shared similar colour.
+A systematic way of identifying the optimal clustering was found, by comparing the parameters of each clustering method and comparing the segmentations each method presented.
+\textbf{Not sure what else to include here}

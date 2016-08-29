@@ -6,7 +6,7 @@ The dataset used for this study is the Wide-Field Camera-3
 Early Release Science (ERS) observations of the nearby spiral galaxy Messier 83 (M83).
 M83 is a grand-design spiral of type SAB, located at a distance of 4.66~Mpc \citep{tully13}
 and the largest member of the M83 subgroup of the nearby Centaurus group of galaxies \citep{tully15}.
-The galaxy's apparent radius of $\sim12$~arcmin \citep{} is reasonably well-matched to the camera's field of view (XX true? XX)
+The galaxy's apparent radius of $\sim12$~arcmin \citep{} is reasonably well-matched to the camera's field of view.
 {\bf And here we note some other interesting things about M83.}
 
 %\item Intro to WFC3 ERS dataset
@@ -30,8 +30,8 @@ and a super-Eddington off-nuclear black hole \citep{soria14}.
 
 \begin{table}
 \centering
-\caption{
-\label{tab:filters}}
+\caption{\textbf{Need to fix ion function} List of filters from ERS survey with band names and exposure times.}
+\label{tab:filters}
 \begin{tabular}{lll}
 \hline\hline
 Filter & Name & Exposure time\\
@@ -66,7 +66,7 @@ between completeness and reliability was achieved.
 Nine objects are flagged in the catalog as being problematic 
 and we remove them from our analysis.
 
-[to be re-organized] As a check on the catalog we used Sextractor to detect and photometer objects in the individual images.
+As a check on the catalog we used Sextractor to detect and photometer objects in the individual images.
 While the aperture photometry measurements matched well, the derived uncertainties were much smaller than those reported in the catalog.
 Indeed, the catalog uncertainties seem to be physically unreasonable, with median uncertainty values well above 1~magnitude in
 most bandpasses, and the catalog notes do not recommend them for use except in a relative sense.
@@ -88,22 +88,22 @@ Figure~\ref{fig:mag_unc} shows the distributions of magnitudes and uncertainties
 %Numbers are calculated based on the 0.5 aperture filters - can be changed if we decide otherwise
 \begin{table}
 \centering
-\caption{
-\label{tab:cat_numbers}}
+\caption{List of filter names with the number of objects detected, the number of objects with an uncertainty < 0.2 mag, and the 0.5 px aperture magnitude for which the median uncertainty is 0.2.}
+\label{tab:cat_numbers}
 \begin{tabular}{lrrlr}
 \hline\hline
-Filter & $N_{\rm obj}$ & $N_{\rm good}$ & $m_{\rm good}$ & $N_{\rm X-555}$\\
+Filter & $N_{\rm obj}$ & $N_{\rm good}$ & $m_{\rm good}$ \\
 \hline
-F225W &  57237 & 15011 & m & 14976\\
-F336W &  62192 & 34129 & m & 33692\\
-F373N &  55966 & 8878 & m & 8853\\
-F438W &  66356 & 48858 & m & 48660\\
-F487N &  63812 & 13335 & m & 13322\\
-F502N &  64313 & 14654 & m & 14644\\
-F555W &  67424 & 65652 & m & $-$\\
-F657N &  67782 & 67634 & m & 65502\\
-F673N &  65305 & 25295 & m & 65502\\
-F814W &  67050 & 59600 & m & 57935\\
+F225W &  57237 & 15011 & 25.159 \\
+F336W &  62192 & 34129 & 26.574 \\
+F373N &  55966 & 8878 & 24.752 \\
+F438W &  66356 & 48858 & 28.048 \\
+F487N &  63812 & 13335 & 25.77 \\
+F502N &  64313 & 14654 & 26.424 \\
+F555W &  67424 & 65652 & 30.059 \\
+F657N &  67782 & 67634 & 26.855 \\
+F673N &  65305 & 25295 & 26.284 \\
+F814W &  67050 & 59600 & 27.8699 \\
 \hline
 \end{tabular}
 \end{table}
@@ -118,44 +118,15 @@ F814W &  67050 & 59600 & m & 57935\\
 \label{fig:mag_unc}
 \end{figure*}
 
-% TODO: discuss (this might also go in a different section)
-Our analysis in this paper is primarily concerned with colours, rather than luminosities.
-Uncertainties in colours are computed as the quadrature sum of the relevant magnitudes.
-Observations in 10 bands allow the generation of 45 different colours,
-but not all of these colours are likely to be useful in characterizing components of the galaxy.
-As the F555W band has the most individual detections, %TODO: AK: is this true?
-we initially compute colours relative to this band.
-The last column of Table~\ref{tab:cat_numbers} gives the number of objects for which a `good' colour (uncertainty $<0.2$~mag) is available.
-%TODO: may use different number than 0.2.
+\subsection{Colour Models}
+\textbf{Discuss colour models. Figure is broad-band combination with model.}
 
-\subsection{Published catalogs}
-
-As one check on the results of our analysis, we use previously-published identifications of specific types of objects in M83.
-We compiled a `published catalog' by combining the contents of the NASA Extragalactic Database (NED) and
-[what does it stand for?] \citep[SIMBAD][]{wenger2000} and then adding the catalogs of Wolf-Rayet stars \citep{kim12} and
-red supergiant candidates \citep{williams15}, which did not appear in either database.
-NED's focus as an extragalactic database and SIMBAD's focus on Galactic objects mean that their contents overlap but are not identical, 
-and this is true of the area surrounding M83. A $3\farcm3$ radius region around the coordinates centered at  ($204.26761\deg, -29.839939\deg$)
-contains 1553 NED objects and 1772 SIMBAD objects, of which 1220 are matched with each other at 1\arcsec tolerance.
-Although the two services use slightly different naming conventions, with human inspection the matches are generally recognizable as referring
-to the same object. Interestingly, the databases do not always report the same object type even when the names are identical.
-The differences are reasonable in some cases (a supernova remnant can also be an X--ray source, for example), but not others
-(e.g. CXOU J133703.0-294945 is reported as a supernova remnant by SIMBAD and an H${\sc ii}$  region by NED).
-A detailed study of the databases is beyond the scope of this work; for the purposes of this analysis, we kept the NED classification
-for objects which appeared in both databases.
-Objects which appeared in one database but not the other were primarily from recent work \citep[e.g.][]{long2014}, from
-older studies likely superseded by newer ones \citep[e.g.][]{larsen1999}, or from studies in which only coordinates relative to
-the galaxy centre were given \citep{rumstay83,dvpd83}.
-
-Our final combined catalog has 2425 objects of which 750**check** are in the region covered by the ERS catalog.
-The main classes are star clusters (350), X--ray sources (105), supernova remnants (86), H${\sc ii}$ regions (81),  and
-radio sources (36).
-Nearly every entry in the published catalog had an ERS catalog object within 1\arcsec, and the mean distance between
-matched objects was 0\farcs26.
-Given the nearly 100-fold difference in object density between the two catalogs, matching based on positions alone may 
-result in spurious matches **REF**. *Some discussion of the exact matching procedure is warranted here, and a conclusion
-on what the best thing to do is.**
-
+\begin{figure}
+\label{fig:model_colour}
+\centering
+\includegraphics[width=0.5\textwidth]{figs/data/plot_mag05_555-mag05_814vsmag05_336-mag05_438}
+\caption{Colour-colour distribution of $V - I$ and $U - B$ with colour model plotted in pink.}
+\end{figure}
 
 %Outline for data section
 %%\begin{enumerate}
