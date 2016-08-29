@@ -13,41 +13,41 @@ Observations in 10 bands allow the generation of 45 different colours, but not a
 
 Two types of band combinations were created: combinations of the most commonly-used broad band filters and combinations including one narrow band and three broad band filters.
 A common band was used in the three-dimensional colours to create a three dimensional space with colours that could be transformed back into the original two dimensional space. 
-In the broad band combinations, three dimensional colour spaces were created by making colours with a common band, either $B$ or $V$
-(these bands were selected in order to avoid using $U - I$, which is less common in the literature).
+In the broad band combinations, three dimensional colour spaces were created by making colours with a common band, either $B$ or $V$.
 In the narrow band combinations, the narrow band was used as the common band.
 Clustering in three dimensions increased the complexity of the distribution, creating more information for the clustering algorithms to use. %need to reword this: not really ``creating more information''..
 Although the original ERS catalog contained nearly 70000 objects, not all objects were detected in all bands with sufficient signal-to-noise for reliable colours. 
 For a given combination of bands, we used only objects for which the magnitude uncertainty was $<0.2$~mag in each band.
-Table~\ref{tab:BBcolours} and Table~\ref{tab:NBcolourcombos} list the two dimensional colour combinations, the number of objects detected in each colour and their mean uncertainty, and the number of objects detected in the colour combination.
+Tables~\ref{tab:BBcolours}~and~\ref{tab:NBcolourcombos} list the two dimensional colour combinations, the number of objects detected in each colour and their mean uncertainty, and the number of objects detected in the colour combination.
 
 
 \subsubsection{Broad Band Combinations}
 
-\textbf{PB: Next sentence explains what we hope to find in these combos}
-The first type of combination was comprised of the broad band filters: F336W (U), F438W(B), F555W(V), and F814W(I).
-These filters were used as they had the largest number of detections, and are common in most HST studies. 
-They are indicative of the temperature of stellar objects, which relates to an objects mass and evolutionary state, describing the general state of the objects in the survey.
-\textbf{PB: Could you explain why we didn't use the UVW band or the U-I colour?}
-The F225W (UVW) filter was not included in this set as it is not a standard filter most surveys.
-The $U - I$ colour was omitted in the analysis because it was determined that this colour was not physically meaningful.
-This is because it is unlikely that an object would emit a detectable reading in both these bands due to their distance from one another in wavelength.
-Using the four filters, the broad band colour combinations created can be found in Table~\ref{tab:BBcombinations}.
-These combinations were created in order to remove any obvious correlation between the colours that could occur by the inclusion of the same band in both colours.
+The first type of combination was comprised of the broad band filters: F336W, F438W, F555W, and F814W.
+For readability, we refer to these hereafter as $U$, $B$, $V$ and $I$, although these filters do not correspond exactly to the ground-based equivalents.
+These bands are used in many {\textit HST} studies and had the largest number of detections in the ERS catalog; broadband visible-light colours
+are rough indicators of stellar temperatures in the range XX-YY~K. % COMPLETE
+Although also a broad-band filter, the UV-wide filter F225W (hereafter UVW) is less-commonly used in the literature, and for the purposes of creating colour combinations we treated it as a narrow-band filter.
+When creating colours from the broad bands, we did not use $U - I$, also not commonly-used in the literature.
+The broad band colour combinations created using $UBVI$ are listed  in Table~\ref{tab:BBcombinations}.
+These combinations were created in order to remove any obvious correlation between the colours that could occur due to the inclusion of the same band in both colours.
+% not quite happy with prev sentence
 
 \begin{table*}
 \centering
-\caption{Broad band colour combinations and the number of objects detected in each colour, and in each combination, with uncertainties less than $0.2$.}
+\caption{Broad band colour combinations: detections in individual colours and combinations}
 \label{tab:BBcombinations}
 \begin{tabular}{lllllll}
 \hline\hline
-Colour 1 & Objects & Mean Uncertainty & Colour 2 & Objects & Mean Uncertainty & Combined Objects \\
+Colour 1 & $N_1^1$ & Mean Uncertainty & Colour 2 & $N_2$ & Mean Uncertainty & $N_{12}$ \\
+ & & mag & & mag & \\
 \hline
-$U - B$ &  33523 & 0.1606 mag & $V - I$ &  57935 & 0.1334 mag & 28931\\
-$U - V$ &  33692 & 0.1429 mag & $B - I$ &  41413 & 0.1590 mag & 28931\\
-$B - V$ &  48660 & 0.1456 mag & $ - $ & $ - $ & $ - $ & $ - $ \\
+$U - B$ &  33523 & 0.1606  & $V - I$ &  57935 & 0.1334  & 28931\\
+$U - V$ &  33692 & 0.1429  & $B - I$ &  41413 & 0.1590  & 28931\\
+$B - V$ &  48660 & 0.1456  & \nodata & \nodate & \nodata & \nodata \\ % remind me again why this is largely blank?
 \hline
 \end{tabular}
+$^1$: $N$ is number of objects detected with photometric uncertainties $<0.2$~mag.
 \end{table*}
 
 \subsubsection{Narrow Band Combinations}
