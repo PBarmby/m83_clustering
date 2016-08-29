@@ -1,29 +1,26 @@
 % Analysis section
 This section will outline colour construction, the clustering process, and the selection of the optimal clustering for each colour combination.
-Each colour combination was clustered using the same process, in both two and three dimensions.
+Each colour combination was clustered using the same algorithms in both two and three dimensions.
 
 \subsection{Colour Selection}
 
 Typical observations of nearby galaxies involve three or four filters, % would be nice to have some backup for this statement
-which can be used to construct two and four independent sets of colours, respectively.
+which can be used to construct two and three independent sets of colours, respectively. %CHECK
 The large number of different filters used for the ERS observations allow us to explore which combinations of four filters would be most useful.
 With four filters $ABCD$, colours can be constructed in either two dimensions ($A-B$ versus $C-D$) or three ($A-B$ versus $B-C$ versus $C-D$ and other combinations).
 Both variations were considered in the clustering analysis.
 Observations in 10 bands allow the generation of 45 different colours, but not all of these colours are likely to be useful in characterizing components of the galaxy.
-Two types of colour combinations were created: a combinations of the most commonly-used broad band filters, and combinations including one narrow band and three broad band filters.
 
-Limiting the number of band combinations reduced the number of dimensions required for clustering.
-However, in addition to the standard two dimensional colour combinations, clustering in three dimensions was investigated.
-Three dimensional colour combinations were created based on the combinations listed in Table~\ref{tab:BBcolours} and Table~\ref{tab:NBcolourcombos}.
-These tables list the two dimensional colour combinations, the number of objects detected in each colour and their mean uncertainty, and the number of objects detected in the colour combination.
-In the broad band combinations, three dimensional colour spaces were created by making colours with a common band, either B or V.
-These bands were selected in order to avoid creating the $U - I$ colour.
-\textbf{PB: Not sure if this next sentence explains why we chose to use a common band clearly. Just trying to say that the colours could be subtracted to transform back into the two dimensional space.}
-A common band was used in all colours in order to create a three dimensional space that of colours that could be transformed back into the original two dimensional space. 
-In the narrow band combinations, the three dimensional colour spaces were created by making colours with the narrow band common between them.
-Similar to the broad band spaces, these combinations could be transformed into the original two dimensional space, and act as an extension of the two dimensional distribution.
-Clustering in three dimensions increased the complexity of the distribution, creating more information for the clustering algorithms to use.
-However, limiting the dimensionality of the problem to three allowed the analysis to stay within the number of bands in a common survey.
+Two types of band combinations were created: combinations of the most commonly-used broad band filters and combinations including one narrow band and three broad band filters.
+A common band was used in the three-dimensional colours to create a three dimensional space with colours that could be transformed back into the original two dimensional space. 
+In the broad band combinations, three dimensional colour spaces were created by making colours with a common band, either $B$ or $V$
+(these bands were selected in order to avoid using $U - I$, which is less common in the literature).
+In the narrow band combinations, the narrow band was used as the common band.
+Clustering in three dimensions increased the complexity of the distribution, creating more information for the clustering algorithms to use. %need to reword this: not really ``creating more information''..
+Although the original ERS catalog contained nearly 70000 objects, not all objects were detected in all bands with sufficient signal-to-noise for reliable colours. 
+For a given combination of bands, we used only objects for which the magnitude uncertainty was $<0.2$~mag in each band.
+Table~\ref{tab:BBcolours} and Table~\ref{tab:NBcolourcombos} list the two dimensional colour combinations, the number of objects detected in each colour and their mean uncertainty, and the number of objects detected in the colour combination.
+
 
 \subsubsection{Broad Band Combinations}
 
