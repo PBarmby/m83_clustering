@@ -1,17 +1,17 @@
 %\section{Clustering Analysis}
-As the size of galactic surveys grows, the number of dimensions available for analysis increases.
+As the size of photometric surveys grows, the number of dimensions available for analysis increases.
 Clustering methods provide an efficient way of finding structure in high dimensional data by searching for structure in colour spaces that are difficult to visualize. 
-The following techniques were used to cluster the data.
-All methods were implemented using the \textit{sklearn.cluster} Python package \citep{sklearn}.
+Three different techniques were used to cluster the data;
+all were implemented using the \textit{sklearn.cluster} Python package \citep{sklearn}. %version number?
 
 \subsection{Mean Shift Clustering} 
-Mean Shift is a non-parametric clustering technique that is based on probability density function estimates at each point in the data. % Should we mentioned sklearn.cluster as the implementation? 
+Mean Shift is a non-parametric clustering technique that is based on probability density function estimates at each point in the data. 
 Mean Shift is a very powerful algorithm, but has not been widely used in astronomy. % Find a paper using it
 The power of Mean Shift clustering is that the clusters are not confined to a particular shape.
 Because Mean Shift moves towards the local mode near the data on which it was initialized, it is useful for estimating the number of significant clusters in a dataset \citep{comanciciu02}.
 At each point, the algorithm estimates the density around that point using a small sample of objects surrounding the point.
-The algorithm is based on two components: kernel density estimation, and density gradient estimation.
-We will highlight the major components of the algorithm, for a full description of the, see \citet{vatturi09}.
+The algorithm is based on two components: kernel density estimation and density gradient estimation.
+The following highlights the major components of the algorithm; for a full description, see \citet{vatturi09}.
 
 The first element of Mean Shift is kernel density estimation. 
 The major parameter of Mean Shift is bandwidth, \textbf{\textit{H}}, which is assumed to be proportional to the matrix $\textbf{\textit{H}} = h^2\textbf{\textit{I}}$, with $h>0$ \citet{vatturi09}.
@@ -20,35 +20,33 @@ The density estimator for a multivariate density kernel is given by:
 \label{eq:ms_de}
 \hat{f}(x) = \frac{c_{k,d}}{nh^d} \sum_{i=1}^n k\Bigg( \norm{\frac{x-x_{i}}{h}}^2 \Bigg)
 \end{equation}
-
-Where \textit{n} are a set of independent \textit{d}-dimensional data points, $h$ is the magnitude of the bandwidth matrix, $k(x)$ is the profile of kernel $K(x)$, and $c_{k,d}$ is a constant making $K(x)$ integrate to one\citet{vatturi09}.
+where $x_i$ are a set of $n$ independent \textit{d}-dimensional data points, $h$ is the magnitude of the bandwidth matrix, $k(x)$ is the profile of kernel $K(x)$, and $c_{k,d}$ is a normalization constant. %unclear what difference between $K$ and $k$ is
 Estimating the bandwidth correctly is critical to determining the correct number of clusters.
-If the bandwidth is too low, the density estimate will be undersmoothed, and Mean Shift will produce many small clusters \citet{vatturi09}. This is a result of the large density gradient resulting from a low bandwidth, causing many data points to be interpreted as local modes.
+If the bandwidth is too low, the density estimate will be undersmoothed, and Mean Shift will produce many small clusters.
 Conversely, if the bandwidth is too large, a small number of large clusters will be detected, resulting in groupings of data that may blur the underlying structure \citet{vatturi09}.
 
 The second element of Mean Shift is density gradient estimation. 
-The density gradient is estimated from the gradient of equation~\ref{eq:ms_de}\citet{vatturi09}.
-The density gradient is given by: 
+The density gradient is estimated from the gradient of equation~\ref{eq:ms_de} and given by: 
 \begin{multline}
 \label{eq:ms_dg}
 \nabla\hat{f}_{h,K}(x) = \frac{2c_{k,d}}{nh^(d+2)} \Bigg[ \sum_{i=1}^n k^{\prime} \Bigg( \norm{\frac{x-x_{i}}{h}}^2 \Bigg) \Bigg] \\ \Bigg[\frac{\sum_{i=1}^n x_{i}k^{\prime} \Bigg( \norm{\frac{x-x_{i}}{h}}^2 \Bigg)}{\sum_{i=1}^n k^{\prime} \Bigg( \norm{\frac{x-x_{i}}{h}}^2 \Bigg)} - x \Bigg]
 \end{multline}
-The second term of equation~\ref{eq:ms_dg}, is the Mean Shift; the difference between the weighted mean using $k^{\prime}$, and $x$ \citet{vatturi09}.
+The second term of equation~\ref{eq:ms_dg}, is the Mean Shift, the difference between the weighted mean using $k^{\prime}$ and $x$.
 Applying a normal kernel to the Mean Shift, the second term of equation~\ref{eq:ms_dg} becomes: 
 \begin{equation} 
 \label{eq:ms_sh}
-m_{h,K}(x) = \frac{\sum_{i=1}^n x_{i} exp \Bigg(\norm{\frac{x-x_{i}}{h}}^2 \Bigg)}{\sum_{i=1}^n exp \Bigg(\norm{\frac{x-x_{i}}{h}}^2 \Bigg)} - x
+m_{h,K}(x) = \frac{\sum_{i=1}^n x_{i} \exp \Bigg(\norm{\frac{x-x_{i}}{h}}^2 \Bigg)}{\sum_{i=1}^n \exp \Bigg(\norm{\frac{x-x_{i}}{h}}^2 \Bigg)} - x
 \end{equation}
 $m_{h,K}$ is the Mean Shift, and always points in the direction of largest ascent through the estimated density function \citet{vatturi09}.
 
-Mean Shift clustering involves the application of equation~\ref{eq:ms_sh} to shift the points of a data set towards the direction of the Mean Shift vector \citet{vatturi09}. 
-The points are shifted by: 
+Mean Shift clustering involves the iterative application of equation~\ref{eq:ms_sh} to shift the points of a data set towards the direction of the Mean Shift vector.
+In each iteration $j$ the points are shifted by: 
 \begin{equation}
 \label{eq:ms}
-x^{i+1} = x^i + m_{h,K}(x^i)
+x_i^{j+1} = x_i^j + m_{h,K}(x_i^j)
 \end{equation}
 Shifting the data points by equation~\ref{eq:ms} ensures that when the points converge, the center is the area of highest local density, or density ``mode". 
-The density mode can be interpreted as the center of a significant cluster in the data set, and is used to classify the objects that were shifted towards it.
+The density mode can be interpreted as the centre of a significant cluster in the data set and is used to classify the objects that were shifted towards it.
 % Add section about bandwidth estimation
 % Discuss drawbacks
 
