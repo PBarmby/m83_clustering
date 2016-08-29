@@ -5,7 +5,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pylab
 import os, os.path
-import argparse
 from astropy.table import Table, Column
 
 '''-------------------------------------------------------------------------'''
@@ -29,7 +28,7 @@ def results(file_name, general_path, save_path, plots):
 
     general_results_data = load_data(gen_path, general_results_file)
 
-    if general_results_file == '05aperture_results_2d.txt':
+    if general_results_file == '05aperture_results_3d.txt':
         clean_gen_res_data, n_clust = organize_data(general_results_data)
     else:
         clean_gen_res_data = general_results_data
@@ -119,22 +118,33 @@ def silhouette_vs_nclust(results_table, path):
     ax.scatter(num_clust[results_table['clustering'] == 'meanshift'],
                results_table['score'][results_table['clustering']=='meanshift'],
                c='b', label='meanshift')
-    ax.scatter(num_clust[results_table['clustering'] == 'affinity'],
-               results_table['score'][results_table['clustering']=='affinity'],
-               c='y', label='affinity')
+    # ax.scatter(num_clust[results_table['clustering'] == 'affinity'],
+      #         results_table['score'][results_table['clustering']=='affinity'],
+      #        c='y', label='affinity')
     ax.legend(loc='best', fontsize=11)
     ax.set_xlabel('Number of clusters')
     ax.set_ylabel('Score')
     ax.set_title('Number of Clusters vs Silhouette Score', fontsize=11)
 
     ax = fig.add_subplot(122)
-    ax.scatter(biggest_clust_fract, s_score, c='r', marker='o',
-               label='Largest Cluster')
-    ax.scatter(smallest_clust_fract, s_score, c='b', marker='o',
-               label='Smallest Cluster')
-    ax.legend(loc='best', fontsize=11)
-    ax.set_xlabel('Fractional size')
-    ax.set_ylabel('Score')
+    # Plot Meanshift biggest vs smallest
+    ax.scatter(s_score[results_table['clustering'] == 'meanshift'],
+               biggest_clust_fract[results_table['clustering'] == 'meanshift'],
+               c='r', marker='o', label='MS Largest')
+    ax.scatter(s_score[results_table['clustering'] == 'meanshift'],
+               smallest_clust_fract[results_table['clustering'] == 'meanshift'],
+               c='b', marker='o', label='MS Smallest')
+    # Plot Kmeans biggest vs. smallest
+    ax.scatter(s_score[results_table['clustering'] == 'kmeans'],
+               biggest_clust_fract[results_table['clustering'] == 'kmeans'],
+               c='y', marker='o', label='KM Largest')
+    ax.scatter(s_score[results_table['clustering'] == 'kmeans'],
+               smallest_clust_fract[results_table['clustering'] == 'kmeans'],
+               c='g', marker='o', label='KM Smallest')
+
+    ax.legend(loc='upper left', fontsize=7)
+    ax.set_xlabel('Score')
+    ax.set_ylabel('Fractional Size')
     ax.set_title('Silhouette Score vs. Fractional Size of Cluster',
                  fontsize=11)
 
@@ -157,15 +167,13 @@ def bandwidth_vs_score(results_table, path):
 
     fig = plt.figure(figsize=(12, 5))
     ax = fig.add_subplot(121)
-    ax.scatter(results_table['b_width'], results_table['score'], marker='o',
-               s=6)
+    ax.scatter(results_table['b_width'], results_table['score'], marker='o')
     ax.set_xlabel('Bandwidth', fontsize=11)
     ax.set_ylabel('Score', fontsize=11)
     ax.set_title('Bandwidth vs. Score', fontsize=12)
 
     ax = fig.add_subplot(122)
-    ax.scatter(results_table['b_width'], results_table['n_clust'], marker='o',
-               s=6)
+    ax.scatter(results_table['b_width'], results_table['n_clust'], marker='o')
     ax.set_xlabel('Bandwidth', fontsize=11)
     ax.set_ylabel('N_clusters', fontsize=11)
     ax.set_title('Bandwidth vs. N_clusters', fontsize=12)
@@ -247,23 +255,26 @@ def inertia_fluctuations(results_table, path):
 
 def cluster_centers_plot(cluster_data, path):
     '''Plot the centers of each cluster after a center_test'''
+    # Find the number of trials
     n_trials = np.arange(0, len(cluster_data[cluster_data['clust_num'] == 1]))
+    # Make table of cluster centers and cluster number
+    # cen_1: colour 1 center coordinate  
     cluster_centers = np.array(cluster_data['clust_num', 'cen_1', 'cen_2'])
+    # Find the number of clusters imposed
     n_clusters = max(cluster_data['clust_num'])
-    fig = plt.figure()
-    for c in range(1, 2):
-        ax = fig.add_subplot(1, 2, c)
-        for i in range(0, len(n_trials)):
-            for k in range(0, len(cluster_centers)):
-                if cluster_centers['clust_num'][k] == 1:
-                    for n in range(k, k+n_clusters):
+    fig = plt.figure(figsize=(12, 8))
+    for c in range(1, 3):  # Loop over the number of colours used
+        ax = fig.add_subplot(1, 2, c)  # Create subplot for each colour
+        for i in range(0, len(n_trials)):  # Loop over each trial in each colour
+            for k in range(0, len(cluster_centers)):  # Loop over every center point
+                if cluster_centers['clust_num'][k] == 1:  # Find the first cluster of a clustering
+                    for n in range(k, k+n_clusters):  # Loop over each cluster
                         ax.scatter(i, cluster_centers['cen_' + str(c)][n],
-                                   s=10)
+                                   s=10, c=colors[n-k])  # Plot the center of each cluster
         ax.set_ylabel('Colour ' + str(c) + ' Cluster Centers', fontsize=10)
-        if c > 1:
-            ax.set_xlabel('Trial', fontsize=10)
-    plt.suptitle('50 Trials vs. Cluster Centers in each Colour')
-    filename = 'cluster_centers.png'
+        ax.set_xlabel('Trial', fontsize=10)
+    plt.suptitle(str(len(n_trials)) + ' Trials vs. Cluster Centers in each Colour')
+    filename = '{}_cl_cluster_centers.png'.format(str(n_clusters))
     pylab.savefig(os.path.join(path, filename))
     plt.show()
 
@@ -288,7 +299,7 @@ def bar_graph(results_table, num_clust, path):
                 # Compute percentage of objects in each cluster and graph
                 Y = results_table[colname][num_clust==i]/results_table['total_objects'][num_clust==i].astype('float')
                 ax.bar(X, Y, color=colors[n], bottom=yprev)
-                ax.set_title('Proportional Cluster Size')
+                ax.set_title('Proportional Size - ' + str(i) + ' Clusters')
                 ax.set_xlabel('Number of Trials')
                 ax.set_ylabel('Fractional Cluster Size')
                 ax.xaxis.set_major_locator(plt.MultipleLocator(1))
@@ -301,7 +312,7 @@ def object_cluster_dist(results_table, num_clust, path):
     '''Determine which clusters hold ~99% of the objects and save percentage
     in cluster_percentage.txt'''
     filename = 'cluster_percentage.txt'
-    header = '# clustering total_clust c_1 c_2 c_3 c_4 c_5 c_6 '\
+    header = '# clustering total_obj c_1 c_2 c_3 c_4 c_5 c_6 '\
              'c_7 c_8 c_9 c_10 c_11 c_12 c_13 c_14 c_15 c_16 c_17 c_18 c_19 '\
              'c_20 c_21 c_22 c_23 c_24 c_25 c_26 c_27 c_28 c_29 c_30 c_31 c_32'\
              ' c_33 c_34 c_35 c_36 c_37 c_38 c_39 c_40'
@@ -309,7 +320,7 @@ def object_cluster_dist(results_table, num_clust, path):
     test_path = '{}\\{}'.format(path, filename)
     if not os.path.exists(test_path):
         create_path = os.path.join(path, filename)
-        cluster_percentage = open(create_path, "a")
+        cluster_percentage = open(create_path, "w")
         cluster_percentage.write(header + '\n')
         cluster_percentage.close()
     cluster_percentage_path = os.path.join(path, filename)
