@@ -94,16 +94,16 @@ The damping factor has a default value of 0.5. %AKK: what value did we use? Does
 \subsection{K-Means Clustering}
 K-Means clustering is one of the most widely used clustering methods and has been used to identify a wide range of interstellar and intergalactic objects. % List papers that have done so
 It is simple, robust, and easy to implement when analyzing high dimensional spaces, making it a powerful way to analyze multi-band photometric surveys. 
-Generally, k-means begins by selecting $k$ data points at random and deems these points cluster centres. %Generally? When does it not?
-Each object in the data set is then assigned to a cluster centre by computing the least-squares distance to each centre.
-K-Means aims to minimize the sum of squares within each cluster given by:
+With the k-means algorithm, the number of clusters $K$ must be selected in advance.
+K-Means aims to minimize the sum of squares of distances within each cluster given by:
 \begin{equation}
 \label{eq:km_sos}
-J = \sum_{n=1}^N \sum_{k=1}^K min \big( \norm{x_n - \mu_k}^2 \big)
+J = \sum_{i=1}^N \sum_{k=1}^K \min \big( \norm{x_i - \mu_k}^2 \big)
 \end{equation}
-Each point, $x$, is then assigned to the cluster centre with the lowest distance in equation~\ref{eq:km_sos}. % use different ref \citet{tammour16}.
-Once all data points have been assigned, the centres are re-calculated by taking the average position of all the points in each cluster. 
-This process continues until the centres do not change after two consecutive iterations \citet{sanchez-almeida13}. %change by how much?
+The algorithm is initialized by selecting $K$ data points at random and deems these points cluster centres, denoted by $\mu_k$. 
+Each point in the data set $x_i$ is then assigned to a cluster centre by finding the centre to which the least-squares distance is the smallest.
+The algorithm iterations continue with the centres being re-calculated by taking the average position of all the points in each cluster and reassigning each point to the nearest cluster centre.
+The stopping criterion is that the centres do not change after two consecutive iterations \citep{sanchez-almeida13}. %change by how much? why are we citing this particular paper?
 
 % Discuss drawbacks
 % K-Means requires the number of clusters to be inputed by the user. 
