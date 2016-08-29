@@ -1,13 +1,6 @@
 % mn2esample.tex
 %
 % v2.1 released 22nd May 2002 (G. Hutton)
-%
-%
-% Previous versions of this sample document were
-% compatible with the LaTeX 2.09 style file mn.sty
-% v1.2 released 5th September 1994 (M. Reed)
-% v1.1 released 18th July 1994
-% v1.0 released 28th January 1994
 
 \documentclass[useAMS,usenatbib]{mn2e}
 \usepackage{graphicx}
@@ -20,24 +13,6 @@
 \usepackage{pdflscape}
 %\usepackage{epstopdf}
 
-% If your system does not have the AMS fonts version 2.0 installed, then
-% remove the useAMS option.
-%
-% useAMS allows you to obtain upright Greek characters.
-% e.g. \umu, \upi etc.  See the section on "Upright Greek characters" in
-% this guide for further information.
-%
-% If you are using AMS 2.0 fonts, bold math letters/symbols are available
-% at a larger range of sizes for NFSS release 1 and 2 (using \boldmath or
-% preferably \bmath).
-%
-% The usenatbib command allows the use of Patrick Daly's natbib.sty for
-% cross-referencing.
-%
-% If you wish to typeset the paper in Times font (if you do not have the
-% PostScript Type 1 Computer Modern fonts you will need to do this to get
-% smoother fonts in a PDF file) then uncomment the next line
-% \usepackage{Times}
 
 %%%%% AUTHORS - PLACE YOUR OWN MACROS HERE %%%%%
 
@@ -51,8 +26,8 @@ Based on observations made with the NASA/ESA Hubble Space Telescope, obtained fr
 }
 \author[Kiar \& Barmby]
 {
-P. Barmby$^{1}$\thanks{E-mail: pbarmby@uwo.ca} and 
-A. K. Kiar$^{1}$\thanks{E-mail: akiar@uwo.ca}\\
+A. K. Kiar$^{1}$\thanks{E-mail: akiar@uwo.ca} and
+P. Barmby$^{1}$\thanks{E-mail: pbarmby@uwo.ca}\\
 $^{1}$Department of Physics and Astronomy and Centre for Planetary Science and Exploration,\\
 University of Western Ontario, London, ON, N6A 3K7, Canada\\
 }
@@ -71,7 +46,11 @@ University of Western Ontario, London, ON, N6A 3K7, Canada\\
 \end{abstract}
 
 \begin{keywords}
-keywords here
+  galaxies: individual: M83
+  galaxies: photometry
+  galaxies: stellar content
+  methods: statistical
+  catalogues % or surveys?
 \end{keywords}
 
 \section{Introduction}
@@ -110,26 +89,4 @@ We acknowledge the efforts of WFC3 Science Oversight Committee in conducting the
 \label{lastpage}
 
 \end{document}
-
-% 2- column table
-%\begin{table*}
-% \centering
-% \begin{minipage}{140mm}
-%  \caption{Data on the RV Tauri stars detected by {\it IRAS}.}
-%  \begin{tabular}{@{}llrrrrlrlr@{}}
-%  \hline
-%   Name     &            & \multicolumn{4}{c}{Flux density (Jy)%
-%   Variable & {\it IRAS} & 12$\,\umu$m & 25$\,\umu$m & 60$\,\umu$m
-%     & 100$\,\umu$m & Sp. & Period & Light- & $T_0\,(\rmn{K})$ \\
-%  \hline
-% TW Cam & 04166$+$5719 & 8.27 & 5.62 & 1.82 & $<$1.73 & A & 85.6 & a & 555 \\
-% RV Tau & 04440$+$2605 & 22.53 & 18.08 & 6.40 & 2.52 & A & 78.9 & b & 460 \\
-% DY Ori & 06034$+$1354 & 12.44 & 14.93 & 4.12 & $<$11.22 & B & 60.3 &  & 295 \\
-% CT Ori & 06072$+$0953 & 6.16 & 5.57 & 1.22 & $<$1.54 & B & 135.6 &  & 330 \\
-% SU Gem & 06108$+$2734 & 7.90 & 5.69 & 2.16 & $<$11.66 & A & 50.1 & b & 575 \\
-% UY CMa & 06160$-$1701 & 3.51 & 2.48 & 0.57 & $<$1.00 & B & 113.9 & a & 420 \\
-% \hline
-%\end{tabular}
-%\end{minipage}
-%\end{table*}
 
