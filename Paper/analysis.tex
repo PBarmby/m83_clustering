@@ -13,10 +13,10 @@ Additionally, two and three dimensions were considered for clustering, in order 
 Limiting the number of band combinations reduced the number of dimensions required for clustering.
 However, in addition to the standard two dimensional colour combinations, clustering in three dimensions was investigated.
 Three dimensional colour combinations were created based on the combinations listed in Table~\ref{tab:BBcolours} and Table~\ref{tab:NBcolourcombos}.
-These tables list the two dimensional colour combinations, the number of objects dected in each colour and their mean uncertainty, and the number of objects detected in the colour combination.
+These tables list the two dimensional colour combinations, the number of objects detected in each colour and their mean uncertainty, and the number of objects detected in the colour combination.
 In the broad band combinations, three dimensional colour spaces were created by making colours with a common band, either B or V.
 These bands were selected in order to avoid creating the $U - I$ colour.
-\textbf{PB: Not sure if this next sentance explains why we chose to use a common band clearly. Just trying to say that the colours could be subtracted to transform back into the two dimensional space.}
+\textbf{PB: Not sure if this next sentence explains why we chose to use a common band clearly. Just trying to say that the colours could be subtracted to transform back into the two dimensional space.}
 A common band was used in all colours in order to create a three dimensional space that of colours that could be transformed back into the original two dimensional space. 
 In the narrow band combinations, the three dimensional colour spaces were created by making colours with the narrow band common between them.
 Similar to the broad band spaces, these combinations could be transformed into the original two dimensional space, and act as an extension of the two dimensional distribution.
@@ -25,7 +25,7 @@ However, limiting the dimensionality of the problem to three allowed the analysi
 
 \subsubsection{Broad Band Combinations}
 
-\textbf{PB: Next sentance explains what we hope to find in these combos}
+\textbf{PB: Next sentence explains what we hope to find in these combos}
 The first type of combination was comprised of the broad band filters: F336W (U), F438W(B), F555W(V), and F814W(I).
 These filters were used as they had the largest number of detections, and are common in most HST studies. 
 They are indicative of the temperature of stellar objects, which relates to an objects mass and evolutionary state, describing the general state of the objects in the survey.
@@ -98,21 +98,21 @@ $ - $ & $ - $ & $ - $ & $B - V$ &  48660 & 0.1456 mag & 18882 \\
 
 \subsection{Clustering Process}
 Clustering was performed using all methods for each colour combination. 
-The following process allowed the investigation of the effect of all paramters on each clustering technique.
+The following process allowed the investigation of the effect of all parameters on each clustering technique.
 This process identified the clustering that was most successful at identifying different segments of objects in the colour space.
 
-\subsubsection{Meanshift}
-Mean-Shift clustering was performed first by estimating the bandwidth paramter with the $estimate-bandwidth$ function in $scikit-learn$ \citep{sklearn}.
+\subsubsection{Mean shift}
+Mean-Shift clustering was performed first by estimating the bandwidth parameter with the $estimate-bandwidth$ function in $scikit-learn$ \citep{sklearn}.
 This function estimates the bandwidth parameter based on the distances between points in the dataset, and determines if the distribution has high or low variance.
-Following the initial clustering, the bandwidth was varried and the clustering performed again to determine how sensitive a combination was to the parameter. 
+Following the initial clustering, the bandwidth was varied and the clustering performed again to determine how sensitive a combination was to the parameter. 
 The bandwidth values were changed on intervals of $\pm 0.1$ or $\pm 0.05$ from the estimated bandwidth value depending on a combination's sensitivity to the parameter. 
-If a combination was very sensitive to bandwidth, then the number of clusters that meanshift would predict would vary greatly over a small range of bandwidth values.
+If a combination was very sensitive to bandwidth, then the number of clusters that mean shift would predict would vary greatly over a small range of bandwidth values.
 This type of combination usually resulted in poor segmentation, as the algorithm would not converge on a number of clusters. 
 However, sensitivity could also be the result of the starting bandwidth estimate.
 If the original estimate was in an unstable bandwidth interval, then the hierarchy would reflect that, and the testing of multiple bandwidth values could result in convergence.
 
 \subsubsection{Affinity Propagation}
-Affinity Propagation clustering was performed after Meanshift.
+Affinity Propagation clustering was performed after Mean shift.
 Affinity Propagation requires two parameters, the preferences, and the damping factor, outlined in Section~\ref{sec:methods_ap}.
 The initial clusterings were performed under two independent conditions.
 First, the preferences were set to the median value of the similarity between data points, and the damping factor was kept at the \textit{scikit-learn} default value of $0.5$.
@@ -120,8 +120,8 @@ Second, the preferences were set to the minimum value of the similarities, and t
 These clusterings resulted in a segmentation with over 100 clusters in multiple colour combinations, which was clearly not meaningful.
 
 Following the two initial conditions, the preferences were set to 10\% of the number of objects in the data set, and the damping factor was set at $0.95$.
-With these parameters, the clusterings varried significantly over differnet colours.
-The clusterings were repeated by varrying the damping factor and the preferences to try and reveal a trend in the parameters, but the algorithm was too sensitive for this size of dataset.
+With these parameters, the clusterings varied significantly over different colours.
+The clusterings were repeated by varying the damping factor and the preferences to try and reveal a trend in the parameters, but the algorithm was too sensitive for this size of dataset.
 Following the initial tests of Affinity Propagation, it was determined that this clustering method was not effective.
 Due to the number of computations required for the calculation of the messages passed between points on each iteration, the algorithm was very sensitive to the input parameters, and did not produce meaningful clusterings.
 The algorithm is effective for small and medium sized datasets, and was able to create some reasonable clusters when the uncertainty limit was set at $0.1 mag$, which reduced the number of objects significantly. 
@@ -129,9 +129,9 @@ After multiple clusterings, a systematic way of determine the correct number of 
 
 \subsubsection{K-Means}
 K-Means clustering was performed last.
-The first clustering was performed using the number of clusters determined from the initial clusterings by Meanshift.
+The first clustering was performed using the number of clusters determined from the initial clusterings by Mean shift.
 Next, K-Means was performed with $K = \pm 4$ from the original clustering.
-This method of clustering was similar to the Meanshift approach, as it revealed how the dataset reacted to different values of $K$.
+This method of clustering was similar to the Mean shift approach, as it revealed how the dataset reacted to different values of $K$.
 K-Means was the most efficient algorithm of the three, as it produced clusterings quickly, and always produced clusters of reasonable size.
 
 Each K-Means clustering was checked by plotting the sum-of-squares value for each value of $K$.
@@ -140,7 +140,7 @@ The value decreases with $K$ as the total distance in each cluster decreases as 
 This distribution was used to check the clustering and ensure that the clusterings were successful.
 
 Following the inertia test, the cluster centers were tested by running K-Means for 40 trials with the same value of $K$.
-This test was run to determine if the clusterings were stable as K-Means is initiallized randomly, and the clusters produced can depend on the starting position.
+This test was run to determine if the clusterings were stable as K-Means is initialized randomly, and the clusters produced can depend on the starting position.
 It was clear that each initialization found different clusters first depending on the starting point. 
 Despite the random initialization the final cluster centers did not change.
 A strong clustering was found when the variance in cluster centers was not large \textbf{quantify}.
@@ -174,7 +174,7 @@ The average cluster score evaluates the strength of a given cluster within a clu
 This metric allowed each cluster to be evaluated individually, and revealed which clusters were responsible for the average score of the clustering.
 Additionally, the average score allowed seemingly arbitrary clusters to be evaluated.
 If the segmentation did not seem meaningful, the average score would reveal if the cluster was isolated and compact.
-This revealed the significance of clusters that could have been viewed as noise or outliers. \textbf{This section needs more explaination}.
+This revealed the significance of clusters that could have been viewed as noise or outliers. \textbf{This section needs more explanation}.
 
 \textbf{Struggling to explain why that is how the score works}. 
 Ideally, the silhouette score for the entire clustering should peak near the center of the distribution indicating the optimal clustering. 
@@ -189,31 +189,31 @@ This means that the algorithm has found the balance between the natural clusters
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{figs/methods/UVW_U_score_vs_nclust}
-\caption{Distribution of the silhouette score as a result of the number of clusters imposed for the $UVW - U$ and $V - I$ colours. The \textit{blue} points are the scores of Meanshift clustering, \textit{red} points are scores of K-Means.}
+\caption{Distribution of the silhouette score as a result of the number of clusters imposed for the $UVW - U$ and $V - I$ colours. The \textit{blue} points are the scores of Mean shift clustering, \textit{red} points are scores of K-Means.}
 \label{fig:sscore}
 \end{figure}
 
-The distribution of score as a result of the Meanshift algorithm does not follow the same pattern.
-The silhouette score was not as successful at describing the strength of Meanshift clusterings as Meanshift often created one large cluster and several smaller ones, which is not considered strong by the score.
-In order to determine the optimal Meanshift clustering, other relationships were investigated.
+The distribution of score as a result of the Mean shift algorithm does not follow the same pattern.
+The silhouette score was not as successful at describing the strength of Mean shift clusterings as Mean shift often created one large cluster and several smaller ones, which is not considered strong by the score.
+In order to determine the optimal Mean shift clustering, other relationships were investigated.
 
-The relations of the bandwidth parameter were investigated for each Meanshift clustering.
+The relations of the bandwidth parameter were investigated for each Mean shift clustering.
 Figure~\ref{fig:bad_ms} shows the relation between the score and number of clusters for the three dimensional $U - O_{2}$ and $B - I$ combination.
-The blue dots represent the Meanshift clusterings.
+The blue dots represent the Mean shift clusterings.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{figs/methods/silhouette_score_bad_ms}
-\caption{Distribution of the silhouette score as a result of the number of clusters imposed for the three dimensional $U - O_{2}$ and $B - I$ combination. The \textit{blue} points are the scores of Meanshift clustering, \textit{red} points are scores of K-Means.}
+\caption{Distribution of the silhouette score as a result of the number of clusters imposed for the three dimensional $U - O_{2}$ and $B - I$ combination. The \textit{blue} points are the scores of Mean shift clustering, \textit{red} points are scores of K-Means.}
 \label{fig:bad_ms}
 \end{figure}
 
-It is clear that an optimal clustering cannot be determined from this relation, as the score decreases linearly with the number of clusters Meanshift predicts.
-The Mean-Shift scores do not follow a similar distribution as K-Means, as the accuracy of Meanshift is related to the bandwidth parameter, seen in Figure~\ref{fig:bwscore}.
+It is clear that an optimal clustering cannot be determined from this relation, as the score decreases linearly with the number of clusters Mean shift predicts.
+The Mean-Shift scores do not follow a similar distribution as K-Means, as the accuracy of Mean shift is related to the bandwidth parameter, seen in Figure~\ref{fig:bwscore}.
 The optimal Mean-Shift clustering was chosen by finding the bandwidth where the relation between the bandwidth and number of clusters reached an elbow, or where the relation between bandwidth and silhouette score elbowed.
 In both panels of Figure~\ref{fig:bwscore} that the bandwidth parameter predicts five clusters.
-Both distributions elbow at the same bandwidth interval, maximizing the score and predicting the same number of clusters for bandwidth valeus following the elbow.
-The bandwidth parameter was the primary indicator of the optimal Meanshift clustering.
+Both distributions elbow at the same bandwidth interval, maximizing the score and predicting the same number of clusters for bandwidth values following the elbow.
+The bandwidth parameter was the primary indicator of the optimal Mean shift clustering.
 If a trend could not be found with the bandwidth parameter, then the silhouette score and number of clusters was investigated.
 
 \begin{figure}[H]
@@ -227,7 +227,7 @@ If a trend could not be found with the bandwidth parameter, then the silhouette 
 Various statistics were calculated to help describe the similarity between the objects in a given cluster.
 The standard deviation and average colour was calculated for each colour, and each cluster within a clustering. 
 These metrics helped describe the distribution of the objects in the colour-colour space within a cluster. 
-Clusters that had large standard deviations were viewed as too dissimilar to be a meaningful cluster, and clusters whose averages varried significantly from the cluster centers were disgarded.
+Clusters that had large standard deviations were viewed as too dissimilar to be a meaningful cluster, and clusters whose averages varied significantly from the cluster centers were discarded.
 
 \textbf{I'm not sure that this paragraph describes why we calculated the fractional size}.
 The fractional size of each cluster was also calculated and described the distribution of objects between clusters.
