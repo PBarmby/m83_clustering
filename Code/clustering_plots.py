@@ -30,10 +30,10 @@ band_names = {'mag05_225':'f225w', 'mag05_336':'f336w', 'mag05_373':'f373n',
 '''-------------------------------------------------------------------------'''
 
 def plotting(dimensions, model_name, f_path, s_path):
-    model_file = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\model_colours\\{}'.format(model_name)
+    model_file = 'C:\\Users\\Alex\\Documents\\GitHub\\m83_clustering\\model_colours\\{}'.format(model_name)
     survey_data = Table.read('data_v3.txt', format='ascii.commented_header',
                              guess=False)
-    save_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\{}\\'.format(s_path)
+    save_path = 'C:\\Users\\Alex\\Documents\\GitHub\\m83_clustering\\{}\\'.format(s_path)
     model = Table.read(model_file, format='ascii.commented_header', guess=False)
     if '2d' in dimensions:  # Check if 2D or 3D 
         plots = Table.read('plots.txt', format='ascii.commented_header',
@@ -99,10 +99,10 @@ def load_files(n_clust, clustering, bands, dim, cols, cen_path):
                                                             bands[base1],
                                                             bands[base2])
         cen_file_name = '3d_cluster_statistics.txt'
-    id_file_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\results\\{}\\{}\\{}\\{}'.format(cen_path, cols, 'id_', id_file_name)
+    id_file_path = 'C:\\Users\\Alex\\Documents\\GitHub\\m83_clustering\\results\\{}\\{}\\{}\\{}'.format(cen_path, cols, 'id_', id_file_name)
     id_file = Table.read(id_file_path, format='ascii.commented_header',
                          guess=False)
-    cen_file_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\results\\{}\\{}\\{}'.format(cen_path, cols, cen_file_name)
+    cen_file_path = 'C:\\Users\\Alex\\Documents\\GitHub\\m83_clustering\\results\\{}\\{}\\{}'.format(cen_path, cols, cen_file_name)
     cluster_center_data = Table.read(cen_file_path,
                                      format='ascii.commented_header',
                                      guess=False)
@@ -307,7 +307,7 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
     plt.close()
 
     # Base colour plot
-    fig2 = plt.figure()
+    fig2 = plt.figure(figsize=(12,12))
     ax2 = fig2.add_subplot(111)
     for b in range(0, n_clust):
         clust_col = plt.cm.jet(float(b) / np.max(c_data['cluster_number'] + 1))
@@ -325,8 +325,9 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
              model_data[0] - model_data[1], color='r')
     # Format Plot
     ax2.xaxis.set_major_locator(plt.MultipleLocator(1.0))
-    ax2.set_xlabel(band_names[bands[0]] + ' - ' + band_names[bands[1]])
-    ax2.set_ylabel(band_names[bands[base1]]+' - ' + band_names[bands[base2]])
+    ax2.set_ylabel(band_names[bands[0]] + ' - ' + band_names[bands[1]])
+    ax2.set_xlabel(band_names[bands[base1]]+' - ' + band_names[bands[base2]])
+    plt.gca().invert_yaxis()
     ax2.set_title(alg + ' ' + str(n_clust) + ' : '+band_names[bands[0]]+'-'+band_names[bands[1]]+' vs. '+band_names[bands[base1]]+'-'+band_names[bands[base2]],
                   fontsize=14)
     ax2.legend(loc='lower right', fontsize=8)
