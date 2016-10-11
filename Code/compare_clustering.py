@@ -107,7 +107,7 @@ def mk_dir(path_):
 
 
 def load_path(path_):
-    path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\results\\{}'.format(path_)
+    path = 'C:\\Users\\Alex\\Documents\\GitHub\\m83_clustering\\results\\{}'.format(path_)
     return(path)
 
 
@@ -122,7 +122,7 @@ def corr_plot(labels, path_, waves1, nclust1, alg1, waves2, nclust2, alg2,
             # Find objects in the same clusters of clustering 1 and 2
             objects = len(labels[np.logical_and(labels['cluster_number_1'] == i,
                                                 labels['cluster_number_2'] == k)])
-            ax.scatter(i+1, k+1, s=objects)
+            ax.scatter(i+1, k+1, s=objects, color='0.75')
             ax.annotate(str(objects), xy=(i+1, k+1), xytext=(i+1.05, k+1.05))
     # Format plot
     ax.xaxis.set_major_locator(plt.MultipleLocator(1.0))
