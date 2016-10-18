@@ -20,7 +20,7 @@ import mpl_toolkits.mplot3d as p3
 # Set base colour
 base1 = 3
 base2 = 5
-b_wave = 5
+b_wave = 3
 
 # Dictionary for plot formatting
 band_names = {'mag05_225':'f225w', 'mag05_336':'f336w', 'mag05_373':'f373n',
@@ -237,7 +237,7 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
         fig = plt.figure()
         ax = fig.add_subplot(111)
         for k in range(0, n_clust):
-            clust_col = plt.cm.jet(float(k) / np.max(c_data['cluster_number'] + 1))
+            clust_col = str(1/(k+1.1))
             my_members = c_data['cluster_number'] == k
             cluster_center_1 = num_clust_data['cen_1'][k]
             cluster_center_2 = num_clust_data['cen_2'][k]
@@ -259,8 +259,7 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
         ax.xaxis.set_major_locator(plt.MultipleLocator(1.0))
         ax.set_xlabel(band_names[bands[0]] + ' - ' + band_names[bands[1]])
         ax.set_ylabel(band_names[bands[i*2]]+' - '+band_names[bands[i*2+1]])
-        ax.set_title(alg + ' ' + str(n_clust) + ': '+band_names[bands[0]]+'-'+band_names[bands[1]]+' vs. '+band_names[bands[i*2]]+'-'+band_names[bands[i*2+1]],
-                     fontsize=14)
+
         ax.legend(loc='lower left', fontsize=8)
         plt.show
         file_name = '{}_3d_projection_{}cl_{}-{}vs{}-{}.png'.format(alg, str(n_clust),
@@ -279,7 +278,7 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
     fig1 = plt.figure()
     ax1 = fig1.add_subplot(111, projection='3d')
     for x in range(0, n_clust):
-        clust_col = plt.cm.jet(float(x) / np.max(c_data['cluster_number'] + 1))
+        clust_col = str(1/(x+1.1))
         cluster_center_1 = num_clust_data['cen_1'][x]
         cluster_center_2 = num_clust_data['cen_2'][x]
         cluster_center_3 = num_clust_data['cen_3'][x]
@@ -310,7 +309,7 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
     fig2 = plt.figure(figsize=(12,12))
     ax2 = fig2.add_subplot(111)
     for b in range(0, n_clust):
-        clust_col = plt.cm.jet(float(b) / np.max(c_data['cluster_number'] + 1))
+        clust_col = str(1/(b+1.1))
         objects = c_data['cluster_number'] == b
         cluster_center_1 = num_clust_data['cen_1'][b]
         cluster_center_2 = num_clust_data['cen_2'][b]
@@ -328,8 +327,7 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
     ax2.set_ylabel(band_names[bands[0]] + ' - ' + band_names[bands[1]])
     ax2.set_xlabel(band_names[bands[base1]]+' - ' + band_names[bands[base2]])
     plt.gca().invert_yaxis()
-    ax2.set_title(alg + ' ' + str(n_clust) + ' : '+band_names[bands[0]]+'-'+band_names[bands[1]]+' vs. '+band_names[bands[base1]]+'-'+band_names[bands[base2]],
-                  fontsize=14)
+
     ax2.legend(loc='lower right', fontsize=8)
     file_name = '{}_base_color_{}cl_{}-{}vs{}-{}.png'.format(alg, str(n_clust),
                                                              band_names[bands[0]],
@@ -344,7 +342,7 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
     ax4 = fig4.add_subplot(111)
     for a in range(0, n_clust):
         my_members = c_data['cluster_number'] == a
-        clust_col = plt.cm.jet(float(a) / np.max(c_data['cluster_number'] + 1))
+        clust_col = str(1/(a+1.1))
         ax4.scatter(c1[my_members], wave2[my_members],
                     color=clust_col, marker='.', s=4, label=a+1)
     ax4.legend(loc='lower right', fontsize=8)
@@ -365,9 +363,12 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
     ax3 = fig3.add_subplot(111)
     for c in range(0, n_clust):
         my_members = c_data['cluster_number'] == c
-        clust_col = plt.cm.jet(float(c) / np.max(c_data['cluster_number'] + 1))
+        clust_col = str(1/(c+1.1))
+        if c == 0:
+            ax3.scatter(base_colour[my_members], base_wave[my_members],
+                    color=clust_col, marker='.', s=4, label=c+1, zorder=2)
         ax3.scatter(base_colour[my_members], base_wave[my_members],
-                    color=clust_col, marker='.', s=4, label=c+1)
+                    color=clust_col, marker='.', s=4, label=c+1, zorder=1)
     ax3.legend(loc='lower right', fontsize=8)
     ax3.set_xlabel(band_names[bands[base1]]+' - '+band_names[bands[base2]])
     ax3.set_ylabel(band_names[bands[base2]])
