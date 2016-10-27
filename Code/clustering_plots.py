@@ -23,10 +23,10 @@ base2 = 5
 b_wave = 3
 
 # Dictionary for plot formatting
-band_names = {'mag05_225':'f225w', 'mag05_336':'f336w', 'mag05_373':'f373n',
-              'mag05_438':'f438w', 'mag05_487':'f487n', 'mag05_502':'f502n',
-              'mag05_555':'f555w', 'mag05_657':'f657n', 'mag05_673':'f673n',
-              'mag05_814':'f814w'}
+band_names = {'mag05_225':'F225W', 'mag05_336':'F336W', 'mag05_373':'F373N',
+              'mag05_438':'F438W', 'mag05_487':'F487N', 'mag05_502':'F502N',
+              'mag05_555':'F555W', 'mag05_657':'F657N', 'mag05_673':'F673N',
+              'mag05_814':'F814W'}
 symbol = ['.', '+', '^', '*', 'o', '>', '<']
 size = 7
 '''-------------------------------------------------------------------------'''
@@ -295,6 +295,10 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
     # Plot model colours
     ax1.plot(model_data[0] - model_data[1], model_data[2] - model_data[3],
              model_data[4] - model_data[5], color='r')
+    ax1.scatter(model_data[0][0] - model_data[1][0],
+                model_data[2][0] - model_data[3][0],
+                model_data[4][0] - model_data[5][0], color='r',
+                marker='o', s=100, zorder=2)
     # Format plot
     ax1.set_xlabel(band_names[bands[0]] + ' - ' + band_names[bands[1]])
     ax1.set_ylabel(band_names[bands[2]] + ' - ' + band_names[bands[3]])
@@ -327,6 +331,9 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
     # Plot model colours
     ax2.plot(model_data[base1] - model_data[base2],
              model_data[0] - model_data[1], color='r')
+    ax2.scatter(model_data[base1][0] - model_data[base2][0],
+                model_data[0][0] - model_data[1][0], color='r',
+                marker='o', s=100, zorder=2)
     # Format Plot
     ax2.xaxis.set_major_locator(plt.MultipleLocator(1.0))
     ax2.set_ylabel(band_names[bands[0]] + ' - ' + band_names[bands[1]])
