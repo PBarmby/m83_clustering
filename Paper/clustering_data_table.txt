@@ -1,5 +1,6 @@
 # clustering data table
 # band1 band2 band3 band4 dimensions K cluster1 cluster2 cluster3 cluster4 cluster5 cluster6 average_1 average_2 average_3 average_4 average_5 average_6 std_1 std_2 std_3 std_4 std_5 std_6 
+# TODO: Add ones in text
 
 f438w f487n f555w f814w 3d 4 7384 3593 1248 922 0 0 (0.4591 -0.1122 0.4977) (0.8327 -0.7970 -0.7772) (0.9064 0.1219 1.7285) (0.2885 -0.2893 -0.2957) 0 0 0.3711 0.8679 0.7884 0.3300 0 0
 f657n f814w f336w f438w 2d 3 13361 12065 3494 0 0 0 (-0.9443 -1.2352) (-1.8468 -1.2042) (-0.2174 -0.2587) 0 0 0 0.3224 0.4546 0.5272 0 0 0

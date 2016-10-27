@@ -27,6 +27,8 @@ band_names = {'mag05_225':'f225w', 'mag05_336':'f336w', 'mag05_373':'f373n',
               'mag05_438':'f438w', 'mag05_487':'f487n', 'mag05_502':'f502n',
               'mag05_555':'f555w', 'mag05_657':'f657n', 'mag05_673':'f673n',
               'mag05_814':'f814w'}
+symbol = ['.', '+', '^', '*', 'o', '>', '<']
+size = 7
 '''-------------------------------------------------------------------------'''
 
 def plotting(dimensions, model_name, f_path, s_path):
@@ -237,24 +239,27 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
         fig = plt.figure()
         ax = fig.add_subplot(111)
         for k in range(0, n_clust):
-            clust_col = str(1/(k+1.1))
+            clust_col = str(1/(k+1.5))
             my_members = c_data['cluster_number'] == k
             cluster_center_1 = num_clust_data['cen_1'][k]
             cluster_center_2 = num_clust_data['cen_2'][k]
             cluster_center_3 = num_clust_data['cen_3'][k]
             if i == 1:
                 ax.scatter(c1[my_members], c2[my_members], color=clust_col,
-                           marker='o', label=k+1, s=2, zorder=1)
-                ax.scatter(cluster_center_1, cluster_center_2, marker='o',
+                           marker=symbol[k], label=k+1, s=size, zorder=1)
+                ax.scatter(cluster_center_1, cluster_center_2, marker=symbol[k],
                            color=clust_col, edgecolor='k', s=100, zorder=2)
             else:
                 ax.scatter(c1[my_members], c3[my_members], color=clust_col,
-                            marker='o', label=k+1, s=2, zorder=1)
-                ax.scatter(cluster_center_1, cluster_center_3, marker='o',
+                            marker=symbol[k], label=k+1, s=size, zorder=1)
+                ax.scatter(cluster_center_1, cluster_center_3, marker=symbol[k],
                             color=clust_col, edgecolor='k', s=100, zorder=2)
         # Plot model colours
         ax.plot(model_data[0] - model_data[1],
                 model_data[i*2] - model_data[i*2+1], color='r')
+        ax.scatter(model_data[0][0] - model_data[1][0],
+                   model_data[i*2][0] - model_data[i*2+1][0], color='r',
+                   marker='o', s=100, zorder=2)
         # Format plot
         ax.xaxis.set_major_locator(plt.MultipleLocator(1.0))
         ax.set_xlabel(band_names[bands[0]] + ' - ' + band_names[bands[1]])
@@ -278,15 +283,15 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
     fig1 = plt.figure()
     ax1 = fig1.add_subplot(111, projection='3d')
     for x in range(0, n_clust):
-        clust_col = str(1/(x+1.1))
+        clust_col = str(1/(x+1.5))
         cluster_center_1 = num_clust_data['cen_1'][x]
         cluster_center_2 = num_clust_data['cen_2'][x]
         cluster_center_3 = num_clust_data['cen_3'][x]
         members = c_data['cluster_number'] == x
         ax1.scatter(c1[members], c2[members], c3[members],
-                    marker='o', color=clust_col, s=2, label=x+1)
+                    marker=symbol[x], color=clust_col, s=size, label=x+1)
         ax1.scatter(cluster_center_1, cluster_center_2, cluster_center_3,
-                    c=clust_col, edgecolor='k', marker='o', s=100)
+                    c=clust_col, edgecolor='k', marker=symbol[x], s=100)
     # Plot model colours
     ax1.plot(model_data[0] - model_data[1], model_data[2] - model_data[3],
              model_data[4] - model_data[5], color='r')
@@ -309,15 +314,15 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
     fig2 = plt.figure(figsize=(12,12))
     ax2 = fig2.add_subplot(111)
     for b in range(0, n_clust):
-        clust_col = str(1/(b+1.1))
+        clust_col = str(1/(b+1.5))
         objects = c_data['cluster_number'] == b
         cluster_center_1 = num_clust_data['cen_1'][b]
         cluster_center_2 = num_clust_data['cen_2'][b]
         cluster_center_3 = num_clust_data['cen_3'][b]
         base_cen = cluster_center_3 - cluster_center_2  # CHANGE
-        ax2.scatter(base_colour[objects], c1[objects], marker='o',
-                    color=clust_col, s=2, label=b+1, zorder=1)
-        ax2.scatter(base_cen, cluster_center_1, marker='o',
+        ax2.scatter(base_colour[objects], c1[objects], marker=symbol[b],
+                    color=clust_col, s=size, label=b+1, zorder=1)
+        ax2.scatter(base_cen, cluster_center_1, marker=symbol[b],
                     color=clust_col, s=100, edgecolor='k', zorder=2)
     # Plot model colours
     ax2.plot(model_data[base1] - model_data[base2],
@@ -342,9 +347,13 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
     ax4 = fig4.add_subplot(111)
     for a in range(0, n_clust):
         my_members = c_data['cluster_number'] == a
-        clust_col = str(1/(a+1.1))
-        ax4.scatter(c1[my_members], wave2[my_members],
-                    color=clust_col, marker='.', s=4, label=a+1)
+        clust_col = str(1/(a+1.5))
+        if a == 0: 
+            ax4.scatter(c1[my_members], wave2[my_members],
+                    color=clust_col, marker=symbol[a], s=size, label=a+1, zorder=2)
+        else: 
+            ax4.scatter(c1[my_members], wave2[my_members],
+                        color=clust_col, marker=symbol[a], s=size, label=a+1, zorder=1)
     ax4.legend(loc='lower right', fontsize=8)
     ax4.set_xlabel(band_names[bands[0]]+' - '+band_names[bands[1]])
     ax4.set_ylabel(band_names[bands[1]])
@@ -363,12 +372,13 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
     ax3 = fig3.add_subplot(111)
     for c in range(0, n_clust):
         my_members = c_data['cluster_number'] == c
-        clust_col = str(1/(c+1.1))
+        clust_col = str(1/(c+1.5))
         if c == 0:
             ax3.scatter(base_colour[my_members], base_wave[my_members],
-                    color=clust_col, marker='.', s=4, label=c+1, zorder=2)
-        ax3.scatter(base_colour[my_members], base_wave[my_members],
-                    color=clust_col, marker='.', s=4, label=c+1, zorder=1)
+                    color=clust_col, marker=symbol[c], s=size, label=c+1, zorder=2)
+        else: 
+            ax3.scatter(base_colour[my_members], base_wave[my_members],
+                        color=clust_col, marker=symbol[c], s=size, label=c+1, zorder=1)
     ax3.legend(loc='lower right', fontsize=8)
     ax3.set_xlabel(band_names[bands[base1]]+' - '+band_names[bands[base2]])
     ax3.set_ylabel(band_names[bands[base2]])
