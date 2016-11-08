@@ -35,6 +35,7 @@ def plotting(dimensions, model_name, f_path, s_path):
     model_file = 'C:\\Users\\Alex\\Documents\\GitHub\\m83_clustering\\model_colours\\{}'.format(model_name)
     survey_data = Table.read('data_v3.txt', format='ascii.commented_header',
                              guess=False)
+    # survey_data = survey_data[::5]
     save_path = 'C:\\Users\\Alex\\Documents\\GitHub\\m83_clustering\\{}\\'.format(s_path)
     model = Table.read(model_file, format='ascii.commented_header', guess=False)
     if '2d' in dimensions:  # Check if 2D or 3D 
@@ -149,7 +150,7 @@ def make_2d_plots(c1, c2, bands, n_clust, alg, c_data, centers, path,
     fig = plt.figure()
     ax = fig.add_subplot(111)
     for k in range(0, n_clust):
-        clust_col = plt.cm.jet(float(k) / np.max(c_data['cluster_number'] + 1))
+        clust_col = str(1/(k+1.5))
         my_members = c_data['cluster_number'] == k
         cluster_center_1 = num_clust_data['cen_1'][k]
         cluster_center_2 = num_clust_data['cen_2'][k]
@@ -160,15 +161,18 @@ def make_2d_plots(c1, c2, bands, n_clust, alg, c_data, centers, path,
     # Plot model colours
     ax.plot(model_data[0] - model_data[1], model_data[2] - model_data[3],
             color='r')
+    ax.scatter(model_data[0][0] - model_data[1][0],
+                model_data[2][0] - model_data[3][0], color='r',
+                marker='o', s=70, zorder=2)
     # Format plot
-    ax.xaxis.set_major_locator(plt.MultipleLocator(0.5))
-    ax.yaxis.set_major_locator(plt.MultipleLocator(0.5))
+    ax.xaxis.set_major_locator(plt.MultipleLocator(1.0))
+    ax.yaxis.set_major_locator(plt.MultipleLocator(1.0))
+    plt.gca().invert_yaxis()
     ax.set_xlabel(band_names[bands[0]] + ' - ' + band_names[bands[1]])
     ax.set_ylabel(band_names[bands[2]]+' - '+band_names[bands[3]])
-    ax.set_title(alg + ' ' + str(n_clust) + ' : '+band_names[bands[0]]+'-'+band_names[bands[1]]+' vs. '+band_names[bands[2]]+'-'+band_names[bands[3]],
-                 fontsize=14)
+
     ax.legend(loc='lower right', fontsize=8)
-    plt.show()
+
     file_name = '{}_color_{}cl_{}-{}vs{}-{}.png'.format(alg, str(n_clust),
                                                         band_names[bands[0]],
                                                         band_names[bands[1]],
@@ -179,6 +183,7 @@ def make_2d_plots(c1, c2, bands, n_clust, alg, c_data, centers, path,
         print "New_path"
         os.makedirs(path_)
     pylab.savefig(os.path.join(path_, file_name))
+    plt.show()
     plt.close()
 
     # CMD1
@@ -186,20 +191,21 @@ def make_2d_plots(c1, c2, bands, n_clust, alg, c_data, centers, path,
     ax1 = fig1.add_subplot(111)
     for a in range(0, n_clust):
         my_members = c_data['cluster_number'] == a
-        clust_col = plt.cm.jet(float(a) / np.max(c_data['cluster_number'] + 1))
+        clust_col = str(1/(a+1.5))
         ax1.scatter(c1[my_members], base_wave1[my_members],
                     color=clust_col, marker='.', s=4, label=a+1)
     ax1.legend(loc='lower right', fontsize=8)
     ax1.set_xlabel(band_names[bands[0]]+' - '+band_names[bands[1]])
     ax1.set_ylabel(band_names[bands[1]])
     plt.gca().invert_yaxis()
-    plt.show()
+    
     '''Display interactive figure if # removed, if not, figures saved'''
     file_name = '{}_CMD_{}cl_{}-{}vs{}.png'.format(alg, str(n_clust),
                                                    band_names[bands[0]],
                                                    band_names[bands[1]],
                                                    band_names[bands[1]])
     pylab.savefig(os.path.join(path_, file_name))
+    plt.show()
     plt.close()
 
     # CMD2
@@ -207,20 +213,21 @@ def make_2d_plots(c1, c2, bands, n_clust, alg, c_data, centers, path,
     ax2 = fig2.add_subplot(111)
     for c in range(0, n_clust):
         my_members = c_data['cluster_number'] == c
-        clust_col = plt.cm.jet(float(c) / np.max(c_data['cluster_number'] + 1))
+        clust_col = str(1/(c+1.5))
         ax2.scatter(c2[my_members], base_wave2[my_members],
                     color=clust_col, marker='.', s=4, label=c+1)
     ax2.legend(loc='lower right', fontsize=8)
     ax2.set_xlabel(band_names[bands[2]]+' - '+band_names[bands[3]])
     ax2.set_ylabel(band_names[bands[3]])
     plt.gca().invert_yaxis()
-    plt.show()
+    
     '''Display interactive figure if # removed, if not, figures saved'''
     file_name = '{}_CMD_{}cl_{}-{}vs{}.png'.format(alg, str(n_clust),
                                                    band_names[bands[2]],
                                                    band_names[bands[3]],
                                                    band_names[bands[3]])
     pylab.savefig(os.path.join(path_, file_name))
+    plt.show()
     plt.close()
 
     return
