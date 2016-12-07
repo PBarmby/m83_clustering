@@ -18,9 +18,9 @@ import mpl_toolkits.mplot3d as p3
 
 '''-------------------------------------------------------------------------'''
 # Set base colour
-base1 = 3
-base2 = 5
-b_wave = 3
+base1 = 2
+base2 = 4
+b_wave = 2
 
 # Dictionary for plot formatting
 band_names = {'mag05_225':'F225W', 'mag05_336':'F336W', 'mag05_373':'F373N',

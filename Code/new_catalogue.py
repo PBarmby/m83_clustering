@@ -3,7 +3,11 @@
     - data_v3.txt uses data_V2.txt to correct the mag_unc:
         - narrow filters: v2_unc/15
         - broad filters: v2_unc/10
-   
+   - data_v4.txt uses data_v2.txt to correct the mag_unc: 
+       - narrow filters: v2_unc/15
+           - 657: v2_unc/8
+       - broad filters: v2_unc/10
+       
 label_cat(): make catalogue of label data
 mk_cat(): make new version of data_v(n).txt'''
 import numpy as np
@@ -33,7 +37,6 @@ def label_cat():
 
 def mk_cat():
     broad_correction = 10
-    narrow_correction = 15
     data = Table.read('data_v2.txt', format='ascii.commented_header',
                       guess=False)
     broad = ['225', '336', '438', '555', '814']
@@ -49,10 +52,15 @@ def mk_cat():
 
     # Narrow uncertanty correction
     for n in range(0, len(narrow)):
+        if narrow[n] == '657':
+            narrow_correction = 8
+        else: 
+            narrow_correction = 15
+
         for j in range (0, len(data)):
             if data['mag05_' + narrow[n]][j] != -99.0 and data['mag05_' + narrow[n] + '_unc'][j] != -99.0:
                 data['mag05_' + narrow[n] + '_unc'][j] = data['mag05_' + narrow[n] + '_unc'][j]/narrow_correction
             if data['mag3_' + narrow[n]][j] != -99.0 and data['mag3_' + narrow[n] + '_unc'][j] != -99.0:
                 data['mag3_' + narrow[n] + '_unc'][j] = data['mag3_' + narrow[n] + '_unc'][j]/narrow_correction
-    Table.write(data, 'data_v3.txt', format='ascii.commented_header')
+    Table.write(data, 'data_v4.txt', format='ascii.commented_header')
     return()
