@@ -1,3 +1,3 @@
 # band1 band2 band3 band4 n_clust clustering
 
-mag05_225 mag05_336 mag05_555 mag05_814 4 kmeans
+mag05_555 mag05_814 mag05_336 mag05_438 5 meanshift
