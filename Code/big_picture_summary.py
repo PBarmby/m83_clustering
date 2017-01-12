@@ -1,15 +1,17 @@
-from astropy.Table import table
+from astropy.table import Table
 from glob import glob
-from pylatex import Document, Section, Subsection, Tabular, Math,  Figure 
+from pylatex import Document, Section, Subsection, Tabular, Math,  Figure, NewPage 
 from pylatex.utils import NoEscape
-from StringIO import StringIO
+#from StringIO import StringIO # Python 2.7
+from io import StringIO # Python 3.x - need to correctly deal with this, probably by getting rid of py2.7..
 import os
+import numpy as np
 
 # combine figures and tables for a given clustering run into a single document
 
 def doit_kmeans_3d(outfile = 'summary',
                    resfile = '05aperture_results_3d.txt',
-                   clust_stat='3d_cluster_statistics.txt'):
+                   statfile='3d_cluster_statistics.txt'):
 
     # generate blank LaTeX doc
     geometry_options = {"tmargin": "1cm", "lmargin": "2cm"}
@@ -22,11 +24,12 @@ def doit_kmeans_3d(outfile = 'summary',
 
     # get the results table and insert into the document
     tmptex = get_results(resfile)
+#    tmptex = get_stats(resfile, 'kmeans',oldcols_results,newcols_results,None,None)
     doc.append(tmptex)
 
     doc.append(NewPage())
     
-    for nclust in range(3,4):
+    for nclust in range(3,5):
         # generate a new section
         section_title = 'K-means colour-colour plots, K=%d' % nclust
 
@@ -34,9 +37,10 @@ def doit_kmeans_3d(outfile = 'summary',
         glob_str = 'kmeans*_%1dcl*' % nclust
         kmeans_plots = glob(glob_str)
 
-        # extract the relevant parts of clust_stat  - NOT COMPLETE
-        tmptex = get_stats(stattab)
-         
+        # extract the relevant parts of statfile and insert
+        tmptex = get_stats(statfile, 'kmeans', oldcols_3d_stats, newcols_3d_stats, 'total_clust', nclust)
+        doc.append(tmptex)
+    
         # insert table and plots into the LaTex document
         with doc.create(Section(section_title)):
             doc.append(tmptex)
@@ -54,6 +58,39 @@ def doit_kmeans_3d(outfile = 'summary',
     # all done!
     return
 
+
+oldcols_results = ['n_clust','inertia', 'score', 'total_objects', 'c_1', 'c_2', 'c_3', 'c_4', 'c_5', 'c_6', 'c_7', 'c_8']
+newcols_results = ['Nclust','inertia', 'score', 'TotObj', 'N1', 'N2', 'N3', 'N4', 'N5', 'N6', 'N7', 'N8']
+
+oldcols_2d_stats= ['clust_num','n_obj','t_scr','c_scr','rms','avg_dist','max_dist','min_dist','stdev','cen_1','cen_2','avg_col_1','avg_col_2']
+newcols_2d_stats = ['Cluster','Nobj','tScore','cScore','rms','AvgDist','MaxDist','MinDist','Stdev','Cen1','Cen2','AvgCol1','AvgCol2']
+
+oldcols_3d_stats= ['clust_num','n_obj','t_scr','c_scr','rms','avg_dist','max_dist','min_dist','stdev','cen_1','cen_2','cen_3','avg_col_1','avg_col_2','avg_col_3']
+newcols_3d_stats = ['Cluster','Nobj','tScore','cScore','rms','AvgDist','MaxDist','MinDist','Stdev','Cen1','Cen2','Cen3','AvgCol1','AvgCol2','AvgCol3']
+
+def get_stats(statsfile, cluster_alg, oldcols, newcols, sel_cond2=None, sel_val2=None):
+
+    # read the results table and select the right rows
+    res_tab = Table.read(statsfile, format='ascii.commented_header')
+    if sel_cond2 != None:
+        sel_cond = np.logical_and(res_tab['clustering']== cluster_alg, res_tab[sel_cond2]==sel_val2)
+    else:
+        sel_cond = res_tab['clustering']== cluster_alg
+    res_tab_k = res_tab[sel_cond][oldcols]
+
+    # rename some columns to get rid of underscores
+    for i,col in enumerate(res_tab_k.colnames):
+        if col != newcols[i]:
+            res_tab_k.rename_column(col,newcols[i])
+
+    # write to a string that pylatex can use
+    tmptex = StringIO()
+    res_tab_k.write(tmptex,format='latex')
+    tmpstr = NoEscape(tmptex.getvalue())
+    tmptex.close()
+    return(tmpstr)
+
+# DONT NEED This
 collist= ['n_clust','inertia', 'score', 'total_objects', 'c_1', 'c_2', 'c_3', 'c_4', 'c_5', 'c_6', 'c_7', 'c_8']
 newnames = ['Nclust','inertia', 'score', 'TotObj', 'N1', 'N2', 'N3', 'N4', 'N5', 'N6', 'N7', 'N8']
 def get_results(resfile):
