@@ -8,7 +8,7 @@ import os
 import numpy as np
 
 # combine figures and tables for a given clustering run into a single document
-# TODO: generalize to 2D and to meanshift
+# TODO: generalize to 2D 
 #
 def doit_3d(outfile = 'summary',
                    resfile = '05aperture_results_3d.txt',
@@ -25,22 +25,23 @@ def doit_3d(outfile = 'summary',
     doc.append(dirname)
 
     # get the K-means section of results table and insert into the document
-    doc.create(Section('K-means results'))
-    tmptex, ncl_list = get_stats(resfile, 'kmeans', oldcols_results, newcols_results, None, None)
-    doc.append(tmptex)
-    doc.append(NewPage())
+    with doc.create(Section('K-means results')):
+        tmptex, ncl_list = get_stats(resfile, 'kmeans', oldcols_results, newcols_results, None, None)
+        doc.append(tmptex)
+        doc.append(NewPage())
     
-    # add the individual K-means runs
-#    add_sections_to_doc(ncl_list, 'kmeans', doc, statfile)
+        # add the individual K-means runs
+        add_sections_to_doc(ncl_list, 'kmeans', doc, statfile)
 
     # now the intro material for meanshift
     # get the results table and insert into the document
-    tmptex, ncl_list = get_stats(resfile, 'meanshift', oldcols_res_ms, newcols_res_ms, None, None)
-    doc.append(tmptex)
-    doc.append(NewPage())
+    with doc.create(Section('Meanshift results')):
+        tmptex, ncl_list = get_stats(resfile, 'meanshift', oldcols_res_ms, newcols_res_ms, None, None)
+        doc.append(tmptex)
+        doc.append(NewPage())
 
-    # add the individual meanshift runs
-    add_sections_to_doc(ncl_list, 'meanshift', doc, statfile)
+        # add the individual meanshift runs
+        add_sections_to_doc(ncl_list, 'meanshift', doc, statfile)
             
     # turn the LaTex into a PDF
     doc.generate_tex(filepath=outfile)
@@ -94,7 +95,7 @@ def get_stats(statsfile, cluster_alg, oldcols, newcols, sel_cond2=None, sel_val2
 
 def add_sections_to_doc(ncl_list, clustering_type, doc, statfile):
     for nclust in ncl_list:
-        # generate a new section
+        # generate a new subsection
         section_title = '%s results, Ncl=%d' % (clustering_type,nclust)
 
         # find the relevant plots
@@ -103,8 +104,7 @@ def add_sections_to_doc(ncl_list, clustering_type, doc, statfile):
 
         # extract the relevant parts of statfile and insert
         tmptex, junk = get_stats(statfile, clustering_type, oldcols_3d_stats, newcols_3d_stats, 'total_clust', nclust)
-        doc.append(tmptex)
-    
+
         # insert table and plots into the LaTex document
         with doc.create(Subsection(section_title)):
             doc.append(tmptex)
