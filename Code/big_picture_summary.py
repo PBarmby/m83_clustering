@@ -10,9 +10,9 @@ import numpy as np
 # combine figures and tables for a given clustering run into a single document
 # TODO: generalize to 2D and to meanshift
 #
-def doit_kmeans_3d(outfile = 'summary',
+def doit_3d(outfile = 'summary',
                    resfile = '05aperture_results_3d.txt',
-                   statfile='3d_cluster_statistics.txt'
+                   statfile='3d_cluster_statistics.txt',
                    ncl_min=3, ncl_max=8):
 
     # generate blank LaTeX doc
@@ -21,36 +21,27 @@ def doit_kmeans_3d(outfile = 'summary',
 
     # insert some introductory material
     dirname = os.getcwd()
-    doc.append('K-means clustering output, found in')
+    doc.append('Clustering output, found in')
     doc.append(dirname)
 
-    # get the results table and insert into the document
-    tmptex = get_stats(resfile, 'kmeans',oldcols_results,newcols_results,None,None)
+    # get the K-means section of results table and insert into the document
+    doc.create(Section('K-means results'))
+    tmptex, ncl_list = get_stats(resfile, 'kmeans', oldcols_results, newcols_results, None, None)
     doc.append(tmptex)
-
     doc.append(NewPage())
     
-    for nclust in range(ncl_min,ncl_max+1):
-        # generate a new section
-        section_title = 'K-means colour-colour plots, K=%d' % nclust
+    # add the individual K-means runs
+#    add_sections_to_doc(ncl_list, 'kmeans', doc, statfile)
 
-        # find the relevant plots
-        glob_str = 'kmeans*_%1dcl*' % nclust
-        kmeans_plots = glob(glob_str)
+    # now the intro material for meanshift
+    # get the results table and insert into the document
+    tmptex, ncl_list = get_stats(resfile, 'meanshift', oldcols_res_ms, newcols_res_ms, None, None)
+    doc.append(tmptex)
+    doc.append(NewPage())
 
-        # extract the relevant parts of statfile and insert
-        tmptex = get_stats(statfile, 'kmeans', oldcols_3d_stats, newcols_3d_stats, 'total_clust', nclust)
-        doc.append(tmptex)
-    
-        # insert table and plots into the LaTex document
-        with doc.create(Section(section_title)):
-            doc.append(tmptex)
-            for image_filename in kmeans_plots:
-                with doc.create(Figure()) as fig:
-                    fig.add_image(image_filename)
-                    fig.add_caption(image_filename)
-            doc.append(NewPage())
-
+    # add the individual meanshift runs
+    add_sections_to_doc(ncl_list, 'meanshift', doc, statfile)
+            
     # turn the LaTex into a PDF
     doc.generate_tex(filepath=outfile)
 #    doc.generate_pdf(outfile, clean_tex=False)
@@ -61,6 +52,9 @@ def doit_kmeans_3d(outfile = 'summary',
 # fix hard-wiring here?
 oldcols_results = ['n_clust','inertia', 'score', 'total_objects', 'c_1', 'c_2', 'c_3', 'c_4', 'c_5', 'c_6', 'c_7', 'c_8']
 newcols_results = ['Nclust','inertia', 'score', 'TotObj', 'N1', 'N2', 'N3', 'N4', 'N5', 'N6', 'N7', 'N8']
+
+oldcols_res_ms = ['b_width', 'n_clust','score',  'total_objects', 'c_1', 'c_2', 'c_3', 'c_4', 'c_5', 'c_6', 'c_7', 'c_8','c_9','c_10']
+newcols_res_ms = ['Bandw', 'Nclust','score', 'TotObj', 'N1', 'N2', 'N3', 'N4', 'N5', 'N6', 'N7', 'N8', 'N9','N10']
 
 oldcols_2d_stats= ['clust_num','n_obj','t_scr','c_scr','rms','avg_dist','max_dist','min_dist','stdev','cen_1','cen_2','avg_col_1','avg_col_2']
 newcols_2d_stats = ['Cluster','Nobj','tScore','cScore','rms','AvgDist','MaxDist','MinDist','Stdev','Cen1','Cen2','AvgCol1','AvgCol2']
@@ -77,21 +71,51 @@ def get_stats(statsfile, cluster_alg, oldcols, newcols, sel_cond2=None, sel_val2
         sel_cond = np.logical_and(res_tab['clustering']== cluster_alg, res_tab[sel_cond2]==sel_val2)
     else:
         sel_cond = res_tab['clustering']== cluster_alg
-    res_tab_k = res_tab[sel_cond][oldcols]
+    res_subtab = res_tab[sel_cond][oldcols]
 
+    # figure out the number of clusters
+    if sel_cond2 == None:
+        ncl = res_subtab['n_clust'].data
+        ncl_list = np.unique(ncl).tolist()
+    else:
+        ncl_list = []
+        
     # rename some columns to get rid of underscores
-    for i,col in enumerate(res_tab_k.colnames):
+    for i,col in enumerate(res_subtab.colnames):
         if col != newcols[i]:
-            res_tab_k.rename_column(col,newcols[i])
+            res_subtab.rename_column(col,newcols[i])
 
-    # write to a string that pylatex can use
+    # write the table to a string that pylatex can use
     tmptex = StringIO()
-    res_tab_k.write(tmptex,format='latex')
+    res_subtab.write(tmptex,format='latex')
     tmpstr = NoEscape(tmptex.getvalue())
     tmptex.close()
-    return(tmpstr)
+    return(tmpstr, ncl_list)
 
+def add_sections_to_doc(ncl_list, clustering_type, doc, statfile):
+    for nclust in ncl_list:
+        # generate a new section
+        section_title = '%s results, Ncl=%d' % (clustering_type,nclust)
 
+        # find the relevant plots
+        glob_str = '%s*_%dcl*' % (clustering_type,nclust)
+        all_plots = glob(glob_str)
+
+        # extract the relevant parts of statfile and insert
+        tmptex, junk = get_stats(statfile, clustering_type, oldcols_3d_stats, newcols_3d_stats, 'total_clust', nclust)
+        doc.append(tmptex)
+    
+        # insert table and plots into the LaTex document
+        with doc.create(Subsection(section_title)):
+            doc.append(tmptex)
+            for image_filename in all_plots:
+                with doc.create(Figure()) as fig:
+                    fig.add_image(image_filename)
+                    fig.add_caption(image_filename)
+            doc.append(NewPage())
+    return
+
+    
     # examples from documentation
 #    with doc.create(Section('The simple stuff')):
 #        doc.append('Some regular text and some')
