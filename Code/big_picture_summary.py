@@ -8,12 +8,13 @@ import os
 import numpy as np
 
 # combine figures and tables for a given clustering run into a single document
-# TODO: generalize to 2D 
-#
+# TODO: generalize to 2D
+#  - resfile 05aperture_results_2d.txt 
+#  - statfile='3d_cluster_statistics.txt'
+# 
 def doit_3d(outfile = 'summary',
                    resfile = '05aperture_results_3d.txt',
-                   statfile='3d_cluster_statistics.txt',
-                   ncl_min=3, ncl_max=8):
+                   statfile='3d_cluster_statistics.txt'):
 
     # generate blank LaTeX doc
     geometry_options = {"tmargin": "1cm", "lmargin": "2cm"}
