@@ -140,7 +140,10 @@ def make_name():
     nd = sum_file_name.count('_')
     return(sum_file_name, nd)
 
-def walk_dirs(globstr='*_*'):
+# find all the various directories for which summaries are needed    
+def walk_dirs(globstr='*_*', summary_dir=None):
+    if summary_dir = None:
+        summary_dir = os.getwcd()
     combos = glob(globstr)
     for d in combos:
         os.chdir(d+'/clustering')
@@ -149,6 +152,7 @@ def walk_dirs(globstr='*_*'):
             os.chdir(sd)
             sumfile, nd = make_name()
             doit(sumfile, nd, action=False)
+            shutil.copy(sumfile, summary_dir)
             os.chdir('../')
         os.chdir('../../')
     return
