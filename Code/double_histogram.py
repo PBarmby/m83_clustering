@@ -13,7 +13,7 @@ from astropy.table import Table
 def mag_hist_cut(path): 
     data_ = load_data('data_v3.txt')
     plot_path = make_directory(path)
-    limit = 0.4  # CHANGE
+    limit = 10  # CHANGE
     filters = data_.colnames
     for i in range(11, len(filters), 2):
         # Load wave and uncertainty

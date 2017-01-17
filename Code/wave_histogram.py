@@ -7,7 +7,7 @@ import os
 
 def wave_unc_hist(path_):
     data = Table.read('data_v3.txt', format='ascii.commented_header', guess=False)
-    limit = 0.2
+    limit = 10
     bins = 500
     for i in range(11, len(data.colnames), 4):
         band1 = data.colnames[i]
@@ -56,7 +56,7 @@ def wave_unc_hist(path_):
             tl.set_visible(True)
 
         file_name = "{}_uncertainty_distribution.png".format(band1)
-        path = "C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\{}".format(path_)
+        path = "C:\\Users\\Alex\\Documents\\GitHub\\m83_clustering\\{}".format(path_)
         if not os.path.exists(path):
             os.makedirs(path)
         plt.savefig(os.path.join(path, file_name))
