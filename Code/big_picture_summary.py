@@ -4,14 +4,12 @@ from pylatex import Document, Section, Subsection, Tabular, Math,  Figure, NewPa
 from pylatex.utils import NoEscape
 #from StringIO import StringIO # Python 2.7
 from io import StringIO # Python 3.x - need to correctly deal with this, probably by getting rid of py2.7..
-import os
+import os, os.path
 import numpy as np
 
+
+    
 # combine figures and tables for a given clustering run into a single document
-# TODO: generalize to 2D
-#  - resfile 05aperture_results_2d.txt 
-#  - statfile='3d_cluster_statistics.txt'
-#  - replace oldcols_3d_stats, newcols_3d_stats with oldcols_2d_stats, newcols_3d_stats
 #
 # WOULD BE NICE:
 # - figure out how to get section titles *above* tables and figures for a given section.
@@ -127,7 +125,18 @@ def add_sections_to_doc(ncl_list, clustering_type, doc, statfile, nd):
             doc.append(NewPage())
     return
 
-    
+# generate an easier-to-read filename based on directories named according to filters
+filt_names = {'mag05_336': 'U', 'mag05_438': 'B', 'mag05_555': 'V', 'mag05_814': 'I', 'mag05_487': 'F487',
+'mag05_502': 'F502', 'mag05_657': 'F657', 'mag05_673': 'F673', 'mag05_225': 'UVW', 'mag05_373': 'F373'}
+
+def make_name():
+    dname = os.path.basename(os.getcwd())
+    for filt in filt_names.keys():
+        dname = dname.replace(filt, filt_names[filt])
+    sum_file_name = 'summary_' + dname
+    return(sum_file_name)
+
+        
     # examples from documentation
 #    with doc.create(Section('The simple stuff')):
 #        doc.append('Some regular text and some')
