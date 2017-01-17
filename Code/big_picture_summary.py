@@ -98,7 +98,7 @@ def get_stats(statsfile, cluster_alg, oldcols, newcols, sel_cond2=None, sel_val2
 
     # write the table to a string that pylatex can use
     tmptex = StringIO()
-    res_subtab.write(tmptex,format='latex')
+    res_subtab.write(tmptex,format='latex',latexdict = {'tablealign': 'h'})
     tmpstr = NoEscape(tmptex.getvalue())
     tmptex.close()
     return(tmpstr, ncl_list)
