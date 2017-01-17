@@ -9,10 +9,11 @@ images/
 raw_data/*ok.rd
 cat_data/ned_simbad_old_vers/*ds9.xml
 check_phot_unc/*phot.raw
-check_phot_unc/*good.rd
+check_phot_unc/*.rd
 check_phot_unc/*.fits
 check_phot_unc/*.cat
 check_phot_unc/*.phot
 *.directory
 *ipynb*
 *.tex
+*.dvi
