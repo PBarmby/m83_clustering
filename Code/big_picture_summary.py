@@ -4,14 +4,18 @@ from pylatex import Document, Section, Subsection, Tabular, Math,  Figure, NewPa
 from pylatex.utils import NoEscape
 #from StringIO import StringIO # Python 2.7
 from io import StringIO # Python 3.x - need to correctly deal with this, probably by getting rid of py2.7..
-import os, os.path
+import os, os.path, shutil
 import numpy as np
 
-
-    
 # combine figures and tables for a given clustering run into a single document
+# usage:
+# from clustering/results/broad_band:
+#     big_picture-summary.walk_dirs('U*')
+# from clustering/results/broad_narrow:
+#     big-picture_summary.walk_dirs('*_*')
+
 #
-# WOULD BE NICE:
+# TBD:
 # - figure out how to get section titles *above* tables and figures for a given section.
 def doit(outfile = 'summary', ndim=3, action=True):
     if action == False:
@@ -138,13 +142,14 @@ def make_name():
         dname = dname.replace(filt, filt_names[filt])
     sum_file_name = 'summary_' + dname
     nd = sum_file_name.count('_')
+#    print(dname, sum_file_name, nd)
     return(sum_file_name, nd)
 
 # find all the various directories for which summaries are needed & make them    
-def walk_dirs(globstr='*_*', summary_dir=None):
+def walk_dirs(globstr='*_*', summary_dir=None, for_real=False):
     # place to store all of the summary PDFs
     if summary_dir == None: 
-        summary_dir = os.getwcd()
+        summary_dir = os.getcwd()
     # list of band combinations
     combos = glob(globstr)
     for d in combos:
@@ -154,8 +159,9 @@ def walk_dirs(globstr='*_*', summary_dir=None):
         for sd in subcombos:
             os.chdir(sd)
             sumfile, nd = make_name() # figure out what we're dealing with
-            doit(sumfile, nd, action=False) # make the summary PDF
-            shutil.copy(sumfile, summary_dir) # copy it to the summary directory
+            doit(sumfile, nd, action=for_real) # make the summary PDF
+            if os.path.exists(sumfile+'.pdf'): # copy it to the summary directory
+                shutil.copy(sumfile+'.pdf', summary_dir) 
             os.chdir('../') # on to the next combination of the same bands
         os.chdir('../../') # on to the next combination of bands
     return
