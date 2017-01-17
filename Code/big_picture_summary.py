@@ -13,7 +13,10 @@ import numpy as np
 #
 # WOULD BE NICE:
 # - figure out how to get section titles *above* tables and figures for a given section.
-def doit(outfile = 'summary', ndim=3):
+def doit(outfile = 'summary', ndim=3, action=True):
+    if action == False:
+        print(outfile, ndim)
+        return
 
     if ndim == 3:
         resfile = '05aperture_results_3d.txt'
@@ -134,9 +137,22 @@ def make_name():
     for filt in filt_names.keys():
         dname = dname.replace(filt, filt_names[filt])
     sum_file_name = 'summary_' + dname
-    return(sum_file_name)
+    nd = sum_file_name.count('_')
+    return(sum_file_name, nd)
 
-        
+def walk_dirs(globstr='*_*'):
+    combos = glob(globstr)
+    for d in combos:
+        os.chdir(d+'/clustering')
+        subcombos = glob('mag05*')
+        for sd in subcombos:
+            os.chdir(sd)
+            sumfile, nd = make_name()
+            doit(sumfile, nd, action=False)
+            os.chdir('../')
+        os.chdir('../../')
+    return
+                        
     # examples from documentation
 #    with doc.create(Section('The simple stuff')):
 #        doc.append('Some regular text and some')
