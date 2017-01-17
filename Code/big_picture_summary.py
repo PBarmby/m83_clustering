@@ -55,7 +55,7 @@ def doit(outfile = 'summary', ndim=3, action=True):
             
     # turn the LaTex into a PDF
     doc.generate_tex(filepath=outfile)
-#    doc.generate_pdf(outfile, clean_tex=False)
+    doc.generate_pdf(outfile, clean_tex=False)
     
     # all done!
     return
@@ -140,21 +140,24 @@ def make_name():
     nd = sum_file_name.count('_')
     return(sum_file_name, nd)
 
-# find all the various directories for which summaries are needed    
+# find all the various directories for which summaries are needed & make them    
 def walk_dirs(globstr='*_*', summary_dir=None):
-    if summary_dir = None:
+    # place to store all of the summary PDFs
+    if summary_dir == None: 
         summary_dir = os.getwcd()
+    # list of band combinations
     combos = glob(globstr)
     for d in combos:
         os.chdir(d+'/clustering')
+        # different ways the same bands are combined: could be 2D or 3D
         subcombos = glob('mag05*')
         for sd in subcombos:
             os.chdir(sd)
-            sumfile, nd = make_name()
-            doit(sumfile, nd, action=False)
-            shutil.copy(sumfile, summary_dir)
-            os.chdir('../')
-        os.chdir('../../')
+            sumfile, nd = make_name() # figure out what we're dealing with
+            doit(sumfile, nd, action=False) # make the summary PDF
+            shutil.copy(sumfile, summary_dir) # copy it to the summary directory
+            os.chdir('../') # on to the next combination of the same bands
+        os.chdir('../../') # on to the next combination of bands
     return
                         
     # examples from documentation
