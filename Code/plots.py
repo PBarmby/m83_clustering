@@ -24,7 +24,7 @@ cluster_colours = ['y', 'g', 'b', 'r', 'c', 'm', 'k', 'w', 'brown', 'darkgray', 
 def plotting(data_table, path, plots, threshold, survey_objects):
     plot_path = make_directory(path)
     data_, trial = load_data(data_table, 'plots.txt')
-    model_file = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\model_colours\\{}'.format('mist_ssp_feh+0.5.txt')
+    model_file = 'C:\\Users\\Alex\\Documents\\GitHub\\m83_clustering\\model_colours\\{}'.format('mist_ssp_feh+0.5.txt')
     model = Table.read(model_file, format='ascii.commented_header', guess=False)
 
     for i in range(0, len(trial)):
@@ -50,7 +50,7 @@ def plotting(data_table, path, plots, threshold, survey_objects):
         if 'wvc' in plots:
             wave_v_colour(wave1, wave2, wave3, wave4, c1, c2, grd, trial[i],
                           plot_path)
-    shutil.copy2('C:\Users\Owner\Documents\GitHub\m83_clustering\Code\plots.txt',
+    shutil.copy2('C:\Users\Alex\Documents\GitHub\m83_clustering\Code\plots.txt',
                  plot_path+'\\inputs.txt')
 
     return
@@ -60,7 +60,7 @@ def make_directory(p_path):
     '''Save results of each analysis
             save_path: set path of where you would like results saved'''
     # Create new plots_folder
-    pl_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\{}'.format(
+    pl_path = 'C:\\Users\\Alex\\Documents\\GitHub\\m83_clustering\\{}'.format(
               p_path)
     if not os.path.exists(pl_path):
         os.makedirs(pl_path)
@@ -83,7 +83,7 @@ def load_data(surveyfile_, experiments):
 
 def data(data, band1, band2, band3, band4):
     '''Select data for analysis'''
-    ratio = 0.2
+    ratio = 0.08
     # Colour 1
     wave1 = data[band1]
     wave1_unc = data[band1+'_unc']
