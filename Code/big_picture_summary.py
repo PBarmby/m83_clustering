@@ -4,14 +4,18 @@ from pylatex import Document, Section, Subsection, Tabular, Math,  Figure, NewPa
 from pylatex.utils import NoEscape
 #from StringIO import StringIO # Python 2.7
 from io import StringIO # Python 3.x - need to correctly deal with this, probably by getting rid of py2.7..
-import os, os.path
+import os, os.path, shutil
 import numpy as np
 
-
-    
 # combine figures and tables for a given clustering run into a single document
+# usage:
+# from clustering/results/broad_band:
+#     big_picture-summary.walk_dirs('U*')
+# from clustering/results/broad_narrow:
+#     big-picture_summary.walk_dirs('*_*')
+
 #
-# WOULD BE NICE:
+# TBD:
 # - figure out how to get section titles *above* tables and figures for a given section.
 def doit(outfile = 'summary', ndim=3, action=True):
     if action == False:
@@ -55,7 +59,7 @@ def doit(outfile = 'summary', ndim=3, action=True):
             
     # turn the LaTex into a PDF
     doc.generate_tex(filepath=outfile)
-#    doc.generate_pdf(outfile, clean_tex=False)
+    doc.generate_pdf(outfile, clean_tex=False)
     
     # all done!
     return
@@ -98,7 +102,7 @@ def get_stats(statsfile, cluster_alg, oldcols, newcols, sel_cond2=None, sel_val2
 
     # write the table to a string that pylatex can use
     tmptex = StringIO()
-    res_subtab.write(tmptex,format='latex')
+    res_subtab.write(tmptex,format='latex',latexdict = {'tablealign': 'h'})
     tmpstr = NoEscape(tmptex.getvalue())
     tmptex.close()
     return(tmpstr, ncl_list)
@@ -138,23 +142,28 @@ def make_name():
         dname = dname.replace(filt, filt_names[filt])
     sum_file_name = 'summary_' + dname
     nd = sum_file_name.count('_')
+#    print(dname, sum_file_name, nd)
     return(sum_file_name, nd)
 
-# find all the various directories for which summaries are needed
-def walk_dirs(globstr='*_*', summary_dir=None):
-    if summary_dir = None:
-        summary_dir = os.getwcd()
+# find all the various directories for which summaries are needed & make them    
+def walk_dirs(globstr='*_*', summary_dir=None, for_real=False):
+    # place to store all of the summary PDFs
+    if summary_dir == None: 
+        summary_dir = os.getcwd()
+    # list of band combinations
     combos = glob(globstr)
     for d in combos:
         os.chdir(d+'/clustering')
+        # different ways the same bands are combined: could be 2D or 3D
         subcombos = glob('mag05*')
         for sd in subcombos:
             os.chdir(sd)
-            sumfile, nd = make_name()
-            doit(sumfile, nd, action=False)
-            shutil.copy(sumfile + '.pdf', summary_dir)
-            os.chdir('../')
-        os.chdir('../../')
+            sumfile, nd = make_name() # figure out what we're dealing with
+            doit(sumfile, nd, action=for_real) # make the summary PDF
+            if os.path.exists(sumfile+'.pdf'): # copy it to the summary directory
+                shutil.copy(sumfile+'.pdf', summary_dir) 
+            os.chdir('../') # on to the next combination of the same bands
+        os.chdir('../../') # on to the next combination of bands
     return
                         
     # examples from documentation
