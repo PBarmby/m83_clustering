@@ -140,7 +140,7 @@ def make_name():
     nd = sum_file_name.count('_')
     return(sum_file_name, nd)
 
-# find all the various directories for which summaries are needed    
+# find all the various directories for which summaries are needed
 def walk_dirs(globstr='*_*', summary_dir=None):
     if summary_dir = None:
         summary_dir = os.getwcd()
@@ -152,7 +152,7 @@ def walk_dirs(globstr='*_*', summary_dir=None):
             os.chdir(sd)
             sumfile, nd = make_name()
             doit(sumfile, nd, action=False)
-            shutil.copy(sumfile, summary_dir)
+            shutil.copy(sumfile + '.pdf', summary_dir)
             os.chdir('../')
         os.chdir('../../')
     return
