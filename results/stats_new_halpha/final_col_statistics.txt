@@ -1,0 +1,3 @@
+# band1 band2 colour_mean colour_median colour_std colour_var colour_min colour_max mag_iqr num_obj unc_mean unc_median unc_std unc_var unc_min unc_max unc_iqr
+mag05_555 mag05_814 0.9133 0.6540 0.9760 0.9526 -2.9990 5.1320 1.5130 57935 0.1334 0.1365 0.0481 0.0023 0.0037 0.2823 0.0706
+mag05_555 mag05_657 1.7648 1.7910 0.8222 0.6761 -0.0880 5.3020 1.2440 23669 0.1677 0.1785 0.0451 0.0020 0.0096 0.2778 0.0560

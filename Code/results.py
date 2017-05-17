@@ -47,6 +47,8 @@ def results(file_name, general_path, save_path, plots):
         inertia_fluctuations(clean_gen_res_data, plot_path)
     if "percentile" in plots:
         object_cluster_dist(clean_gen_res_data, n_clust, plot_path)
+    if "final_plots" in plots:
+        final_plots(clean_gen_res_data, plot_path)
 
     return
 
@@ -91,7 +93,6 @@ def make_path(sum_path):
     '''Set up file paths'''
     g_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\{}'.format(sum_path)
     return(g_path)
-
 
 def silhouette_vs_nclust(results_table, path):
     '''Create plots of features vs. the silhouette_score'''

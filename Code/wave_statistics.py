@@ -1,18 +1,18 @@
 '''Data is trimmed with unc < 0.2 and removed all -99s
     - Exception: ID file which records all object detections
-    - Using data file: data_v3.txt in m83_clustering\Code'''
+    - Using data file: data_v4.txt in m83_clustering\Code'''
 import numpy as np 
 import os
 from astropy.table import Table
 from scipy.stats import binned_statistic as bs
 # base_path = '/Users/alexkiar/GitHub/m83_clustering/'  # MAC
-base_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\'  # PC
+base_path = 'C:\\Users\\Alex\\Documents\\GitHub\\m83_clustering\\'  # PC
 # figure_save_symbol = '//'  # MAC
 figure_save_symbol = '\\'  # PC
 
 
 def binned_stats():
-    data = Table.read('data_v3.txt', format='ascii.commented_header',
+    data = Table.read('data_v4.txt', format='ascii.commented_header',
                       guess=False)
     band_names = data.colnames
     for i in range(11, len(data.colnames), 4):
@@ -32,7 +32,7 @@ def band_unc_limit(path_):
     '''Creates file with each band at various uncertainty limits and counts
     the number of objects valid at each limit. 
         - removes all -99 objects'''
-    data = Table.read('data_v3.txt', format='ascii.commented_header',
+    data = Table.read('data_v4.txt', format='ascii.commented_header',
                       guess=False)
     band_names = data.colnames
 
@@ -69,7 +69,7 @@ def colour_unc(path_):
         - remove all -99 objects
         - uncertainty = quadrature_uncertainty of both bands'''
 
-    data = Table.read('data_v3.txt', format='ascii.commented_header',
+    data = Table.read('data_v4.txt', format='ascii.commented_header',
                       guess=False)
     trials = Table.read('stats_experiments.txt',
                         format='ascii.commented_header', guess=False)
@@ -126,7 +126,7 @@ def colour_unc(path_):
 def band_id(path_):
     '''Makes id files for all bands in both apertures, saves with id and mag
         - Only removed data with -99'''
-    data = Table.read('data_v3.txt', format='ascii.commented_header', guess=False)
+    data = Table.read('data_v4.txt', format='ascii.commented_header', guess=False)
     band_names = data.colnames
     id_path = make_directory(path_)
     for i in range(11, len(band_names), 2):
@@ -148,7 +148,7 @@ def col_stats(path_):
         - sets BAND uncertainty limit at 0.2
         - Colour uncertainty is not constrained'''
 
-    data = Table.read('data_v3.txt', format='ascii.commented_header', guess=False)
+    data = Table.read('data_v4.txt', format='ascii.commented_header', guess=False)
     trials = Table.read('stats_experiments.txt',
                         format='ascii.commented_header', guess=False)
 
@@ -223,7 +223,7 @@ def band_stats(path_):
     '''Makes file with band statistics
         - removes all -99 
         - uncertainty limit of 0.2'''
-    data = Table.read('data_v3.txt', format='ascii.commented_header', guess=False)
+    data = Table.read('data_v4.txt', format='ascii.commented_header', guess=False)
     band_names = data.colnames
 
     stats_path = make_directory(path_)
@@ -276,7 +276,7 @@ def band_stats(path_):
 def n_detections(path_): 
     '''Makes file with the number of objects detected in each band without an
         uncertainty filter'''
-    data = Table.read('data_v3.txt', format='ascii.commented_header',
+    data = Table.read('data_v4.txt', format='ascii.commented_header',
                       guess=False)
     band_names = data.colnames
 
