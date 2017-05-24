@@ -21,6 +21,7 @@ import mpl_toolkits.mplot3d as p3
 base1 = 3
 base2 = 5
 b_wave = 2
+col='k'
 
 # Dictionary for plot formatting
 band_names = {'mag05_225':'F225W', 'mag05_336':'F336W', 'mag05_373':'F373N',
@@ -167,14 +168,36 @@ def make_2d_plots(c1, c2, bands, n_clust, alg, c_data, centers, path,
     ax.scatter(model_data[0][0] - model_data[1][0], 
                 model_data[2][0] - model_data[3][0], color='r',
                 marker='o', s=70, zorder=2)
+    
+    # Plot Chandar colours. Comment out if not UBVI combination
+    #Cluster Space
+    ax.plot([0.5, (2-0.33)/0.33], [0.5, 2], color=col)
+    ax.plot([0.5, -1], [0.5,-7], color=col)
+    ax.text(3, 0, "Cluster space")
+
+    # Star/Cluster space
+    ax.plot([-4, 0.24], [-0.8, -0.8], color=col)
+    ax.plot([0.24, -1], [-0.8, -7], color=col)
+    ax.text(-3, -2, "Star/Cluster space")
+
+    #Blue Star space
+    ax.plot([0.5, -4], [0.5, 0.5], color=col)
+    ax.text(-3, 0, "Blue Star space")
+
+    # Yellow star space
+    ax.text(-3, 1.25, "Yellow Star space")
+
     # Format plot
     ax.xaxis.set_major_locator(plt.MultipleLocator(1.0))
     ax.yaxis.set_major_locator(plt.MultipleLocator(1.0))
-    # plt.gca().invert_yaxis()
     ax.set_xlabel(band_names[bands[0]] + ' - ' + band_names[bands[1]],
                   fontweight='bold', fontsize=14)
     ax.set_ylabel(band_names[bands[2]]+' - '+band_names[bands[3]],
                   fontweight='bold', fontsize=14)
+
+    # Plot limits - comment out if no Chandar colours used
+    plt.ylim(-3, 2)
+    plt.xlim(-4, 5)
 
     ax.legend(loc='lower right', fontsize=11, scatterpoints=1)
 
@@ -358,6 +381,24 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
     ax2.scatter(model_data[base1][0] - model_data[base2][0], 
                 model_data[0][0] - model_data[1][0], color='k',                 # Model colour
                 marker='o', s=100, zorder=2)
+    # Plot Chandar colours. Comment out if not UBVI combination
+    #Cluster Space
+    ax2.plot([0.5, (2-0.33)/0.33], [0.5, 2], color=col)
+    ax2.plot([0.5, -1], [0.5,-7], color=col)
+    ax2.text(3, 0, "Cluster space")
+
+    # Star/Cluster space
+    ax2.plot([-4, 0.24], [-0.8, -0.8], color=col)
+    ax2.plot([0.24, -1], [-0.8, -7], color=col)
+    ax2.text(-3, -2, "Star/Cluster space")
+
+    #Blue Star space
+    ax2.plot([0.5, -4], [0.5, 0.5], color=col)
+    ax2.text(-3, 0, "Blue Star space")
+
+    # Yellow star space
+    ax2.text(-3, 1.25, "Yellow Star space")
+
     # Format Plot
     ax2.xaxis.set_major_locator(plt.MultipleLocator(1.0))
     ax2.set_ylabel(band_names[bands[0]] + ' - ' + band_names[bands[1]],
@@ -365,8 +406,10 @@ def make_3d_plots(c1, c2, c3, bands, n_clust, alg, c_data, centers,
     ax2.set_xlabel(band_names[bands[base1]]+' - ' + band_names[bands[base2]],
                    fontweight='bold', fontsize=14)
     # plt.gca().invert_yaxis()
-
+    plt.ylim(-3, 2)
+    plt.xlim(-4, 5)
     ax2.legend(loc='lower right', fontsize=11, scatterpoints=1)
+
     file_name = '{}_base_color_{}cl_{}-{}vs{}-{}.png'.format(alg, str(n_clust),
                                                              band_names[bands[0]],
                                                              band_names[bands[1]],
