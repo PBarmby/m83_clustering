@@ -1,0 +1,6 @@
+'''Final plots - create plots for paper drafts''' 
+import numpy as np
+import matplotlib.pyplot as plt
+import pylab
+import os, os.path
+from astropy.table import Table, Column

@@ -20,11 +20,16 @@ cluster_colours = ['y', 'g', 'b', 'r', 'c', 'm', 'k', 'w', 'brown', 'darkgray', 
                    'r','c','m','k','m','w','y','g','b','r','c','m','k','m','w',
                    'y','g','b','r','c','m','k','m','w']
 
+band_names = {'mag05_225':'F225W', 'mag05_336':'F336W', 'mag05_373':'F373N',
+              'mag05_438':'F438W', 'mag05_487':'F487N', 'mag05_502':'F502N',
+              'mag05_555':'F555W', 'mag05_657':'F657N', 'mag05_673':'F673N',
+              'mag05_814':'F814W'}
+
 
 def plotting(data_table, path, plots, threshold, survey_objects):
     plot_path = make_directory(path)
     data_, trial = load_data(data_table, 'plots.txt')
-    model_file = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\model_colours\\{}'.format('mist_ssp_feh+0.5.txt')
+    model_file = 'C:\\Users\\Alex\\Documents\\GitHub\\m83_clustering\\model_colours\\{}'.format('mist_ssp_feh+0.5.txt')
     model = Table.read(model_file, format='ascii.commented_header', guess=False)
 
     for i in range(0, len(trial)):
@@ -50,7 +55,7 @@ def plotting(data_table, path, plots, threshold, survey_objects):
         if 'wvc' in plots:
             wave_v_colour(wave1, wave2, wave3, wave4, c1, c2, grd, trial[i],
                           plot_path)
-    shutil.copy2('C:\Users\Owner\Documents\GitHub\m83_clustering\Code\plots.txt',
+    shutil.copy2('C:\Users\Alex\Documents\GitHub\m83_clustering\Code\plots.txt',
                  plot_path+'\\inputs.txt')
 
     return
@@ -60,7 +65,7 @@ def make_directory(p_path):
     '''Save results of each analysis
             save_path: set path of where you would like results saved'''
     # Create new plots_folder
-    pl_path = 'C:\\Users\\Owner\\Documents\\GitHub\\m83_clustering\\{}'.format(
+    pl_path = 'C:\\Users\\Alex\\Documents\\GitHub\\m83_clustering\\{}'.format(
               p_path)
     if not os.path.exists(pl_path):
         os.makedirs(pl_path)
@@ -240,16 +245,19 @@ def colour_v_colour(colour1, colour2, trial, path, model_cols):
     pylab.savefig(os.path.join(path_, matrix_file))
     plt.close()
 
-    plot_file = 'plot_{}-{}vs{}-{}.png'.format(trial['band1'], trial['band2'],
-                                               trial['band3'], trial['band4'])
+    plot_file = 'plot_{}-{}vs{}-{}.png'.format(band_names[trial['band1']], band_names[trial['band2']],
+                                               band_names[trial['band3']], band_names[trial['band4']])
     fig = plt.figure()
     ax = fig.add_subplot(111)
     ax.scatter(colour1, colour2, marker='.', c='k', s=1)
     ax.plot(model_cols[0] - model_cols[1], model_cols[2] - model_cols[3],
-            color = 'm')
-    ax.set_title('Colour-Colour Plot')
-    ax.set_xlabel(trial['band1'] + ' - ' + trial['band2'])
-    ax.set_ylabel(trial['band3'] + ' - ' + trial['band4'])
+            color = 'r')
+    ax.scatter(model_cols[0][0] - model_cols[1][0],
+               model_cols[2][0] - model_cols[3][0], color='r',
+               marker='o', s=70, zorder=2)
+    #ax.set_title('Colour-Colour Plot')
+    ax.set_xlabel(band_names[trial['band1']] + ' - ' + band_names[trial['band2']], fontweight='bold', fontsize=14)
+    ax.set_ylabel(band_names[trial['band3']] + ' - ' + band_names[trial['band4']], fontweight='bold', fontsize=14)
     pylab.savefig(os.path.join(path_, plot_file))
     plt.close()
 
