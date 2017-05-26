@@ -140,7 +140,10 @@ def load_3d_cluster_data(filter_data, bands):
     base_wave = filter_data[bands[b_wave]]
     return(colour1, colour2, colour3, base_colour, base_wave, wave2)
 
-
+#make_2d_plots(colour1_2d, colour2_2d, waves, n_clusters,
+#                          algorithm, cluster_data_2d, centers_2d,
+#                          save_path, wave_2, wave_4, mod_filt_2d)
+      
 def make_2d_plots(c1, c2, bands, n_clust, alg, c_data, centers, path,
                   base_wave1, base_wave2, model_data):
     colours = ('{}-{}_{}-{}').format(bands[0], bands[1], bands[2],
