@@ -16,6 +16,7 @@ import os
 #published_cats.add_tables('M83_NSall.fits',['williams15_rsg.fits','kim12_wr.fits'],'M83_final.fits')
 #published_cats.catalog_match('M83_final.fits', 'hlsp_wfc3ers_hst_wfc3_m83_cat_all_v2-corrected.txt','M83_ers_pubcat.txt')
 
+# table columns to be renamed as part of processing: [I think (old, new)]
 ned_rename = [('Name_N', 'Name'), ('RA(deg)', 'RA'), ('DEC(deg)', 'Dec'),('Type_N', 'Type')]
 sim_rename = [('Name_S', 'Name'), ('RA_d', 'RA'), ('DEC_d', 'Dec'),('Type_S', 'Type')]
 
@@ -37,18 +38,23 @@ def ns_combine(ned_name, simbad_name, ns_combine, final_tab, match_tol = 1.0): #
     matched_ned, matched_sim, ned_only, sim_only = symmetric_match_sky_coords(ned_coo, sim_coo, match_tol*u.arcsec)
 
     # generate the matched table
+    # hstack is "horizontal stack", ie put the NED and SIMBAD columns for matched objects in the same row
     matchtab = hstack([ned_proc[matched_ned], sim_proc[matched_sim]], join_type = 'outer')
-    # mark the really good matches
+    
+    # find the secure matches, save these as intermediate results
     matchtab2 = process_match(matchtab)
     matchtab2.write(ns_combine, format='fits')
 
-    #rename some columns
-    nedcat = process_unmatch(ned_proc[ned_only], src = 'N', rename_cols= ned_rename)
-    simcat = process_unmatch(sim_proc[sim_only], src = 'S', rename_cols = sim_rename)
+    # process the secure match catalog
     keeplist = ['Name_N','RA(deg)','DEC(deg)','Type_N']
     matchtab3 = process_unmatch(Table(matchtab2[keeplist]), src='NS', rename_cols = ned_rename)
+
+    #process the catalogs containing NED-only and SIMBAD-only objects
+    nedcat = process_unmatch(ned_proc[ned_only], src = 'N', rename_cols= ned_rename)
+    simcat = process_unmatch(sim_proc[sim_only], src = 'S', rename_cols = sim_rename)   
     
-    # add on the unmatched objects
+    # add the secure matches to the NED-only and SIMBAD-only catalogs
+    # NB: I think this implies that the "insecure" matches just get thrown away - is that what we want?
     finaltab = vstack([matchtab3, nedcat, simcat],join_type = 'outer')
     
     # save the result
@@ -57,6 +63,13 @@ def ns_combine(ned_name, simbad_name, ns_combine, final_tab, match_tol = 1.0): #
     return
 
 def add_tables(basetab_file, tab_file_list, outfile, jt = 'outer'):
+   '''perform a vertical join of a list of tables to a base table
+      input:
+      basetab_file: filename for base table
+      tab_file_list: list of filenames for additional tables
+      outfile: name of output file
+      jt: join type, should generaly be 'outer'
+    '''    
     basetab = Table.read(basetab_file)
     tablist = [basetab]
     for filename in tab_file_list:
@@ -66,12 +79,9 @@ def add_tables(basetab_file, tab_file_list, outfile, jt = 'outer'):
     stack.write(outfile)
     return
 
-ns_replace_names = [(" ", ""), ("MESSIER083:",""),("NGC5236:",""), ("M83-",""), ("NGC5236","")]
-ns_replace_types = [('*Cl','Cl*'), ('PofG','Galaxy'),('X','XrayS'), ('Radio','RadioS')]
-ns_remove_ids= ['NAMENGC5236Group', 'M83', 'MESSIER083', 'NGC5236GROUP']
-ra_dec_cols = ['RA(deg)','DEC(deg)','RA_d','DEC_d']
-
 def catalog_match(pubcat_file, erscat_file, match_out_file, match_tol = 1.0):
+    ''' matches combined NED/SIMBAD file to ERS source list
+    '''
     pubcat = Table.read(pubcat_file, format = 'fits')
     erscat = Table.read(erscat_file, format='ascii.commented_header')
 
@@ -95,9 +105,18 @@ def catalog_match(pubcat_file, erscat_file, match_out_file, match_tol = 1.0):
 
     return
 
+# notation to be replaced in object names: (old, new). Note this is galaxy-specific and really shoudn't be hardwired like this.
+ns_replace_names = [(" ", ""), ("MESSIER083:",""),("NGC5236:",""), ("M83-",""), ("NGC5236","")]
+# object types to be changed - makes NED more like SIMBAD
+ns_replace_types = [('*Cl','Cl*'), ('PofG','Galaxy'),('X','XrayS'), ('Radio','RadioS')]
+# objects to be removed from NED/SIMBAD list (e.g. the galaxy itself). Again galaxy-specific, shoudn't be hardwired like this.
+ns_remove_ids= ['NAMENGC5236Group', 'M83', 'MESSIER083', 'NGC5236GROUP']
+# names of RA & Dec columns - NED, SIMBAD respectively
+ra_dec_cols = ['RA(deg)','DEC(deg)','RA_d','DEC_d']
+
 def reformat_cat(in_tab, old_name, new_name, old_type, new_type, replace_names=ns_replace_names, replace_types=ns_replace_types, remove_id=ns_remove_ids, keepcols=None):
     ''' reformat NED or SIMBAD catalog to make more intercompatible'''     
-    # just keep selected columns
+    # only keep selected columns
     if keepcols!= None:
         in_tab = in_tab[keepcols]
         
@@ -110,17 +129,19 @@ def reformat_cat(in_tab, old_name, new_name, old_type, new_type, replace_names=n
     in_tab.rename_column(old_name, new_name)
     in_tab.rename_column(old_type, new_type)
 
-    # reformat some object names
+    # reformat some object names: remove spaces, remove some parts of names that are repeated
     for pair in replace_names:
         in_tab[new_name] = np.char.replace(in_tab[new_name],pair[0], pair[1])
 
     # reformat some object types
+    # remove spaces and question marks
     in_tab[new_type] = np.char.replace(in_tab[new_type],"?", "")
     in_tab[new_type] = np.char.replace(in_tab[new_type]," ", "")
+    # rename some type indicators
     for pair in replace_types:
         in_tab[new_type][in_tab[new_type]==pair[0]] = pair[1]        
     
-    # delete rows whose names are in remove_id
+    # delete rows whose names are in list remove_id
     # there's a non-loopy way to do this but I can't remember it
     remove_idx = []
     for i in range(0,len(in_tab)):
@@ -132,7 +153,9 @@ def reformat_cat(in_tab, old_name, new_name, old_type, new_type, replace_names=n
     return(in_tab)
 
 def symmetric_match_sky_coords(coord1, coord2, tolerance):
-    '''produce the symmetric match of coord1 to coord2
+    '''produce the symmetric match of coord1 to coord2, such that objects are only a match if
+       distance is < tolerance AND
+       each is the closest match in the other list  
        output:
        index1_matched: index into coord1 for matched objects
        index2_matched: index into coord2 for matches of objects in index1_matched
@@ -149,6 +172,7 @@ def symmetric_match_sky_coords(coord1, coord2, tolerance):
 
     for i in range(0, len(coord1)): # doubtless there is a more Pythonic way to do this..
         # not sure this condition covers all of the possible corner cases. But good enough.
+        # (NB: should put in an assertion to check that tolerance is an angular unit)
         if sep2d_1to2[i] < tolerance and i == closest_2to1[closest_1to2[i]]:     
             index1_matched.append(i)
             index2_matched.append(closest_2to1[i])
@@ -163,7 +187,8 @@ def symmetric_match_sky_coords(coord1, coord2, tolerance):
     
     
 def process_match(matched_tab_in):
-    '''find secure matches btw NED and SIMBAD'''
+    '''take an already-matched table btw NED and SIMBAD, find secure matches
+    where secure implies both name and object type match'''
     goodmatch = np.logical_or(matched_tab_in['Name_S']==matched_tab_in['Name_N'],
                               matched_tab_in['Type_S']==matched_tab_in['Type_N'])
     matched_tab_in.add_column(Column(goodmatch, name='Secure'))
@@ -171,7 +196,7 @@ def process_match(matched_tab_in):
 
 
 def process_unmatch(tab_in, src, rename_cols):
-    '''find secure matches btw NED and SIMBAD'''
+    '''process unmatched catalogs: rename columns, add source column (ie, NED or SIMBAD)'''
     for pair in rename_cols:
         tab_in.rename_column(pair[0], pair[1])
     tab_in.add_column(Column(name='Source', length = len(tab_in), dtype='S2'))
